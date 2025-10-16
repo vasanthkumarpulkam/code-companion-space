@@ -95,16 +95,12 @@ export function QuickQuoteDialog({ providerId, providerName }: QuickQuoteDialogP
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="lg" className="w-full" onClick={(e) => {
-          e.preventDefault();
-          handleOpenDialog();
-        }}>
-          <Zap className="mr-2 h-5 w-5" />
-          Request Quick Quote
-        </Button>
-      </DialogTrigger>
+    <>
+      <Button size="lg" className="w-full" onClick={handleOpenDialog}>
+        <Zap className="mr-2 h-5 w-5" />
+        Request Quick Quote
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Request Quick Quote from {providerName}</DialogTitle>
@@ -204,6 +200,7 @@ export function QuickQuoteDialog({ providerId, providerName }: QuickQuoteDialogP
           </div>
         </form>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+    </>
   );
 }
