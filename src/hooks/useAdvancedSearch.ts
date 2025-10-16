@@ -26,8 +26,8 @@ export function useAdvancedSearch(filters: SearchFilters) {
       .from('jobs')
       .select(`
         *,
-        category:categories(name, icon),
-        customer:profiles!jobs_customer_id_fkey(full_name, avatar_url)
+        categories(name, icon),
+        profiles(full_name, avatar_url)
       `)
       .eq('status', 'open');
 

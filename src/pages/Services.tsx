@@ -41,8 +41,8 @@ export default function Services() {
       .from('jobs')
       .select(`
         *,
-        category:categories(name, icon),
-        customer:profiles!jobs_customer_id_fkey(full_name, avatar_url)
+        categories(name, icon),
+        profiles(full_name, avatar_url)
       `)
       .eq('status', 'open')
       .order('created_at', { ascending: false });
