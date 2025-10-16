@@ -93,10 +93,12 @@ export default function Login() {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => navigate(-1)}
+                asChild
                 className="h-8 w-8"
               >
-                <ArrowLeft className="h-4 w-4" />
+                <Link to="/">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
               </Button>
               <CardTitle>Welcome Back</CardTitle>
             </div>
