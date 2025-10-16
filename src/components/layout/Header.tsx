@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -31,14 +41,43 @@ export const Header = () => {
             </Link>
           </nav>
 
-          {/* Desktop Auth Buttons */}
+          {/* Desktop Auth Buttons / User Menu */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" asChild>
-              <Link to="/auth/login">Login</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/auth/signup">Sign Up</Link>
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-background">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="cursor-pointer">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile/edit" className="cursor-pointer">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/chats" className="cursor-pointer">Messages</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/auth/login">Login</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/auth/signup">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -75,12 +114,37 @@ export const Header = () => {
               Support
             </Link>
             <div className="flex flex-col space-y-2 pt-4 border-t">
-              <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-                <Link to="/auth/login">Login</Link>
-              </Button>
-              <Button asChild onClick={() => setMobileMenuOpen(false)}>
-                <Link to="/auth/signup">Sign Up</Link>
-              </Button>
+              {user ? (
+                <>
+                  <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Button>
+                  <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/profile/edit">Profile</Link>
+                  </Button>
+                  <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/chats">Messages</Link>
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      signOut();
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/auth/login">Login</Link>
+                  </Button>
+                  <Button asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/auth/signup">Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}
