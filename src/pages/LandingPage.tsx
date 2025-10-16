@@ -4,9 +4,10 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Sparkles, Home, Truck, TreePine, Hammer, PartyPopper, MoreHorizontal, CheckCircle, MessageCircle, Star, Search, Shield, Clock, Users, TrendingUp, ArrowRight, Award } from "lucide-react";
-import { useState } from "react";
+import { Sparkles, Home, Truck, TreePine, Hammer, PartyPopper, MoreHorizontal, CheckCircle, MessageCircle, Star, Search, Shield, Clock, Users, TrendingUp, ArrowRight, Award, MapPin } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const categories = [
   { name: "category.cleaning", icon: Sparkles, path: "/services/cleaning" },
@@ -21,6 +22,42 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
+  const [zipcode, setZipcode] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [serviceCategories, setServiceCategories] = useState<any[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<any[]>([]);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const { data } = await supabase.from('categories').select('*').order('name');
+      if (data) setServiceCategories(data);
+    };
+    loadCategories();
+  }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = serviceCategories.filter(cat => 
+        cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(true);
+    } else {
+      setFilteredSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [searchQuery, serviceCategories]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const steps = [
     {
@@ -70,9 +107,15 @@ export default function LandingPage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/services?search=${encodeURIComponent(searchQuery)}`);
-    }
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.append('search', searchQuery);
+    if (zipcode.trim()) params.append('zipcode', zipcode);
+    navigate(`/jobs?${params.toString()}`);
+  };
+
+  const handleSuggestionClick = (categoryName: string) => {
+    setSearchQuery(categoryName);
+    setShowSuggestions(false);
   };
 
   return (
@@ -91,23 +134,57 @@ export default function LandingPage() {
                 {t('landing.hero.subtitle')}
               </p>
               
-              {/* Search Bar */}
-              <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder={t('landing.hero.search')}
-                    className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+              {/* Search Bar with Suggestions and Zipcode */}
+              <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8">
+                <div className="flex flex-col md:flex-row gap-3">
+                  {/* Service Search with Dropdown */}
+                  <div ref={searchRef} className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+                    <Input
+                      type="text"
+                      placeholder="What service do you need? (e.g., house cleaning, moving help...)"
+                      className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onFocus={() => searchQuery && setShowSuggestions(true)}
+                    />
+                    {showSuggestions && filteredSuggestions.length > 0 && (
+                      <div className="absolute top-full mt-2 w-full bg-background border-2 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto">
+                        {filteredSuggestions.map((category) => (
+                          <button
+                            key={category.id}
+                            type="button"
+                            onClick={() => handleSuggestionClick(category.name)}
+                            className="w-full text-left px-4 py-3 hover:bg-accent transition-colors flex items-center gap-3"
+                          >
+                            <Search className="h-4 w-4 text-muted-foreground" />
+                            <span className="font-medium">{category.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Zipcode Search */}
+                  <div className="relative md:w-48">
+                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      placeholder="Zipcode"
+                      className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
+                      value={zipcode}
+                      onChange={(e) => setZipcode(e.target.value)}
+                      maxLength={5}
+                    />
+                  </div>
+
+                  {/* Search Button */}
                   <Button 
                     type="submit" 
                     size="lg" 
-                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                    className="h-14 px-8 shadow-lg"
                   >
-                    {t('landing.hero.searchButton')}
+                    Search
                   </Button>
                 </div>
               </form>
@@ -117,6 +194,9 @@ export default function LandingPage() {
                   <Link to="/jobs/new">{t('landing.hero.postJob')}</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="shadow-lg">
+                  <Link to="/providers">Find Providers</Link>
+                </Button>
+                <Button size="lg" variant="secondary" asChild className="shadow-lg">
                   <Link to="/auth/signup">{t('landing.hero.joinProvider')}</Link>
                 </Button>
               </div>
