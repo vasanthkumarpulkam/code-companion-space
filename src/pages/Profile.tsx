@@ -24,8 +24,11 @@ export default function Profile() {
   }, [uid]);
 
   const fetchProfile = async () => {
+    // Use 'profiles' for own profile (includes email/phone), 'public_profiles' for others
+    const isOwnProfile = uid === user?.id;
+    
     const { data } = await supabase
-      .from('profiles')
+      .from(isOwnProfile ? 'profiles' : ('public_profiles' as any))
       .select('*, user_roles(role)')
       .eq('id', uid)
       .single();
