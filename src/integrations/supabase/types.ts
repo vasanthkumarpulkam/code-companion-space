@@ -340,6 +340,246 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_certifications: {
+        Row: {
+          certificate_url: string | null
+          certification_name: string
+          created_at: string | null
+          expiry_date: string | null
+          id: string
+          issue_date: string | null
+          issuing_organization: string | null
+          provider_id: string
+          verified: boolean | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          certification_name: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_organization?: string | null
+          provider_id: string
+          verified?: boolean | null
+        }
+        Update: {
+          certificate_url?: string | null
+          certification_name?: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string | null
+          issuing_organization?: string | null
+          provider_id?: string
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_certifications_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_certifications_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provider_settings: {
+        Row: {
+          accepts_fixed: boolean | null
+          accepts_hourly: boolean | null
+          accepts_instant_bookings: boolean | null
+          available_now: boolean | null
+          bio_headline: string | null
+          created_at: string | null
+          hourly_rate: number | null
+          id: string
+          provider_id: string
+          response_time_hours: number | null
+          service_radius_miles: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          accepts_fixed?: boolean | null
+          accepts_hourly?: boolean | null
+          accepts_instant_bookings?: boolean | null
+          available_now?: boolean | null
+          bio_headline?: string | null
+          created_at?: string | null
+          hourly_rate?: number | null
+          id?: string
+          provider_id: string
+          response_time_hours?: number | null
+          service_radius_miles?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          accepts_fixed?: boolean | null
+          accepts_hourly?: boolean | null
+          accepts_instant_bookings?: boolean | null
+          available_now?: boolean | null
+          bio_headline?: string | null
+          created_at?: string | null
+          hourly_rate?: number | null
+          id?: string
+          provider_id?: string
+          response_time_hours?: number | null
+          service_radius_miles?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_settings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_settings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: true
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provider_skills: {
+        Row: {
+          created_at: string | null
+          id: string
+          provider_id: string
+          skill_name: string
+          verified: boolean | null
+          years_experience: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          provider_id: string
+          skill_name: string
+          verified?: boolean | null
+          years_experience?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          provider_id?: string
+          skill_name?: string
+          verified?: boolean | null
+          years_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_skills_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_skills_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_requests: {
+        Row: {
+          category_id: string
+          created_at: string | null
+          customer_id: string
+          description: string
+          id: string
+          location: string
+          preferred_pricing: string | null
+          provider_id: string
+          quoted_amount: number | null
+          quoted_at: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          urgency: string | null
+        }
+        Insert: {
+          category_id: string
+          created_at?: string | null
+          customer_id: string
+          description: string
+          id?: string
+          location: string
+          preferred_pricing?: string | null
+          provider_id: string
+          quoted_amount?: number | null
+          quoted_at?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          urgency?: string | null
+        }
+        Update: {
+          category_id?: string
+          created_at?: string | null
+          customer_id?: string
+          description?: string
+          id?: string
+          location?: string
+          preferred_pricing?: string | null
+          provider_id?: string
+          quoted_amount?: number | null
+          quoted_at?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          urgency?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_requests_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_requests_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_requests_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reviews: {
         Row: {
           comment: string | null
@@ -374,6 +614,59 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_providers: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          provider_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          provider_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          provider_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_providers_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_providers_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_providers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_providers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]

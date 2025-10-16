@@ -17,6 +17,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
+import Providers from "./pages/Providers";
 import Jobs from "./pages/jobs/Jobs";
 import NewJob from "./pages/jobs/NewJob";
 import JobDetail from "./pages/jobs/JobDetail";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/providers" element={<Providers />} />
             <Route path="/services/:category" element={<ServiceCategory />} />
             <Route path="/support" element={<Support />} />
             <Route path="/legal/terms" element={<TermsOfService />} />

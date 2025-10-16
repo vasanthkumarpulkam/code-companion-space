@@ -37,7 +37,10 @@ export const Header = () => {
               Home
             </Link>
             <Link to="/services" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              Services
+              Browse Jobs
+            </Link>
+            <Link to="/providers" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+              Find Providers
             </Link>
             <Link to="/how-it-works" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               How it Works
@@ -129,7 +132,14 @@ export const Header = () => {
               className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Services
+              Browse Jobs
+            </Link>
+            <Link
+              to="/providers"
+              className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Find Providers
             </Link>
             <Link
               to="/how-it-works"

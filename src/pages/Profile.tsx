@@ -7,18 +7,23 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star, MapPin, Briefcase, MessageSquare, Calendar, Award } from 'lucide-react';
+import { Star, MapPin, Briefcase, MessageSquare, Calendar, Award, CheckCircle, DollarSign, Clock } from 'lucide-react';
+import { QuickQuoteDialog } from '@/components/providers/QuickQuoteDialog';
 
 export default function Profile() {
   const { uid } = useParams();
   const { user } = useAuth();
   const [profile, setProfile] = useState<any>(null);
+  const [providerSettings, setProviderSettings] = useState<any>(null);
+  const [skills, setSkills] = useState<any[]>([]);
+  const [certifications, setCertifications] = useState<any[]>([]);
   const [completedJobs, setCompletedJobs] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchProfile();
+    fetchProviderData();
     fetchCompletedJobs();
     fetchReviews();
   }, [uid]);
@@ -29,7 +34,6 @@ export default function Profile() {
       return;
     }
 
-    // Use 'profiles' for own profile (includes email/phone), 'public_profiles' for others
     const isOwnProfile = uid === user?.id;
     
     const { data, error } = await supabase
@@ -40,6 +44,30 @@ export default function Profile() {
 
     setProfile(data);
     setLoading(false);
+  };
+
+  const fetchProviderData = async () => {
+    if (!uid) return;
+
+    const { data: settings } = await supabase
+      .from('provider_settings')
+      .select('*')
+      .eq('provider_id', uid)
+      .maybeSingle();
+
+    const { data: skillsData } = await supabase
+      .from('provider_skills')
+      .select('*')
+      .eq('provider_id', uid);
+
+    const { data: certsData } = await supabase
+      .from('provider_certifications')
+      .select('*')
+      .eq('provider_id', uid);
+
+    setProviderSettings(settings);
+    setSkills(skillsData || []);
+    setCertifications(certsData || []);
   };
 
   const fetchCompletedJobs = async () => {
@@ -104,14 +132,46 @@ export default function Profile() {
                 <p className="text-muted-foreground max-w-2xl">{profile.bio}</p>
               )}
 
+              {providerSettings?.bio_headline && (
+                <p className="text-lg font-medium">{providerSettings.bio_headline}</p>
+              )}
+
+              {isProvider && providerSettings && (
+                <div className="flex gap-4 flex-wrap">
+                  {providerSettings.hourly_rate && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <DollarSign className="h-3 w-3" />
+                      ${providerSettings.hourly_rate}/hr
+                    </Badge>
+                  )}
+                  {providerSettings.response_time_hours && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      ~{providerSettings.response_time_hours}h response
+                    </Badge>
+                  )}
+                  {providerSettings.accepts_instant_bookings && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <CheckCircle className="h-3 w-3" />
+                      Instant Booking
+                    </Badge>
+                  )}
+                  {providerSettings.available_now && (
+                    <Badge className="bg-green-600 flex items-center gap-1">
+                      Available Now
+                    </Badge>
+                  )}
+                </div>
+              )}
+
               <div className="flex gap-3">
-                {user?.id !== uid && (
+                {user?.id !== uid && isProvider && (
                   <>
                     <Button>
                       <MessageSquare className="mr-2 h-4 w-4" />
                       Message
                     </Button>
-                    <Button variant="outline">Request Quote</Button>
+                    <QuickQuoteDialog providerId={uid!} providerName={profile.full_name || 'Provider'} />
                   </>
                 )}
               </div>
@@ -128,9 +188,15 @@ export default function Profile() {
                     <span className="text-sm text-muted-foreground">Rating</span>
                     <span className="text-2xl font-bold">{averageRating}</span>
                   </div>
-                  <Badge variant="secondary" className="w-full justify-center">
-                    Available
-                  </Badge>
+                  {providerSettings?.available_now ? (
+                    <Badge variant="default" className="w-full justify-center bg-green-600">
+                      Available Now
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="w-full justify-center">
+                      Available Soon
+                    </Badge>
+                  )}
                 </CardContent>
               </Card>
             )}
@@ -143,6 +209,7 @@ export default function Profile() {
           <TabsList>
             <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            {isProvider && <TabsTrigger value="skills">Skills & Certifications</TabsTrigger>}
             <TabsTrigger value="about">About</TabsTrigger>
           </TabsList>
 
@@ -182,6 +249,77 @@ export default function Profile() {
               <p className="text-muted-foreground">No reviews yet</p>
             </Card>
           </TabsContent>
+
+          {isProvider && (
+            <TabsContent value="skills" className="space-y-4">
+              <h2 className="text-2xl font-bold">Skills & Certifications</h2>
+              
+              {skills.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Skills</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {skills.map((skill) => (
+                        <div key={skill.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{skill.skill_name}</span>
+                            {skill.verified && (
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                            )}
+                          </div>
+                          {skill.years_experience && (
+                            <Badge variant="secondary">{skill.years_experience} years</Badge>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {certifications.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Certifications</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {certifications.map((cert) => (
+                        <div key={cert.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                          <Award className="h-6 w-6 text-primary shrink-0" />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-semibold">{cert.certification_name}</h3>
+                              {cert.verified && (
+                                <CheckCircle className="h-4 w-4 text-green-600" />
+                              )}
+                            </div>
+                            {cert.issuing_organization && (
+                              <p className="text-sm text-muted-foreground">{cert.issuing_organization}</p>
+                            )}
+                            {cert.issue_date && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Issued: {new Date(cert.issue_date).toLocaleDateString()}
+                                {cert.expiry_date && ` • Expires: ${new Date(cert.expiry_date).toLocaleDateString()}`}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {skills.length === 0 && certifications.length === 0 && (
+                <Card className="p-12 text-center">
+                  <p className="text-muted-foreground">No skills or certifications added yet</p>
+                </Card>
+              )}
+            </TabsContent>
+          )}
 
           <TabsContent value="about" className="space-y-4">
             <h2 className="text-2xl font-bold">About</h2>
