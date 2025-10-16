@@ -84,13 +84,23 @@ export function QuickQuoteDialog({ providerId, providerName }: QuickQuoteDialogP
     }
   };
 
+  const handleOpenDialog = () => {
+    if (!user) {
+      toast({ title: "Please login to request quotes" });
+      navigate('/auth/login');
+      return;
+    }
+    setOpen(true);
+    loadCategories();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => {
-      setOpen(isOpen);
-      if (isOpen) loadCategories();
-    }}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="lg" className="w-full">
+        <Button size="lg" className="w-full" onClick={(e) => {
+          e.preventDefault();
+          handleOpenDialog();
+        }}>
           <Zap className="mr-2 h-5 w-5" />
           Request Quick Quote
         </Button>
