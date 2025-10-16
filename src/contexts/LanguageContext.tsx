@@ -22,7 +22,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.profile': 'Profile',
     'nav.logout': 'Logout',
     'jobs.postJob': 'Post a Job',
-    'jobs.findJobs': 'Find Jobs',
+    'jobs.findJobs': 'Browse Jobs',
     'jobs.title': 'Title',
     'jobs.description': 'Description',
     'jobs.budget': 'Budget',

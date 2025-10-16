@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, X, User, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import {
@@ -17,6 +18,7 @@ import {
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, userRole, signOut } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -34,16 +36,16 @@ export const Header = () => {
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1">
               <Home className="h-4 w-4" />
-              Home
+              {t('nav.home')}
             </Link>
             <Link to="/services" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              Browse Jobs
+              {t('jobs.findJobs')}
             </Link>
             <Link to="/providers" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               Find Providers
             </Link>
             <Link to="/how-it-works" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              How it Works
+              {t('nav.howItWorks')}
             </Link>
             <Link to="/support" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               Support
@@ -66,10 +68,10 @@ export const Header = () => {
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard" className="cursor-pointer">Dashboard</Link>
+                    <Link to="/dashboard" className="cursor-pointer">{t('nav.dashboard')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to={`/profile/${user.id}`} className="cursor-pointer">View Profile</Link>
+                    <Link to={`/profile/${user.id}`} className="cursor-pointer">{t('nav.profile')}</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/profile/edit" className="cursor-pointer">Edit Profile</Link>
@@ -78,7 +80,7 @@ export const Header = () => {
                     <Link to="/settings" className="cursor-pointer">Settings</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/chats" className="cursor-pointer">Messages</Link>
+                    <Link to="/chats" className="cursor-pointer">{t('nav.messages')}</Link>
                   </DropdownMenuItem>
                   {userRole === 'admin' && (
                     <>
@@ -90,7 +92,7 @@ export const Header = () => {
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
-                    Logout
+                    {t('nav.logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -98,10 +100,10 @@ export const Header = () => {
             ) : (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/auth/login">Login</Link>
+                  <Link to="/auth/login">{t('nav.login')}</Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/auth/signup">Sign Up</Link>
+                  <Link to="/auth/signup">{t('nav.signup')}</Link>
                 </Button>
               </>
             )}
@@ -119,20 +121,23 @@ export const Header = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t py-4 space-y-4">
+            <div className="flex justify-end mb-2">
+              <LanguageSwitcher />
+            </div>
             <Link
               to="/"
               className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors flex items-center gap-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               <Home className="h-4 w-4" />
-              Home
+              {t('nav.home')}
             </Link>
             <Link
               to="/services"
               className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Browse Jobs
+              {t('jobs.findJobs')}
             </Link>
             <Link
               to="/providers"
@@ -146,7 +151,7 @@ export const Header = () => {
               className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              How it Works
+              {t('nav.howItWorks')}
             </Link>
             <Link
               to="/support"
@@ -159,10 +164,10 @@ export const Header = () => {
               {user ? (
                 <>
                   <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-                    <Link to="/dashboard">Dashboard</Link>
+                    <Link to="/dashboard">{t('nav.dashboard')}</Link>
                   </Button>
                   <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-                    <Link to={`/profile/${user.id}`}>View Profile</Link>
+                    <Link to={`/profile/${user.id}`}>{t('nav.profile')}</Link>
                   </Button>
                   <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
                     <Link to="/profile/edit">Edit Profile</Link>
@@ -171,7 +176,7 @@ export const Header = () => {
                     <Link to="/settings">Settings</Link>
                   </Button>
                   <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-                    <Link to="/chats">Messages</Link>
+                    <Link to="/chats">{t('nav.messages')}</Link>
                   </Button>
                   {userRole === 'admin' && (
                     <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
@@ -185,16 +190,16 @@ export const Header = () => {
                       signOut();
                     }}
                   >
-                    Logout
+                    {t('nav.logout')}
                   </Button>
                 </>
               ) : (
                 <>
                   <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-                    <Link to="/auth/login">Login</Link>
+                    <Link to="/auth/login">{t('nav.login')}</Link>
                   </Button>
                   <Button asChild onClick={() => setMobileMenuOpen(false)}>
-                    <Link to="/auth/signup">Sign Up</Link>
+                    <Link to="/auth/signup">{t('nav.signup')}</Link>
                   </Button>
                 </>
               )}
