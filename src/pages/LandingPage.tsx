@@ -9,12 +9,12 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const categories = [
-  { name: "Cleaning", icon: Sparkles, path: "/services/cleaning" },
-  { name: "Moving", icon: Truck, path: "/services/moving" },
-  { name: "Landscaping", icon: TreePine, path: "/services/landscaping" },
-  { name: "Handyman", icon: Hammer, path: "/services/handyman" },
-  { name: "Events", icon: PartyPopper, path: "/services/events" },
-  { name: "Other", icon: MoreHorizontal, path: "/services/other" },
+  { name: "category.cleaning", icon: Sparkles, path: "/services/cleaning" },
+  { name: "category.moving", icon: Truck, path: "/services/moving" },
+  { name: "category.landscaping", icon: TreePine, path: "/services/landscaping" },
+  { name: "category.handyman", icon: Hammer, path: "/services/handyman" },
+  { name: "category.events", icon: PartyPopper, path: "/services/events" },
+  { name: "category.other", icon: MoreHorizontal, path: "/services/other" },
 ];
 
 export default function LandingPage() {
@@ -44,19 +44,19 @@ export default function LandingPage() {
     {
       name: "Maria Rodriguez",
       role: t('landing.testimonials.customer'),
-      text: "Found an amazing cleaner in minutes! The bidding process made it easy to find someone within my budget.",
+      text: t('testimonial1.text'),
       rating: 5,
     },
     {
       name: "John Smith",
       role: t('landing.testimonials.provider'),
-      text: "Service HUB has helped me grow my handyman business. I get consistent work from local customers.",
+      text: t('testimonial2.text'),
       rating: 5,
     },
     {
       name: "Sarah Chen",
       role: t('landing.testimonials.customer'),
-      text: "The platform made moving so much easier. Got multiple quotes and chose the perfect moving company.",
+      text: t('testimonial3.text'),
       rating: 5,
     },
   ];
@@ -150,7 +150,7 @@ export default function LandingPage() {
                       <div className="h-16 w-16 mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                         <category.icon className="h-8 w-8 text-primary" />
                       </div>
-                      <h3 className="font-semibold text-sm md:text-base">{category.name}</h3>
+                      <h3 className="font-semibold text-sm md:text-base">{t(category.name)}</h3>
                     </CardContent>
                   </Card>
                 </Link>

@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Footer = () => {
+  const { t } = useLanguage();
+  
   return (
     <footer className="w-full border-t bg-background">
       <div className="container mx-auto px-4 py-12">
@@ -14,22 +17,22 @@ export const Footer = () => {
               <span className="text-lg font-bold">Service HUB</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Connecting customers with local service providers across Texas.
+              {t('footer.tagline')}
             </p>
           </div>
 
           {/* Company */}
           <div>
-            <h3 className="font-semibold mb-3">Company</h3>
+            <h3 className="font-semibold mb-3">{t('footer.company')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-                  How it Works
+                  {t('nav.howItWorks')}
                 </Link>
               </li>
               <li>
                 <Link to="/services" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Services
+                  {t('nav.services')}
                 </Link>
               </li>
               <li>
@@ -42,16 +45,16 @@ export const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h3 className="font-semibold mb-3">Legal</h3>
+            <h3 className="font-semibold mb-3">{t('footer.legal')}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/legal/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Terms of Service
+                  {t('footer.termsOfService')}
                 </Link>
               </li>
               <li>
                 <Link to="/legal/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Privacy Policy
+                  {t('footer.privacyPolicy')}
                 </Link>
               </li>
             </ul>
@@ -59,13 +62,13 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold mb-3">Contact</h3>
+            <h3 className="font-semibold mb-3">{t('footer.contact')}</h3>
             <ul className="space-y-2 text-sm">
               <li className="text-muted-foreground">
-                Email: support@servicehub.com
+                {t('footer.email')}: support@servicehub.com
               </li>
               <li className="text-muted-foreground">
-                Location: Texas, USA
+                {t('footer.location')}: {t('footer.locationValue')}
               </li>
             </ul>
           </div>

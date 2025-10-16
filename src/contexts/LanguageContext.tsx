@@ -172,6 +172,27 @@ const translations: Record<Language, Record<string, string>> = {
     'howItWorks.faq.a4': 'Providers create detailed profiles with their skills and portfolio. They build reputation through customer reviews and ratings visible on their public profiles.',
     'howItWorks.faq.q5': 'Can I message providers before hiring?',
     'howItWorks.faq.a5': "Yes! Our in-app messaging system allows you to communicate with providers, ask questions, and clarify details before making a decision.",
+    // Categories
+    'category.cleaning': 'Cleaning',
+    'category.moving': 'Moving',
+    'category.landscaping': 'Landscaping',
+    'category.handyman': 'Handyman',
+    'category.events': 'Events',
+    'category.other': 'Other',
+    // Testimonials
+    'testimonial1.text': 'Found an amazing cleaner in minutes! The bidding process made it easy to find someone within my budget.',
+    'testimonial2.text': 'Service HUB has helped me grow my handyman business. I get consistent work from local customers.',
+    'testimonial3.text': 'The platform made moving so much easier. Got multiple quotes and chose the perfect moving company.',
+    // Footer
+    'footer.tagline': 'Connecting customers with local service providers across Texas.',
+    'footer.company': 'Company',
+    'footer.legal': 'Legal',
+    'footer.contact': 'Contact',
+    'footer.email': 'Email',
+    'footer.location': 'Location',
+    'footer.locationValue': 'Texas, USA',
+    'footer.termsOfService': 'Terms of Service',
+    'footer.privacyPolicy': 'Privacy Policy',
   },
   es: {
     // Navigation
@@ -334,6 +355,27 @@ const translations: Record<Language, Record<string, string>> = {
     'howItWorks.faq.a4': 'Los proveedores crean perfiles detallados con sus habilidades y portafolio. Construyen reputación a través de reseñas y calificaciones de clientes visibles en sus perfiles públicos.',
     'howItWorks.faq.q5': '¿Puedo enviar mensajes a proveedores antes de contratar?',
     'howItWorks.faq.a5': '¡Sí! Nuestro sistema de mensajería integrado te permite comunicarte con proveedores, hacer preguntas y aclarar detalles antes de tomar una decisión.',
+    // Categories
+    'category.cleaning': 'Limpieza',
+    'category.moving': 'Mudanza',
+    'category.landscaping': 'Jardinería',
+    'category.handyman': 'Reparación',
+    'category.events': 'Eventos',
+    'category.other': 'Otros',
+    // Testimonials
+    'testimonial1.text': '¡Encontré una limpiadora increíble en minutos! El proceso de ofertas hizo fácil encontrar a alguien dentro de mi presupuesto.',
+    'testimonial2.text': 'Service HUB me ha ayudado a hacer crecer mi negocio de reparación. Obtengo trabajo consistente de clientes locales.',
+    'testimonial3.text': 'La plataforma hizo la mudanza mucho más fácil. Obtuve múltiples cotizaciones y elegí la compañía de mudanza perfecta.',
+    // Footer
+    'footer.tagline': 'Conectando clientes con proveedores de servicios locales en todo Texas.',
+    'footer.company': 'Empresa',
+    'footer.legal': 'Legal',
+    'footer.contact': 'Contacto',
+    'footer.email': 'Correo',
+    'footer.location': 'Ubicación',
+    'footer.locationValue': 'Texas, EE.UU.',
+    'footer.termsOfService': 'Términos de Servicio',
+    'footer.privacyPolicy': 'Política de Privacidad',
   },
 };
 
