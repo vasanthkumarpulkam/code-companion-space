@@ -38,13 +38,27 @@ export default function Profile() {
 
     const isOwnProfile = uid === user?.id;
     
-    const { data, error } = await supabase
-      .from(isOwnProfile ? 'profiles' : ('public_profiles' as any))
-      .select('*, user_roles(role)')
+    // Fetch profile data
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
       .eq('id', uid)
       .maybeSingle();
 
-    setProfile(data);
+    if (profileData) {
+      // Fetch user roles separately
+      const { data: rolesData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', uid);
+
+      // Combine the data
+      setProfile({
+        ...profileData,
+        user_roles: rolesData || []
+      });
+    }
+
     setLoading(false);
   };
 
