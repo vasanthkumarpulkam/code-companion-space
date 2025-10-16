@@ -134,20 +134,12 @@ Run the Supabase linter:
 supabase db lint
 ```
 
-## Deployment
 
-### Via Lovable (Recommended)
-Simply open [Lovable](https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01) and click on Share → Publish.
-
-### Custom Domain
-To connect a custom domain, navigate to Project > Settings > Domains.
-Read more: [Custom Domain Setup](https://docs.lovable.dev/features/custom-domain)
 
 ## Support
 For issues or questions:
-- Lovable Documentation: https://docs.lovable.dev
+
 - Supabase Documentation: https://supabase.com/docs
 - Project URL: https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01
 
-## License
-[Your License Here]
+
