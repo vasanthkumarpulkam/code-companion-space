@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Briefcase, DollarSign, AlertTriangle, Settings, FileText } from 'lucide-react';
+import { Users, Briefcase, DollarSign, AlertTriangle, Settings, FileText, Eye } from 'lucide-react';
+import { FinancialReports } from '@/components/admin/FinancialReports';
+import { DisputeResolution } from '@/components/admin/DisputeResolution';
 
 export default function Admin() {
   const { user, userRole } = useAuth();
@@ -29,16 +31,23 @@ export default function Admin() {
   }, [userRole]);
 
   const fetchStats = async () => {
-    const [usersCount, jobsCount] = await Promise.all([
+    const [usersCount, jobsCount, paymentsData, reportsData] = await Promise.all([
       supabase.from('profiles').select('id', { count: 'exact', head: true }),
       supabase.from('jobs').select('id', { count: 'exact', head: true }),
+      supabase.from('payments').select('customer_fee, provider_fee').eq('status', 'completed'),
+      supabase.from('user_reports').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
     ]);
+
+    const totalRevenue = paymentsData.data?.reduce(
+      (sum, p) => sum + Number(p.customer_fee) + Number(p.provider_fee),
+      0
+    ) || 0;
 
     setStats({
       totalUsers: usersCount.count || 0,
       totalJobs: jobsCount.count || 0,
-      totalRevenue: 0, // Placeholder
-      pendingDisputes: 0, // Placeholder
+      totalRevenue,
+      pendingDisputes: reportsData.count || 0,
     });
   };
 
@@ -101,7 +110,7 @@ export default function Admin() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${stats.totalRevenue}</div>
+              <div className="text-2xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
             </CardContent>
           </Card>
 
@@ -126,9 +135,13 @@ export default function Admin() {
               <Briefcase className="h-4 w-4 mr-2" />
               Jobs
             </TabsTrigger>
-            <TabsTrigger value="reports">
-              <FileText className="h-4 w-4 mr-2" />
-              Reports
+            <TabsTrigger value="financial">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Financial
+            </TabsTrigger>
+            <TabsTrigger value="disputes">
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Disputes
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
@@ -168,7 +181,12 @@ export default function Admin() {
                           {new Date(user.created_at).toLocaleDateString()}
                         </TableCell>
                         <TableCell>
-                          <Button variant="outline" size="sm">View</Button>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link to={`/profile/${user.id}`}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              View
+                            </Link>
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -208,7 +226,12 @@ export default function Admin() {
                         </TableCell>
                         <TableCell>${job.budget}</TableCell>
                         <TableCell>
-                          <Button variant="outline" size="sm">View</Button>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link to={`/jobs/${job.id}`}>
+                              <Eye className="h-4 w-4 mr-2" />
+                              View
+                            </Link>
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -218,15 +241,12 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="reports">
-            <Card>
-              <CardHeader>
-                <CardTitle>Financial Reports</CardTitle>
-              </CardHeader>
-              <CardContent className="p-12 text-center text-muted-foreground">
-                Financial reporting dashboard coming soon
-              </CardContent>
-            </Card>
+          <TabsContent value="financial">
+            <FinancialReports />
+          </TabsContent>
+
+          <TabsContent value="disputes">
+            <DisputeResolution />
           </TabsContent>
 
           <TabsContent value="settings">
