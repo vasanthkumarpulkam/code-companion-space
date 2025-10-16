@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProviderCard from "@/components/providers/ProviderCard";
 
 export default function Providers() {
+  const [searchParams] = useSearchParams();
+  const skillParam = searchParams.get('skill');
+  
   const [providers, setProviders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,7 +24,7 @@ export default function Providers() {
   useEffect(() => {
     fetchCategories();
     fetchProviders();
-  }, [selectedCategory, availableOnly]);
+  }, [selectedCategory, availableOnly, skillParam]);
 
   const fetchCategories = async () => {
     const { data } = await supabase
@@ -67,9 +71,20 @@ export default function Providers() {
     const { data } = await query;
     
     if (data) {
+      let filteredData = data;
+      
+      // Filter by skill if skill parameter is provided
+      if (skillParam) {
+        filteredData = data.filter(provider => 
+          provider.provider_skills?.some((skill: any) => 
+            skill.skill_name.toLowerCase().includes(skillParam.toLowerCase())
+          )
+        );
+      }
+      
       // Get average ratings for each provider
       const providersWithRatings = await Promise.all(
-        data.map(async (provider) => {
+        filteredData.map(async (provider) => {
           const { data: reviews } = await supabase
             .from('reviews')
             .select('rating')
@@ -107,10 +122,13 @@ export default function Providers() {
         <section className="py-12 px-4 bg-gradient-to-b from-primary/5 to-background">
           <div className="container mx-auto max-w-6xl">
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">
-              Find Trusted Professionals
+              {skillParam ? `Find ${skillParam} Professionals` : 'Find Trusted Professionals'}
             </h1>
             <p className="text-xl text-muted-foreground text-center mb-8">
-              Browse skilled providers ready to help with your next project
+              {skillParam 
+                ? `Browse skilled ${skillParam.toLowerCase()} providers ready to help with your next project`
+                : 'Browse skilled providers ready to help with your next project'
+              }
             </p>
             
             {/* Search and Filters */}
