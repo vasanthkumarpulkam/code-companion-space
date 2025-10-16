@@ -15,6 +15,10 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
+import Jobs from "./pages/jobs/Jobs";
+import NewJob from "./pages/jobs/NewJob";
+import JobDetail from "./pages/jobs/JobDetail";
+import Chats from "./pages/Chats";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +45,24 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/jobs" element={<Jobs />} />
+            <Route 
+              path="/jobs/new" 
+              element={
+                <ProtectedRoute>
+                  <NewJob />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/jobs/:id" element={<JobDetail />} />
+            <Route 
+              path="/chats" 
+              element={
+                <ProtectedRoute>
+                  <Chats />
                 </ProtectedRoute>
               } 
             />
