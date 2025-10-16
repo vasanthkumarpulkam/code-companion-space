@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Star, MapPin, Briefcase, MessageSquare, Calendar, Award, CheckCircle, DollarSign, Clock } from 'lucide-react';
 import { QuickQuoteDialog } from '@/components/providers/QuickQuoteDialog';
+import { toast } from '@/hooks/use-toast';
 
 export default function Profile() {
   const { uid } = useParams();
@@ -186,7 +187,17 @@ export default function Profile() {
               <div className="flex gap-3">
                 {user?.id !== uid && isProvider && (
                   <>
-                    <Button>
+                    <Button onClick={() => {
+                      if (!user) {
+                        toast({ title: t('auth.loginRequired') });
+                        window.location.href = '/auth/login';
+                        return;
+                      }
+                      toast({ 
+                        title: t('profile.messageInfo'),
+                        description: t('profile.messageDescription')
+                      });
+                    }}>
                       <MessageSquare className="mr-2 h-4 w-4" />
                       {t('profile.message')}
                     </Button>
