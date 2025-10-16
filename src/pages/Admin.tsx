@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Users, Briefcase, DollarSign, AlertTriangle, Settings, FileText, Eye } from 'lucide-react';
 import { FinancialReports } from '@/components/admin/FinancialReports';
 import { DisputeResolution } from '@/components/admin/DisputeResolution';
+import { UserManagement } from '@/components/admin/UserManagement';
+import { PlatformSettings } from '@/components/admin/PlatformSettings';
 
 export default function Admin() {
   const { user, userRole } = useAuth();
@@ -52,13 +54,30 @@ export default function Admin() {
   };
 
   const fetchUsers = async () => {
-    const { data } = await supabase
+    const { data: profilesData } = await supabase
       .from('profiles')
-      .select('*, user_roles(role)')
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(10);
 
-    setUsers(data || []);
+    if (profilesData) {
+      // Fetch roles for each user
+      const usersWithRoles = await Promise.all(
+        profilesData.map(async (profile) => {
+          const { data: rolesData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', profile.id);
+          
+          return {
+            ...profile,
+            user_roles: rolesData || []
+          };
+        })
+      );
+      
+      setUsers(usersWithRoles);
+    }
   };
 
   const fetchJobs = async () => {
@@ -150,50 +169,7 @@ export default function Admin() {
           </TabsList>
 
           <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Joined</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {users.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell>{user.full_name || 'Anonymous'}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>
-                          {user.user_roles?.map((r: any) => (
-                            <Badge key={r.role} variant="secondary" className="mr-1">
-                              {r.role}
-                            </Badge>
-                          ))}
-                        </TableCell>
-                        <TableCell>
-                          {new Date(user.created_at).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Button variant="outline" size="sm" asChild>
-                            <Link to={`/profile/${user.id}`}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View
-                            </Link>
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <UserManagement />
           </TabsContent>
 
           <TabsContent value="jobs">
@@ -250,14 +226,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Platform Settings</CardTitle>
-              </CardHeader>
-              <CardContent className="p-12 text-center text-muted-foreground">
-                Platform configuration coming soon
-              </CardContent>
-            </Card>
+            <PlatformSettings />
           </TabsContent>
         </Tabs>
       </div>
