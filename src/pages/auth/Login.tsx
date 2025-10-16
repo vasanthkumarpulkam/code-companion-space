@@ -91,14 +91,13 @@ export default function Login() {
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
               <Button
+                type="button"
                 variant="ghost"
                 size="icon"
-                asChild
+                onClick={() => navigate(-1)}
                 className="h-8 w-8"
               >
-                <Link to="/">
-                  <ArrowLeft className="h-4 w-4" />
-                </Link>
+                <ArrowLeft className="h-4 w-4" />
               </Button>
               <CardTitle>Welcome Back</CardTitle>
             </div>
