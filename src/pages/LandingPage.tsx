@@ -212,26 +212,52 @@ export default function LandingPage() {
         </section>
 
         {/* Popular Services */}
-        <section className="py-16 md:py-20 px-4 bg-background">
+        <section className="py-16 md:py-20 px-4 bg-muted/30">
           <div className="container mx-auto max-w-7xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">Popular services in Texas</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-8">Popular services near you</h2>
+            
+            {/* Category Tabs */}
+            <div className="flex gap-3 mb-8 overflow-x-auto pb-2 hide-scrollbar">
               {[
-                { name: "House cleaning", icon: Sparkles },
-                { name: "Handyman", icon: Hammer },
-                { name: "Interior painting", icon: Home },
-                { name: "Junk removal", icon: Truck },
-                { name: "Local moving", icon: Truck },
-                { name: "Landscaping", icon: TreePine },
-                { name: "Event planning", icon: PartyPopper },
-                { name: "Electrical repair", icon: Hammer }
-              ].map((service, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer group">
-                  <CardContent className="p-6">
-                    <service.icon className="h-8 w-8 mb-3 text-primary group-hover:scale-110 transition-transform" />
-                    <h3 className="font-semibold">{service.name}</h3>
-                  </CardContent>
-                </Card>
+                { name: 'Cleaning', icon: Sparkles, skill: 'Cleaning' },
+                { name: 'Handyman', icon: Hammer, skill: 'Handyman' },
+                { name: 'Moving', icon: Truck, skill: 'Moving' },
+                { name: 'Landscaping', icon: TreePine, skill: 'Landscaping' },
+                { name: 'Events', icon: PartyPopper, skill: 'Events' },
+                { name: 'Other', icon: MoreHorizontal, skill: 'Other' },
+              ].map((category, index) => (
+                <Link
+                  key={category.name}
+                  to={`/providers?skill=${encodeURIComponent(category.skill)}`}
+                  className={`flex flex-col items-center gap-2 p-4 min-w-[110px] rounded-xl transition-all ${
+                    index === 0 
+                      ? 'bg-background shadow-md border-2 border-primary/20' 
+                      : 'bg-background/50 hover:bg-background hover:shadow-md border-2 border-transparent hover:border-primary/20'
+                  }`}
+                >
+                  <category.icon className={`h-8 w-8 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`} />
+                  <span className="text-sm font-medium text-center whitespace-nowrap">{category.name}</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Service Pills */}
+            <div className="flex flex-wrap gap-3">
+              {[
+                'General Furniture Assembly',
+                'IKEA Assembly',
+                'Crib Assembly',
+                'PAX Assembly',
+                'Bookshelf Assembly',
+                'Desk Assembly',
+              ].map((service) => (
+                <Link
+                  key={service}
+                  to={`/providers?skill=Handyman`}
+                  className="px-6 py-2.5 rounded-full border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-sm font-medium whitespace-nowrap"
+                >
+                  {service}
+                </Link>
               ))}
             </div>
           </div>
@@ -257,35 +283,45 @@ export default function LandingPage() {
         {/* Cost Estimates Section */}
         <section className="py-16 md:py-20 px-4 bg-background">
           <div className="container mx-auto max-w-7xl">
-            <div className="text-center mb-12">
+            <div className="mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Get free cost estimates</h2>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              <p className="text-lg text-muted-foreground max-w-3xl">
                 We analyzed millions of bids from Service HUB professionals to see what things really cost. Find out what other people have paid for projects like yours.
               </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { service: "House Cleaning", price: "$110 – $140", skill: "Cleaning" },
-                { service: "Interior Painting", price: "$600 – $850", skill: "Painting" },
-                { service: "Local Moving", price: "$80 – $100", skill: "Moving" },
-                { service: "Handyman Services", price: "$60 – $120", skill: "Handyman" },
-                { service: "Junk Removal", price: "$170 – $230", skill: "Junk Removal" },
-                { service: "Landscaping", price: "$200 – $400", skill: "Landscaping" },
-                { service: "Event Planning", price: "$500 – $2000", skill: "Event Planning" },
-                { service: "Pressure Washing", price: "$300 – $400", skill: "Pressure Washing" },
-                { service: "Carpet Cleaning", price: "$120 – $150", skill: "Carpet Cleaning" }
-              ].map((item, index) => (
-                <Link key={index} to={`/providers?skill=${encodeURIComponent(item.skill)}`}>
-                  <Card className="hover:shadow-xl hover:border-primary/50 transition-all cursor-pointer group h-full">
-                    <CardContent className="p-6">
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">{item.service}</h3>
-                      <p className="text-2xl font-bold text-primary mb-3">Avg. price: {item.price}</p>
-                      <div className="flex items-center text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                        <span>See pros near you</span>
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </div>
-                    </CardContent>
-                  </Card>
+                { service: 'Furniture Assembly', price: 'Projects starting at $49', skill: 'Handyman', gradient: 'from-orange-100 to-orange-200' },
+                { service: 'Mount Art or Shelves', price: 'Projects starting at $65', skill: 'Handyman', gradient: 'from-blue-100 to-blue-200' },
+                { service: 'Home & Apartment Cleaning', price: 'Projects starting at $49', skill: 'Cleaning', gradient: 'from-green-100 to-green-200' },
+                { service: 'Minor Plumbing Repairs', price: 'Projects starting at $74', skill: 'Handyman', gradient: 'from-purple-100 to-purple-200' },
+                { service: 'Electrical Help', price: 'Projects starting at $69', skill: 'Handyman', gradient: 'from-yellow-100 to-yellow-200' },
+                { service: 'Local Moving', price: 'Projects starting at $80', skill: 'Moving', gradient: 'from-red-100 to-red-200' },
+                { service: 'Landscaping', price: 'Projects starting at $200', skill: 'Landscaping', gradient: 'from-emerald-100 to-emerald-200' },
+                { service: 'Event Setup', price: 'Projects starting at $150', skill: 'Events', gradient: 'from-pink-100 to-pink-200' },
+              ].map((item) => (
+                <Link
+                  key={item.service}
+                  to={`/providers?skill=${encodeURIComponent(item.skill)}`}
+                  className="group relative overflow-hidden rounded-2xl border-2 border-border bg-card hover:shadow-xl hover:border-primary/30 transition-all duration-300"
+                >
+                  {/* Image Placeholder with Gradient */}
+                  <div className={`h-48 bg-gradient-to-br ${item.gradient} flex items-center justify-center relative overflow-hidden`}>
+                    <div className="absolute inset-0 opacity-20">
+                      {item.skill === 'Cleaning' && <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
+                      {item.skill === 'Handyman' && <Hammer className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
+                      {item.skill === 'Moving' && <Truck className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
+                      {item.skill === 'Landscaping' && <TreePine className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
+                      {item.skill === 'Events' && <PartyPopper className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
+                    </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="p-5 bg-card">
+                    <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">{item.service}</h3>
+                    <p className="text-sm text-muted-foreground">{item.price}</p>
+                  </div>
                 </Link>
               ))}
             </div>
