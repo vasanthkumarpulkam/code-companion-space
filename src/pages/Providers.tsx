@@ -36,16 +36,29 @@ export default function Providers() {
   const fetchProviders = async () => {
     setLoading(true);
     
+    // First get all provider user IDs from user_roles
+    const { data: providerRoles } = await supabase
+      .from('user_roles')
+      .select('user_id')
+      .eq('role', 'provider');
+    
+    if (!providerRoles || providerRoles.length === 0) {
+      setProviders([]);
+      setLoading(false);
+      return;
+    }
+    
+    const providerIds = providerRoles.map(r => r.user_id);
+    
     // Get all providers with their settings
     let query = supabase
       .from('profiles')
       .select(`
         *,
         provider_settings (*),
-        provider_skills (skill_name, years_experience, verified),
-        user_roles!inner (role)
+        provider_skills (skill_name, years_experience, verified)
       `)
-      .eq('user_roles.role', 'provider');
+      .in('id', providerIds);
 
     if (availableOnly) {
       query = query.eq('provider_settings.available_now', true);
