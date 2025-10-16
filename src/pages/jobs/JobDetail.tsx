@@ -7,10 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { MapPin, DollarSign, Calendar, MessageSquare, Award, Languages } from 'lucide-react';
+import { MapPin, DollarSign, Calendar, MessageSquare, Award, Languages, Flag } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import BidCard from '@/components/jobs/BidCard';
 import { useRealtimeBids } from '@/hooks/useRealtimeBids';
+import { ReportDialog } from '@/components/jobs/ReportDialog';
+import { analytics } from '@/utils/analytics';
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -75,6 +77,7 @@ export default function JobDetail() {
       if (error) throw error;
 
       toast({ title: 'Bid submitted successfully!' });
+      analytics.trackBidSubmitted(id!, parseFloat(bidAmount));
       setBidAmount('');
       setBidProposal('');
       fetchBids();
@@ -111,6 +114,7 @@ export default function JobDetail() {
         .neq('id', bidId);
 
       toast({ title: 'Bid awarded successfully!' });
+      analytics.trackJobAwarded(id!, providerId);
       fetchJobDetails();
       fetchBids();
     } catch (error: any) {
@@ -140,9 +144,12 @@ export default function JobDetail() {
                   <Badge>{job.categories?.name}</Badge>
                   <CardTitle className="text-3xl">{job.title}</CardTitle>
                 </div>
-                <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
-                  {job.status}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
+                    {job.status}
+                  </Badge>
+                  {!isOwner && <ReportDialog jobId={id} />}
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
