@@ -185,6 +185,53 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          customer_fee: number
+          customer_id: string
+          id: string
+          job_id: string
+          provider_fee: number
+          provider_id: string
+          status: string
+          stripe_payment_intent_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          customer_fee: number
+          customer_id: string
+          id?: string
+          job_id: string
+          provider_fee: number
+          provider_id: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          customer_fee?: number
+          customer_id?: string
+          id?: string
+          job_id?: string
+          provider_fee?: number
+          provider_id?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -224,6 +271,44 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          job_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          job_id: string
+          rating: number
+          reviewed_id: string
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          job_id?: string
+          rating?: number
+          reviewed_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -250,6 +335,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_average_rating: {
+        Args: { user_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

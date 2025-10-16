@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { MapPin, DollarSign, Calendar, MessageSquare, Award, Languages } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import BidCard from '@/components/jobs/BidCard';
+import { useRealtimeBids } from '@/hooks/useRealtimeBids';
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -21,6 +22,13 @@ export default function JobDetail() {
   const [bidAmount, setBidAmount] = useState('');
   const [bidProposal, setBidProposal] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  const fetchBidsCallback = useCallback(() => {
+    fetchBids();
+  }, [id]);
+
+  // Real-time bid updates
+  useRealtimeBids(id, fetchBidsCallback);
 
   useEffect(() => {
     fetchJobDetails();

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send, Paperclip } from 'lucide-react';
+import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 
 export default function Chats() {
   const { user } = useAuth();
@@ -14,6 +15,16 @@ export default function Chats() {
   const [selectedThread, setSelectedThread] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
+
+  const handleMessageReceived = useCallback(() => {
+    fetchThreads();
+    if (selectedThread) {
+      fetchMessages(selectedThread);
+    }
+  }, [selectedThread]);
+
+  // Real-time message updates
+  useRealtimeMessages(handleMessageReceived);
 
   useEffect(() => {
     if (user) {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -8,12 +8,20 @@ import { Card } from '@/components/ui/card';
 import { Plus, Search, MapPin, DollarSign, Calendar } from 'lucide-react';
 import JobCard from '@/components/jobs/JobCard';
 import JobFilters from '@/components/jobs/JobFilters';
+import { useRealtimeJobs } from '@/hooks/useRealtimeJobs';
 
 export default function Jobs() {
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('date');
+
+  const fetchJobsCallback = useCallback(() => {
+    fetchJobs();
+  }, [sortBy]);
+
+  // Real-time job updates
+  useRealtimeJobs(fetchJobsCallback);
 
   useEffect(() => {
     fetchJobs();
