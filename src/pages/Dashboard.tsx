@@ -1,14 +1,38 @@
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
-import { Briefcase, DollarSign, Star, Plus, Search, MessageCircle } from 'lucide-react';
+import { Briefcase, DollarSign, Star, Plus, Search, MessageCircle, User, MapPin, Calendar, Edit } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Dashboard() {
   const { user, userRole } = useAuth();
+  const [profile, setProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const fetchProfile = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user?.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error fetching profile:", error);
+    } else {
+      setProfile(data);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -19,7 +43,7 @@ export default function Dashboard() {
           {/* Welcome Section */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">
-              Welcome back, {user?.user_metadata?.full_name || 'User'}!
+              Welcome back, {user?.user_metadata?.full_name || profile?.full_name || 'User'}!
             </h1>
             <p className="text-muted-foreground">
               {userRole === 'customer' && 'Manage your posted jobs and find local service providers'}
@@ -27,6 +51,70 @@ export default function Dashboard() {
               {userRole === 'admin' && 'Platform administration and oversight'}
             </p>
           </div>
+
+          {/* Profile Overview Card */}
+          {profile && (
+            <Card className="mb-8">
+              <CardContent className="pt-6">
+                <div className="flex flex-col md:flex-row items-start gap-6">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage src={profile.avatar_url} alt={profile.full_name || "User"} />
+                    <AvatarFallback>
+                      <User className="h-12 w-12" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 w-full">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div>
+                        <h2 className="text-2xl font-bold">{profile.full_name || "Complete your profile"}</h2>
+                        <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
+                          {profile.location && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-4 w-4" />
+                              {profile.location}
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            Member since {new Date(profile.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button variant="outline" asChild>
+                          <Link to={`/profile/${user?.id}`}>
+                            <User className="h-4 w-4 mr-2" />
+                            View Profile
+                          </Link>
+                        </Button>
+                        <Button asChild>
+                          <Link to="/profile/edit">
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                    {profile.bio && (
+                      <p className="mt-4 text-muted-foreground">{profile.bio}</p>
+                    )}
+                    {profile.role === "provider" && profile.skills && profile.skills.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm font-semibold mb-2">Skills:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {profile.skills.map((skill: string, index: number) => (
+                            <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Customer Dashboard */}
           {userRole === 'customer' && (

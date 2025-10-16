@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
@@ -32,6 +32,10 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1">
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
             <Link to="/services" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               Services
             </Link>
@@ -112,6 +116,14 @@ export const Header = () => {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t py-4 space-y-4">
+            <Link
+              to="/"
+              className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors flex items-center gap-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
             <Link
               to="/services"
               className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
