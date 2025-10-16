@@ -265,22 +265,28 @@ export default function LandingPage() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { service: "House Cleaning", price: "$110 – $140" },
-                { service: "Interior Painting", price: "$600 – $850" },
-                { service: "Local Moving (under 50 miles)", price: "$80 – $100" },
-                { service: "Handyman Services", price: "$60 – $120" },
-                { service: "Junk Removal", price: "$170 – $230" },
-                { service: "Landscaping", price: "$200 – $400" },
-                { service: "Event Planning", price: "$500 – $2000" },
-                { service: "Pressure Washing", price: "$300 – $400" },
-                { service: "Carpet Cleaning", price: "$120 – $150" }
+                { service: "House Cleaning", price: "$110 – $140", skill: "Cleaning" },
+                { service: "Interior Painting", price: "$600 – $850", skill: "Painting" },
+                { service: "Local Moving", price: "$80 – $100", skill: "Moving" },
+                { service: "Handyman Services", price: "$60 – $120", skill: "Handyman" },
+                { service: "Junk Removal", price: "$170 – $230", skill: "Junk Removal" },
+                { service: "Landscaping", price: "$200 – $400", skill: "Landscaping" },
+                { service: "Event Planning", price: "$500 – $2000", skill: "Event Planning" },
+                { service: "Pressure Washing", price: "$300 – $400", skill: "Pressure Washing" },
+                { service: "Carpet Cleaning", price: "$120 – $150", skill: "Carpet Cleaning" }
               ].map((item, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <h3 className="font-semibold text-lg mb-2">{item.service}</h3>
-                    <p className="text-2xl font-bold text-primary">Avg. price: {item.price}</p>
-                  </CardContent>
-                </Card>
+                <Link key={index} to={`/providers?skill=${encodeURIComponent(item.skill)}`}>
+                  <Card className="hover:shadow-xl hover:border-primary/50 transition-all cursor-pointer group h-full">
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">{item.service}</h3>
+                      <p className="text-2xl font-bold text-primary mb-3">Avg. price: {item.price}</p>
+                      <div className="flex items-center text-sm text-muted-foreground group-hover:text-primary transition-colors">
+                        <span>See pros near you</span>
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>
