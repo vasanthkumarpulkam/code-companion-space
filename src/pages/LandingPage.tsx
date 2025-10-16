@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Home, Truck, TreePine, Hammer, PartyPopper, MoreHorizontal, CheckCircle, MessageCircle, Star } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Sparkles, Home, Truck, TreePine, Hammer, PartyPopper, MoreHorizontal, CheckCircle, MessageCircle, Star, Search, Shield, Clock, Users, TrendingUp, ArrowRight, Award } from "lucide-react";
+import { useState } from "react";
 
 const categories = [
   { name: "Cleaning", icon: Sparkles, path: "/services/cleaning" },
@@ -37,110 +39,218 @@ const testimonials = [
     name: "Maria Rodriguez",
     role: "Customer",
     text: "Found an amazing cleaner in minutes! The bidding process made it easy to find someone within my budget.",
+    rating: 5,
   },
   {
     name: "John Smith",
     role: "Provider",
     text: "Service HUB has helped me grow my handyman business. I get consistent work from local customers.",
+    rating: 5,
   },
   {
     name: "Sarah Chen",
     role: "Customer",
     text: "The platform made moving so much easier. Got multiple quotes and chose the perfect moving company.",
+    rating: 5,
   },
 ];
 
+const stats = [
+  { icon: Users, label: "Active Providers", value: "10,000+" },
+  { icon: CheckCircle, label: "Jobs Completed", value: "50,000+" },
+  { icon: Star, label: "Average Rating", value: "4.8/5" },
+  { icon: Clock, label: "Avg Response Time", value: "< 2 hours" },
+];
+
 export default function LandingPage() {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/services?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-20 px-4 bg-gradient-to-b from-primary/5 to-background">
-          <div className="container mx-auto text-center max-w-4xl">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Find Local Help for Any Task
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Connect with trusted service providers in Texas. Post a job, get bids, and hire the perfect person for the job.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
-                <Link to="/jobs/new">Post a Job</Link>
-              </Button>
-              <Button size="lg" variant="accent" asChild>
-                <Link to="/auth/signup">Join as Provider</Link>
-              </Button>
+        <section className="relative py-16 md:py-24 px-4 bg-gradient-to-br from-primary/10 via-background to-accent/5">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Find Local Help for Any Task
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Connect with trusted service providers in Texas. Post a job, get competitive bids, and hire the perfect professional.
+              </p>
+              
+              {/* Search Bar */}
+              <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="What service do you need? (e.g., house cleaning, moving help...)"
+                    className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                  >
+                    Search
+                  </Button>
+                </div>
+              </form>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" asChild className="shadow-lg">
+                  <Link to="/jobs/new">Post a Job</Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild className="shadow-lg">
+                  <Link to="/auth/signup">Join as Provider</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-16">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center p-4 rounded-lg bg-card border shadow-sm">
+                  <stat.icon className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <p className="text-2xl md:text-3xl font-bold mb-1">{stat.value}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* Service Categories */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">Browse by Category</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <section className="py-16 md:py-20 px-4 bg-muted/30">
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Popular Services</h2>
+              <p className="text-muted-foreground">Choose from our most requested service categories</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
               {categories.map((category) => (
                 <Link key={category.name} to={category.path}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                  <Card className="hover:shadow-xl hover:scale-105 hover:border-primary/50 transition-all duration-300 cursor-pointer h-full group">
                     <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                      <category.icon className="h-12 w-12 mb-3 text-primary" />
-                      <h3 className="font-semibold">{category.name}</h3>
+                      <div className="h-16 w-16 mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <category.icon className="h-8 w-8 text-primary" />
+                      </div>
+                      <h3 className="font-semibold text-sm md:text-base">{category.name}</h3>
                     </CardContent>
                   </Card>
                 </Link>
               ))}
             </div>
+            <div className="text-center mt-8">
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/services">
+                  View All Services <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
         {/* How It Works */}
-        <section className="py-16 px-4 bg-muted/50">
-          <div className="container mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <section className="py-16 md:py-20 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+              <p className="text-muted-foreground">Get started in three simple steps</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
               {steps.map((step, index) => (
-                <div key={index} className="text-center">
-                  <div className="flex justify-center mb-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                      <step.icon className="h-8 w-8" />
+                <div key={index} className="text-center relative">
+                  {index < steps.length - 1 && (
+                    <div className="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-gradient-to-r from-primary to-accent" />
+                  )}
+                  <div className="flex justify-center mb-6 relative z-10">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg">
+                      <step.icon className="h-10 w-10" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                  <p className="text-muted-foreground">{step.description}</p>
+                  <div className="bg-card border rounded-lg p-6 shadow-sm">
+                    <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
+                    <p className="text-muted-foreground">{step.description}</p>
+                  </div>
                 </div>
               ))}
             </div>
             <div className="text-center mt-12">
-              <Button variant="outline" asChild>
-                <Link to="/how-it-works">Learn More</Link>
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/how-it-works">
+                  Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
             </div>
           </div>
         </section>
 
         {/* Testimonials */}
-        <section className="py-16 px-4">
-          <div className="container mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">What People Say</h2>
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <section className="py-16 md:py-20 px-4 bg-muted/30">
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">What People Say</h2>
+              <p className="text-muted-foreground">Trusted by thousands across Texas</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
               {testimonials.map((testimonial, index) => (
-                <Card key={index}>
+                <Card key={index} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
-                    <CardTitle>{testimonial.name}</CardTitle>
-                    <CardDescription>{testimonial.role}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex mb-2">
-                      {[...Array(5)].map((_, i) => (
+                    <div className="flex items-center gap-4 mb-2">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold">
+                        {testimonial.name.charAt(0)}
+                      </div>
+                      <div>
+                        <CardTitle className="text-base">{testimonial.name}</CardTitle>
+                        <CardDescription className="text-xs">{testimonial.role}</CardDescription>
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      {[...Array(testimonial.rating)].map((_, i) => (
                         <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                       ))}
                     </div>
-                    <p className="text-sm text-muted-foreground">{testimonial.text}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground leading-relaxed">"{testimonial.text}"</p>
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 md:py-20 px-4">
+          <div className="container mx-auto max-w-4xl">
+            <div className="bg-gradient-to-br from-primary to-accent rounded-2xl p-8 md:p-12 text-center text-primary-foreground shadow-2xl">
+              <Award className="h-16 w-16 mx-auto mb-6" />
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
+              <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
+                Join thousands of satisfied customers and top-rated service providers on Service HUB today.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button size="lg" variant="secondary" asChild className="shadow-lg">
+                  <Link to="/jobs/new">Post a Job Now</Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild className="bg-white/10 hover:bg-white/20 text-white border-white/30 shadow-lg">
+                  <Link to="/auth/signup">Become a Provider</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </section>
