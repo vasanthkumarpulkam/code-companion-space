@@ -54,13 +54,13 @@ export const Header = () => {
               {t('jobs.findJobs')}
             </Link>
             <Link to="/providers" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              Find Providers
+              {t('header.findProviders')}
             </Link>
             <Link to="/how-it-works" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               {t('nav.howItWorks')}
             </Link>
             <Link to="/support" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
-              Support
+              {t('header.support')}
             </Link>
           </nav>
 
@@ -156,7 +156,7 @@ export const Header = () => {
               className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Find Providers
+              {t('header.findProviders')}
             </Link>
             <Link
               to="/how-it-works"
@@ -170,7 +170,7 @@ export const Header = () => {
               className="block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
-              Support
+              {t('header.support')}
             </Link>
             <div className="flex flex-col space-y-2 pt-4 border-t">
               {user ? (

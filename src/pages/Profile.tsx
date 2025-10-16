@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { QuickQuoteDialog } from '@/components/providers/QuickQuoteDialog';
 export default function Profile() {
   const { uid } = useParams();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [profile, setProfile] = useState<any>(null);
   const [providerSettings, setProviderSettings] = useState<any>(null);
   const [skills, setSkills] = useState<any[]>([]);
@@ -103,11 +105,11 @@ export default function Profile() {
   };
 
   if (loading) {
-    return <div className="container py-8">Loading profile...</div>;
+    return <div className="container py-8">{t('profile.loadingProfile')}</div>;
   }
 
   if (!profile) {
-    return <div className="container py-8">Profile not found</div>;
+    return <div className="container py-8">{t('profile.notFound')}</div>;
   }
 
   const isProvider = profile.user_roles?.some((r: any) => r.role === 'provider');
@@ -164,18 +166,18 @@ export default function Profile() {
                   {providerSettings.response_time_hours && (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      ~{providerSettings.response_time_hours}h response
+                      ~{providerSettings.response_time_hours}h {t('profile.response')}
                     </Badge>
                   )}
                   {providerSettings.accepts_instant_bookings && (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <CheckCircle className="h-3 w-3" />
-                      Instant Booking
+                      {t('profile.instantBooking')}
                     </Badge>
                   )}
                   {providerSettings.available_now && (
                     <Badge className="bg-green-600 flex items-center gap-1">
-                      Available Now
+                      {t('profile.availableNow')}
                     </Badge>
                   )}
                 </div>
@@ -186,7 +188,7 @@ export default function Profile() {
                   <>
                     <Button>
                       <MessageSquare className="mr-2 h-4 w-4" />
-                      Message
+                      {t('profile.message')}
                     </Button>
                     <QuickQuoteDialog providerId={uid!} providerName={profile.full_name || 'Provider'} />
                   </>
@@ -198,20 +200,20 @@ export default function Profile() {
               <Card className="w-64">
                 <CardContent className="pt-6 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Completed Jobs</span>
+                    <span className="text-sm text-muted-foreground">{t('profile.completedJobs')}</span>
                     <span className="text-2xl font-bold">{completedJobsCount}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Rating</span>
+                    <span className="text-sm text-muted-foreground">{t('profile.rating')}</span>
                     <span className="text-2xl font-bold">{averageRating}</span>
                   </div>
                   {providerSettings?.available_now ? (
                     <Badge variant="default" className="w-full justify-center bg-green-600">
-                      Available Now
+                      {t('profile.availableNow')}
                     </Badge>
                   ) : (
                     <Badge variant="secondary" className="w-full justify-center">
-                      Available Soon
+                      {t('profile.availableSoon')}
                     </Badge>
                   )}
                 </CardContent>
@@ -224,18 +226,18 @@ export default function Profile() {
       <div className="container py-8">
         <Tabs defaultValue="portfolio" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews</TabsTrigger>
-            {isProvider && <TabsTrigger value="skills">Skills & Certifications</TabsTrigger>}
-            <TabsTrigger value="about">About</TabsTrigger>
+            <TabsTrigger value="portfolio">{t('profile.portfolio')}</TabsTrigger>
+            <TabsTrigger value="reviews">{t('profile.reviews')}</TabsTrigger>
+            {isProvider && <TabsTrigger value="skills">{t('profile.skillsCerts')}</TabsTrigger>}
+            <TabsTrigger value="about">{t('profile.about')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="portfolio" className="space-y-4">
-            <h2 className="text-2xl font-bold">Completed Work</h2>
+            <h2 className="text-2xl font-bold">{t('profile.completedWork')}</h2>
             
             {completedJobs.length === 0 ? (
               <Card className="p-12 text-center">
-                <p className="text-muted-foreground">No completed jobs yet</p>
+                <p className="text-muted-foreground">{t('profile.noCompletedJobs')}</p>
               </Card>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -260,21 +262,21 @@ export default function Profile() {
           </TabsContent>
 
           <TabsContent value="reviews" className="space-y-4">
-            <h2 className="text-2xl font-bold">Reviews & Ratings</h2>
+            <h2 className="text-2xl font-bold">{t('profile.reviewsRatings')}</h2>
             
             <Card className="p-12 text-center">
-              <p className="text-muted-foreground">No reviews yet</p>
+              <p className="text-muted-foreground">{t('profile.noReviews')}</p>
             </Card>
           </TabsContent>
 
           {isProvider && (
             <TabsContent value="skills" className="space-y-4">
-              <h2 className="text-2xl font-bold">Skills & Certifications</h2>
+              <h2 className="text-2xl font-bold">{t('profile.skillsCerts')}</h2>
               
               {skills.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Skills</CardTitle>
+                    <CardTitle>{t('profile.skills')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -287,7 +289,7 @@ export default function Profile() {
                             )}
                           </div>
                           {skill.years_experience && (
-                            <Badge variant="secondary">{skill.years_experience} years</Badge>
+                            <Badge variant="secondary">{skill.years_experience} {t('profile.years')}</Badge>
                           )}
                         </div>
                       ))}
@@ -299,7 +301,7 @@ export default function Profile() {
               {certifications.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Certifications</CardTitle>
+                    <CardTitle>{t('profile.certifications')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -318,8 +320,8 @@ export default function Profile() {
                             )}
                             {cert.issue_date && (
                               <p className="text-xs text-muted-foreground mt-1">
-                                Issued: {new Date(cert.issue_date).toLocaleDateString()}
-                                {cert.expiry_date && ` • Expires: ${new Date(cert.expiry_date).toLocaleDateString()}`}
+                                {t('profile.issued')}: {new Date(cert.issue_date).toLocaleDateString()}
+                                {cert.expiry_date && ` • ${t('profile.expires')}: ${new Date(cert.expiry_date).toLocaleDateString()}`}
                               </p>
                             )}
                           </div>
@@ -332,27 +334,27 @@ export default function Profile() {
 
               {skills.length === 0 && certifications.length === 0 && (
                 <Card className="p-12 text-center">
-                  <p className="text-muted-foreground">No skills or certifications added yet</p>
+                  <p className="text-muted-foreground">{t('profile.noSkillsCerts')}</p>
                 </Card>
               )}
             </TabsContent>
           )}
 
           <TabsContent value="about" className="space-y-4">
-            <h2 className="text-2xl font-bold">About</h2>
+            <h2 className="text-2xl font-bold">{t('profile.about')}</h2>
             
             <Card>
               <CardContent className="pt-6 space-y-4">
                 <div>
-                  <h3 className="font-semibold mb-2">Bio</h3>
+                  <h3 className="font-semibold mb-2">{t('profile.bio')}</h3>
                   <p className="text-muted-foreground">
-                    {profile.bio || 'No bio provided'}
+                    {profile.bio || t('profile.noBio')}
                   </p>
                 </div>
 
                 {profile.location && (
                   <div>
-                    <h3 className="font-semibold mb-2">Service Area</h3>
+                    <h3 className="font-semibold mb-2">{t('profile.serviceArea')}</h3>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="h-4 w-4" />
                       <span>{profile.location}</span>
@@ -361,7 +363,7 @@ export default function Profile() {
                 )}
 
                 <div>
-                  <h3 className="font-semibold mb-2">Member Since</h3>
+                  <h3 className="font-semibold mb-2">{t('profile.memberSince')}</h3>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="h-4 w-4" />
                     <span>{new Date(profile.created_at).toLocaleDateString()}</span>
