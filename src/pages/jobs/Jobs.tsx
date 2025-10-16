@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { Plus, Search } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus, Search, List, Map } from 'lucide-react';
 import JobCard from '@/components/jobs/JobCard';
 import { AdvancedFilters } from '@/components/jobs/AdvancedFilters';
+import { JobMapView } from '@/components/jobs/JobMapView';
 import { useAdvancedSearch, SearchFilters } from '@/hooks/useAdvancedSearch';
 import { analytics } from '@/utils/analytics';
 
@@ -14,6 +16,7 @@ export default function Jobs() {
     sortBy: 'recent',
     datePosted: 'all'
   });
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const { jobs, loading } = useAdvancedSearch(filters);
 
   const handleSearchChange = (value: string) => {
@@ -39,14 +42,34 @@ export default function Jobs() {
 
         <div className="space-y-6">
           <Card className="p-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search jobs..."
-                value={filters.query || ''}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-10"
-              />
+            <div className="flex gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search jobs..."
+                  value={filters.query || ''}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                  size="icon"
+                  onClick={() => setViewMode('list')}
+                  title="List View"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'map' ? 'default' : 'outline'}
+                  size="icon"
+                  onClick={() => setViewMode('map')}
+                  title="Map View"
+                >
+                  <Map className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </Card>
 
@@ -57,13 +80,23 @@ export default function Jobs() {
           ) : jobs.length === 0 ? (
             <Card className="p-12 text-center">
               <p className="text-muted-foreground">No jobs found</p>
+              <p className="text-sm text-muted-foreground mt-2">Try adjusting your filters</p>
             </Card>
           ) : (
-            <div className="space-y-4">
-              {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
-            </div>
+            <>
+              {viewMode === 'list' ? (
+                <div className="space-y-4">
+                  <div className="text-sm text-muted-foreground mb-4">
+                    {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} found
+                  </div>
+                  {jobs.map((job) => (
+                    <JobCard key={job.id} job={job} />
+                  ))}
+                </div>
+              ) : (
+                <JobMapView jobs={jobs} />
+              )}
+            </>
           )}
         </div>
       </div>

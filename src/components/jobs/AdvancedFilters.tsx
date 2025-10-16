@@ -12,6 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SearchFilters } from '@/hooks/useAdvancedSearch';
 import { SlidersHorizontal } from 'lucide-react';
+import { CategoryFilter } from './CategoryFilter';
 import {
   Collapsible,
   CollapsibleContent,
@@ -56,6 +57,14 @@ export function AdvancedFilters({ filters, onFiltersChange }: AdvancedFiltersPro
         
         <CollapsibleContent>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <CategoryFilter 
+                selectedCategory={filters.category}
+                onCategoryChange={(categoryId) => handleFilterChange('category', categoryId)}
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="minBudget">Min Budget</Label>

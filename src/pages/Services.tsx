@@ -107,6 +107,14 @@ export default function Services() {
         {/* Jobs Listing */}
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-6xl">
+            {!loading && filteredJobs.length > 0 && (
+              <div className="flex items-center justify-between mb-6">
+                <p className="text-sm text-muted-foreground">
+                  Showing {filteredJobs.length} open {filteredJobs.length === 1 ? 'job' : 'jobs'}
+                </p>
+              </div>
+            )}
+
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -116,8 +124,13 @@ export default function Services() {
             ) : filteredJobs.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-lg mb-4">No open jobs found</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {searchQuery || selectedCategory !== 'all' 
+                    ? 'Try adjusting your search or filters' 
+                    : 'Be the first to post a job'}
+                </p>
                 <Button asChild>
-                  <Link to="/jobs/new">Post the First Job</Link>
+                  <Link to="/jobs/new">Post a Job</Link>
                 </Button>
               </div>
             ) : (
