@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       setUserRole(data?.role as UserRole || 'customer');
@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from('user_roles')
         .select('role')
         .eq('user_id', data.user.id)
-        .single();
+        .maybeSingle();
 
       // Redirect admin users to admin dashboard
       if (roleData?.role === 'admin') {
