@@ -19,6 +19,10 @@ import Jobs from "./pages/jobs/Jobs";
 import NewJob from "./pages/jobs/NewJob";
 import JobDetail from "./pages/jobs/JobDetail";
 import Chats from "./pages/Chats";
+import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
+import Settings from "./pages/Settings";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +67,31 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Chats />
+                </ProtectedRoute>
+              } 
+            />
+            <Route path="/profile/:uid" element={<Profile />} />
+            <Route 
+              path="/profile/edit" 
+              element={
+                <ProtectedRoute>
+                  <EditProfile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/settings" 
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <Admin />
                 </ProtectedRoute>
               } 
             />

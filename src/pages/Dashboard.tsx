@@ -178,6 +178,11 @@ export default function Dashboard() {
                           <Link to="/profile/edit">Complete Profile</Link>
                         </Button>
                       </div>
+                      <div className="mt-4 text-center">
+                        <Button asChild>
+                          <Link to="/jobs">Browse All Jobs</Link>
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -193,7 +198,7 @@ export default function Dashboard() {
                         <Briefcase className="h-12 w-12 mx-auto mb-4 opacity-50" />
                         <p className="mb-4">You haven't submitted any bids yet</p>
                         <Button asChild>
-                          <Link to="/services">Browse Jobs</Link>
+                          <Link to="/jobs">Browse Jobs</Link>
                         </Button>
                       </div>
                     </CardContent>
@@ -247,7 +252,9 @@ export default function Dashboard() {
                   <CardDescription>Platform management and oversight</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Admin features coming soon...</p>
+                  <Button asChild>
+                    <Link to="/admin">Go to Admin Panel</Link>
+                  </Button>
                 </CardContent>
               </Card>
             </div>

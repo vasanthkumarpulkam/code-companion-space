@@ -14,7 +14,7 @@ import {
 
 export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, userRole, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -57,11 +57,25 @@ export const Header = () => {
                     <Link to="/dashboard" className="cursor-pointer">Dashboard</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/profile/edit" className="cursor-pointer">Profile</Link>
+                    <Link to={`/profile/${user.id}`} className="cursor-pointer">View Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile/edit" className="cursor-pointer">Edit Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="cursor-pointer">Settings</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/chats" className="cursor-pointer">Messages</Link>
                   </DropdownMenuItem>
+                  {userRole === 'admin' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="cursor-pointer">Admin Panel</Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
                     Logout
@@ -120,11 +134,22 @@ export const Header = () => {
                     <Link to="/dashboard">Dashboard</Link>
                   </Button>
                   <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
-                    <Link to="/profile/edit">Profile</Link>
+                    <Link to={`/profile/${user.id}`}>View Profile</Link>
+                  </Button>
+                  <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/profile/edit">Edit Profile</Link>
+                  </Button>
+                  <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/settings">Settings</Link>
                   </Button>
                   <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
                     <Link to="/chats">Messages</Link>
                   </Button>
+                  {userRole === 'admin' && (
+                    <Button variant="ghost" asChild onClick={() => setMobileMenuOpen(false)}>
+                      <Link to="/admin">Admin Panel</Link>
+                    </Button>
+                  )}
                   <Button 
                     variant="destructive" 
                     onClick={() => {
