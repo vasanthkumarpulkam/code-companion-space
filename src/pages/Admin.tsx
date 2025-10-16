@@ -85,7 +85,7 @@ export default function Admin() {
   const fetchJobs = async () => {
     const { data } = await supabase
       .from('jobs')
-      .select('*, profiles!jobs_customer_id_fkey(full_name), categories(name)')
+      .select('*, profiles(full_name), categories(name)')
       .order('created_at', { ascending: false })
       .limit(10);
 

@@ -15,12 +15,25 @@ export default function Dashboard() {
   const { user, userRole } = useAuth();
   const { t } = useLanguage();
   const [profile, setProfile] = useState<any>(null);
+  const [stats, setStats] = useState({
+    activeJobs: 0,
+    totalSpent: 0,
+    reviewsGiven: 0,
+    activeBids: 0,
+    totalEarned: 0,
+    rating: 0,
+    totalUsers: 0,
+    totalJobsAdmin: 0,
+    platformFees: 0,
+    reports: 0
+  });
 
   useEffect(() => {
     if (user) {
       fetchProfile();
+      fetchStats();
     }
-  }, [user]);
+  }, [user, userRole]);
 
   const fetchProfile = async () => {
     const { data, error } = await supabase
@@ -31,6 +44,66 @@ export default function Dashboard() {
 
     if (!error) {
       setProfile(data);
+    }
+  };
+
+  const fetchStats = async () => {
+    if (userRole === 'customer') {
+      // Fetch customer stats
+      const [jobsData, paymentsData, reviewsData] = await Promise.all([
+        supabase.from('jobs').select('id', { count: 'exact', head: true }).eq('customer_id', user?.id).in('status', ['open', 'awarded', 'in_progress']),
+        supabase.from('payments').select('customer_fee').eq('customer_id', user?.id).eq('status', 'completed'),
+        supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('reviewer_id', user?.id)
+      ]);
+
+      const totalSpent = paymentsData.data?.reduce((sum, p) => sum + Number(p.customer_fee), 0) || 0;
+
+      setStats(prev => ({
+        ...prev,
+        activeJobs: jobsData.count || 0,
+        totalSpent,
+        reviewsGiven: reviewsData.count || 0
+      }));
+    } else if (userRole === 'provider') {
+      // Fetch provider stats
+      const [bidsData, paymentsData, reviewsData] = await Promise.all([
+        supabase.from('bids').select('id', { count: 'exact', head: true }).eq('provider_id', user?.id).eq('status', 'pending'),
+        supabase.from('payments').select('provider_fee').eq('provider_id', user?.id).eq('status', 'completed'),
+        supabase.from('reviews').select('rating').eq('reviewed_id', user?.id)
+      ]);
+
+      const totalEarned = paymentsData.data?.reduce((sum, p) => sum + Number(p.provider_fee), 0) || 0;
+      const avgRating = reviewsData.data && reviewsData.data.length > 0
+        ? reviewsData.data.reduce((sum, r) => sum + r.rating, 0) / reviewsData.data.length
+        : 0;
+
+      setStats(prev => ({
+        ...prev,
+        activeBids: bidsData.count || 0,
+        totalEarned,
+        rating: avgRating
+      }));
+    } else if (userRole === 'admin') {
+      // Fetch admin stats
+      const [usersData, jobsData, paymentsData, reportsData] = await Promise.all([
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('jobs').select('id', { count: 'exact', head: true }).in('status', ['open', 'awarded', 'in_progress']),
+        supabase.from('payments').select('customer_fee, provider_fee').eq('status', 'completed'),
+        supabase.from('user_reports').select('id', { count: 'exact', head: true }).eq('status', 'pending')
+      ]);
+
+      const platformFees = paymentsData.data?.reduce(
+        (sum, p) => sum + Number(p.customer_fee) + Number(p.provider_fee),
+        0
+      ) || 0;
+
+      setStats(prev => ({
+        ...prev,
+        totalUsers: usersData.count || 0,
+        totalJobsAdmin: jobsData.count || 0,
+        platformFees,
+        reports: reportsData.count || 0
+      }));
     }
   };
 
@@ -127,7 +200,7 @@ export default function Dashboard() {
                     <Briefcase className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">0</div>
+                    <div className="text-2xl font-bold">{stats.activeJobs}</div>
                     <p className="text-xs text-muted-foreground">{t('dashboard.stats.jobsOpen')}</p>
                   </CardContent>
                 </Card>
@@ -137,7 +210,7 @@ export default function Dashboard() {
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$0</div>
+                    <div className="text-2xl font-bold">${stats.totalSpent.toFixed(2)}</div>
                     <p className="text-xs text-muted-foreground">{t('dashboard.stats.onCompleted')}</p>
                   </CardContent>
                 </Card>
@@ -147,7 +220,7 @@ export default function Dashboard() {
                     <Star className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">0</div>
+                    <div className="text-2xl font-bold">{stats.reviewsGiven}</div>
                     <p className="text-xs text-muted-foreground">{t('dashboard.stats.providerReviews')}</p>
                   </CardContent>
                 </Card>
@@ -220,7 +293,7 @@ export default function Dashboard() {
                     <Briefcase className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">0</div>
+                    <div className="text-2xl font-bold">{stats.activeBids}</div>
                     <p className="text-xs text-muted-foreground">{t('dashboard.stats.pendingProposals')}</p>
                   </CardContent>
                 </Card>
@@ -230,7 +303,7 @@ export default function Dashboard() {
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$0</div>
+                    <div className="text-2xl font-bold">${stats.totalEarned.toFixed(2)}</div>
                     <p className="text-xs text-muted-foreground">{t('dashboard.stats.fromCompleted')}</p>
                   </CardContent>
                 </Card>
@@ -240,7 +313,7 @@ export default function Dashboard() {
                     <Star className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">—</div>
+                    <div className="text-2xl font-bold">{stats.rating > 0 ? stats.rating.toFixed(1) : '—'}</div>
                     <p className="text-xs text-muted-foreground">{t('dashboard.stats.noReviews')}</p>
                   </CardContent>
                 </Card>
@@ -305,7 +378,7 @@ export default function Dashboard() {
                     <CardTitle className="text-sm font-medium">{t('dashboard.admin.totalUsers')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">0</div>
+                    <div className="text-2xl font-bold">{stats.totalUsers}</div>
                   </CardContent>
                 </Card>
                 <Card>
@@ -313,7 +386,7 @@ export default function Dashboard() {
                     <CardTitle className="text-sm font-medium">{t('dashboard.admin.activeJobs')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">0</div>
+                    <div className="text-2xl font-bold">{stats.totalJobsAdmin}</div>
                   </CardContent>
                 </Card>
                 <Card>
@@ -321,7 +394,7 @@ export default function Dashboard() {
                     <CardTitle className="text-sm font-medium">{t('dashboard.admin.platformFees')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$0</div>
+                    <div className="text-2xl font-bold">${stats.platformFees.toFixed(2)}</div>
                   </CardContent>
                 </Card>
                 <Card>
@@ -329,7 +402,7 @@ export default function Dashboard() {
                     <CardTitle className="text-sm font-medium">{t('dashboard.admin.reports')}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">0</div>
+                    <div className="text-2xl font-bold">{stats.reports}</div>
                   </CardContent>
                 </Card>
               </div>
