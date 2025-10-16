@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -46,16 +46,32 @@ export default function NewJob() {
   });
 
   // Fetch categories
-  useState(() => {
+  useEffect(() => {
     const fetchCategories = async () => {
-      const { data } = await supabase.from('categories').select('*');
+      const { data, error } = await supabase.from('categories').select('*');
+      if (error) {
+        console.error('Error fetching categories:', error);
+        toast({ 
+          title: 'Error loading categories', 
+          description: error.message, 
+          variant: 'destructive' 
+        });
+      }
       setCategories(data || []);
     };
     fetchCategories();
-  });
+  }, []);
 
   const onSubmit = async (data: FormData) => {
-    if (!user) return;
+    if (!user) {
+      toast({ 
+        title: 'Authentication required', 
+        description: 'Please log in to post a job', 
+        variant: 'destructive' 
+      });
+      navigate('/auth/login');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -69,12 +85,20 @@ export default function NewJob() {
         media_urls: data.media_urls || [],
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error posting job:', error);
+        throw error;
+      }
 
       toast({ title: 'Job posted successfully!' });
       navigate('/jobs');
     } catch (error: any) {
-      toast({ title: 'Error posting job', description: error.message, variant: 'destructive' });
+      console.error('Job posting error:', error);
+      toast({ 
+        title: 'Error posting job', 
+        description: error.message || 'Failed to post job', 
+        variant: 'destructive' 
+      });
     } finally {
       setLoading(false);
     }
