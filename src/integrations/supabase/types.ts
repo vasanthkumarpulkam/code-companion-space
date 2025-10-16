@@ -797,6 +797,10 @@ export type Database = {
       }
     }
     Functions: {
+      assign_admin_role_to_email: {
+        Args: { user_email: string }
+        Returns: undefined
+      }
       get_user_average_rating: {
         Args: { user_id: string }
         Returns: number
