@@ -5,77 +5,80 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Link } from "react-router-dom";
 import { UserCircle, Briefcase, MessageCircle, DollarSign, Star } from "lucide-react";
-
-const customerSteps = [
-  {
-    icon: MessageCircle,
-    title: "1. Post Your Job",
-    description: "Create a detailed job posting with photos, budget, and location. Our system automatically translates to Spanish.",
-  },
-  {
-    icon: UserCircle,
-    title: "2. Review Provider Bids",
-    description: "Receive private bids from local providers. Compare prices, reviews, and proposals to find the perfect match.",
-  },
-  {
-    icon: DollarSign,
-    title: "3. Hire & Pay",
-    description: "Award the job to your chosen provider. Pay in cash when the work is complete. The platform fee is automatically collected.",
-  },
-  {
-    icon: Star,
-    title: "4. Leave a Review",
-    description: "Rate your experience and help other customers find great providers.",
-  },
-];
-
-const providerSteps = [
-  {
-    icon: Briefcase,
-    title: "1. Create Your Profile",
-    description: "Showcase your skills, add portfolio photos, and set your service area. Build trust with potential customers.",
-  },
-  {
-    icon: MessageCircle,
-    title: "2. Browse Jobs & Bid",
-    description: "Find jobs that match your skills. Submit competitive bids with detailed proposals to win work.",
-  },
-  {
-    icon: UserCircle,
-    title: "3. Get Hired",
-    description: "Communicate with customers, confirm details, and complete the job to their satisfaction.",
-  },
-  {
-    icon: Star,
-    title: "4. Build Reputation",
-    description: "Collect 5-star reviews and grow your business through the platform.",
-  },
-];
-
-const faqs = [
-  {
-    question: "How does the payment system work?",
-    answer: "Customers pay providers directly in cash when the job is completed. The platform automatically collects a 10% fee from both parties through saved payment methods.",
-  },
-  {
-    question: "What categories are available?",
-    answer: "We support Cleaning, Moving, Landscaping, Handyman services, Events, and Other miscellaneous services across Texas.",
-  },
-  {
-    question: "Is there a fee to use Service HUB?",
-    answer: "Posting jobs and browsing providers is free. We charge a 10% platform fee from both customers and providers only when a job is successfully completed.",
-  },
-  {
-    question: "How are providers verified?",
-    answer: "Providers create detailed profiles with their skills and portfolio. They build reputation through customer reviews and ratings visible on their public profiles.",
-  },
-  {
-    question: "Can I message providers before hiring?",
-    answer: "Yes! Our in-app messaging system allows you to communicate with providers, ask questions, and clarify details before making a decision.",
-  },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function HowItWorks() {
+  const { t } = useLanguage();
+
+  const customerSteps = [
+    {
+      icon: MessageCircle,
+      title: t('howItWorks.customers.step1'),
+      description: t('howItWorks.customers.step1Desc'),
+    },
+    {
+      icon: UserCircle,
+      title: t('howItWorks.customers.step2'),
+      description: t('howItWorks.customers.step2Desc'),
+    },
+    {
+      icon: DollarSign,
+      title: t('howItWorks.customers.step3'),
+      description: t('howItWorks.customers.step3Desc'),
+    },
+    {
+      icon: Star,
+      title: t('howItWorks.customers.step4'),
+      description: t('howItWorks.customers.step4Desc'),
+    },
+  ];
+
+  const providerSteps = [
+    {
+      icon: Briefcase,
+      title: t('howItWorks.providers.step1'),
+      description: t('howItWorks.providers.step1Desc'),
+    },
+    {
+      icon: MessageCircle,
+      title: t('howItWorks.providers.step2'),
+      description: t('howItWorks.providers.step2Desc'),
+    },
+    {
+      icon: UserCircle,
+      title: t('howItWorks.providers.step3'),
+      description: t('howItWorks.providers.step3Desc'),
+    },
+    {
+      icon: Star,
+      title: t('howItWorks.providers.step4'),
+      description: t('howItWorks.providers.step4Desc'),
+    },
+  ];
+
+  const faqs = [
+    {
+      question: t('howItWorks.faq.q1'),
+      answer: t('howItWorks.faq.a1'),
+    },
+    {
+      question: t('howItWorks.faq.q2'),
+      answer: t('howItWorks.faq.a2'),
+    },
+    {
+      question: t('howItWorks.faq.q3'),
+      answer: t('howItWorks.faq.a3'),
+    },
+    {
+      question: t('howItWorks.faq.q4'),
+      answer: t('howItWorks.faq.a4'),
+    },
+    {
+      question: t('howItWorks.faq.q5'),
+      answer: t('howItWorks.faq.a5'),
+    },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -84,9 +87,9 @@ export default function HowItWorks() {
         {/* Hero */}
         <section className="py-12 px-4 bg-gradient-to-b from-primary/5 to-background">
           <div className="container mx-auto text-center max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">How Service HUB Works</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('howItWorks.title')}</h1>
             <p className="text-xl text-muted-foreground">
-              A simple platform connecting customers with trusted local service providers
+              {t('howItWorks.subtitle')}
             </p>
           </div>
         </section>
@@ -95,8 +98,8 @@ export default function HowItWorks() {
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-2">For Customers</h2>
-              <p className="text-muted-foreground">Get your tasks done by local professionals</p>
+              <h2 className="text-3xl font-bold mb-2">{t('howItWorks.customers.title')}</h2>
+              <p className="text-muted-foreground">{t('howItWorks.customers.subtitle')}</p>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               {customerSteps.map((step, index) => (
@@ -117,7 +120,7 @@ export default function HowItWorks() {
             </div>
             <div className="text-center mt-8">
               <Button size="lg" asChild>
-                <Link to="/jobs/new">Post Your First Job</Link>
+                <Link to="/jobs/new">{t('howItWorks.customers.cta')}</Link>
               </Button>
             </div>
           </div>
@@ -127,8 +130,8 @@ export default function HowItWorks() {
         <section className="py-16 px-4 bg-muted/50">
           <div className="container mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-2">For Service Providers</h2>
-              <p className="text-muted-foreground">Grow your business with local customers</p>
+              <h2 className="text-3xl font-bold mb-2">{t('howItWorks.providers.title')}</h2>
+              <p className="text-muted-foreground">{t('howItWorks.providers.subtitle')}</p>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
               {providerSteps.map((step, index) => (
@@ -149,7 +152,7 @@ export default function HowItWorks() {
             </div>
             <div className="text-center mt-8">
               <Button size="lg" variant="accent" asChild>
-                <Link to="/auth/signup">Join as Provider</Link>
+                <Link to="/auth/signup">{t('howItWorks.providers.cta')}</Link>
               </Button>
             </div>
           </div>
@@ -158,7 +161,7 @@ export default function HowItWorks() {
         {/* FAQs */}
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-3xl">
-            <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">{t('howItWorks.faq.title')}</h2>
             <Accordion type="single" collapsible className="w-full">
               {faqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>

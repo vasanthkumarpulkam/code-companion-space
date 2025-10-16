@@ -9,8 +9,10 @@ import { supabase } from "@/integrations/supabase/client";
 import JobCard from "@/components/jobs/JobCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Services() {
+  const { t } = useLanguage();
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,6 +63,7 @@ export default function Services() {
     job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     job.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -69,9 +72,9 @@ export default function Services() {
         {/* Hero */}
         <section className="py-12 px-4 bg-gradient-to-b from-primary/5 to-background">
           <div className="container mx-auto max-w-6xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">Browse Open Jobs</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">{t('services.title')}</h1>
             <p className="text-xl text-muted-foreground text-center mb-8">
-              Find jobs and start bidding - Login required to submit bids
+              {t('services.subtitle')}
             </p>
             
             {/* Search and Filter Bar */}
@@ -80,7 +83,7 @@ export default function Services() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Search for jobs..."
+                  placeholder={t('services.search')}
                   className="pl-10 h-12"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -90,10 +93,10 @@ export default function Services() {
               <div className="flex gap-4">
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger className="w-full md:w-[200px]">
-                    <SelectValue placeholder="All Categories" />
+                    <SelectValue placeholder={t('services.allCategories')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="all">{t('services.allCategories')}</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                     ))}
@@ -110,7 +113,7 @@ export default function Services() {
             {!loading && filteredJobs.length > 0 && (
               <div className="flex items-center justify-between mb-6">
                 <p className="text-sm text-muted-foreground">
-                  Showing {filteredJobs.length} open {filteredJobs.length === 1 ? 'job' : 'jobs'}
+                  {t('services.showing')} {filteredJobs.length} {t('services.openJobs')} {filteredJobs.length === 1 ? t('services.job') : t('services.jobs')}
                 </p>
               </div>
             )}
@@ -123,14 +126,14 @@ export default function Services() {
               </div>
             ) : filteredJobs.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg mb-4">No open jobs found</p>
+                <p className="text-muted-foreground text-lg mb-4">{t('services.noJobs')}</p>
                 <p className="text-sm text-muted-foreground mb-4">
                   {searchQuery || selectedCategory !== 'all' 
-                    ? 'Try adjusting your search or filters' 
-                    : 'Be the first to post a job'}
+                    ? t('services.adjustFilters')
+                    : t('services.beFirst')}
                 </p>
                 <Button asChild>
-                  <Link to="/jobs/new">Post a Job</Link>
+                  <Link to="/jobs/new">{t('services.postJob')}</Link>
                 </Button>
               </div>
             ) : (
@@ -146,12 +149,12 @@ export default function Services() {
         {/* CTA Section */}
         <section className="py-16 px-4 bg-muted/50">
           <div className="container mx-auto text-center max-w-2xl">
-            <h2 className="text-3xl font-bold mb-4">Need a Service Provider?</h2>
+            <h2 className="text-3xl font-bold mb-4">{t('services.cta.title')}</h2>
             <p className="text-muted-foreground mb-6">
-              Post your job and get competitive bids from local professionals
+              {t('services.cta.subtitle')}
             </p>
             <Button size="lg" asChild>
-              <Link to="/jobs/new">Post a Job Now</Link>
+              <Link to="/jobs/new">{t('services.cta.button')}</Link>
             </Button>
           </div>
         </section>

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Sparkles, Home, Truck, TreePine, Hammer, PartyPopper, MoreHorizontal, CheckCircle, MessageCircle, Star, Search, Shield, Clock, Users, TrendingUp, ArrowRight, Award } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const categories = [
   { name: "Cleaning", icon: Sparkles, path: "/services/cleaning" },
@@ -16,55 +17,56 @@ const categories = [
   { name: "Other", icon: MoreHorizontal, path: "/services/other" },
 ];
 
-const steps = [
-  {
-    icon: MessageCircle,
-    title: "Post Your Job",
-    description: "Describe what you need done and set your budget",
-  },
-  {
-    icon: CheckCircle,
-    title: "Review Bids",
-    description: "Compare proposals from local providers",
-  },
-  {
-    icon: Star,
-    title: "Get It Done",
-    description: "Hire the best provider and pay when complete",
-  },
-];
-
-const testimonials = [
-  {
-    name: "Maria Rodriguez",
-    role: "Customer",
-    text: "Found an amazing cleaner in minutes! The bidding process made it easy to find someone within my budget.",
-    rating: 5,
-  },
-  {
-    name: "John Smith",
-    role: "Provider",
-    text: "Service HUB has helped me grow my handyman business. I get consistent work from local customers.",
-    rating: 5,
-  },
-  {
-    name: "Sarah Chen",
-    role: "Customer",
-    text: "The platform made moving so much easier. Got multiple quotes and chose the perfect moving company.",
-    rating: 5,
-  },
-];
-
-const stats = [
-  { icon: Users, label: "Active Providers", value: "10,000+" },
-  { icon: CheckCircle, label: "Jobs Completed", value: "50,000+" },
-  { icon: Star, label: "Average Rating", value: "4.8/5" },
-  { icon: Clock, label: "Avg Response Time", value: "< 2 hours" },
-];
-
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const steps = [
+    {
+      icon: MessageCircle,
+      title: t('landing.howItWorks.step1'),
+      description: t('landing.howItWorks.step1Desc'),
+    },
+    {
+      icon: CheckCircle,
+      title: t('landing.howItWorks.step2'),
+      description: t('landing.howItWorks.step2Desc'),
+    },
+    {
+      icon: Star,
+      title: t('landing.howItWorks.step3'),
+      description: t('landing.howItWorks.step3Desc'),
+    },
+  ];
+
+  const testimonials = [
+    {
+      name: "Maria Rodriguez",
+      role: t('landing.testimonials.customer'),
+      text: "Found an amazing cleaner in minutes! The bidding process made it easy to find someone within my budget.",
+      rating: 5,
+    },
+    {
+      name: "John Smith",
+      role: t('landing.testimonials.provider'),
+      text: "Service HUB has helped me grow my handyman business. I get consistent work from local customers.",
+      rating: 5,
+    },
+    {
+      name: "Sarah Chen",
+      role: t('landing.testimonials.customer'),
+      text: "The platform made moving so much easier. Got multiple quotes and chose the perfect moving company.",
+      rating: 5,
+    },
+  ];
+
+  const stats = [
+    { icon: Users, label: t('landing.stats.activeProviders'), value: "10,000+" },
+    { icon: CheckCircle, label: t('landing.stats.jobsCompleted'), value: "50,000+" },
+    { icon: Star, label: t('landing.stats.avgRating'), value: "4.8/5" },
+    { icon: Clock, label: t('landing.stats.avgResponse'), value: "< 2 hours" },
+  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,10 +85,10 @@ export default function LandingPage() {
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Find Local Help for Any Task
+                {t('landing.hero.title')}
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Connect with trusted service providers in Texas. Post a job, get competitive bids, and hire the perfect professional.
+                {t('landing.hero.subtitle')}
               </p>
               
               {/* Search Bar */}
@@ -95,7 +97,7 @@ export default function LandingPage() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="What service do you need? (e.g., house cleaning, moving help...)"
+                    placeholder={t('landing.hero.search')}
                     className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -105,17 +107,17 @@ export default function LandingPage() {
                     size="lg" 
                     className="absolute right-2 top-1/2 -translate-y-1/2"
                   >
-                    Search
+                    {t('landing.hero.searchButton')}
                   </Button>
                 </div>
               </form>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" asChild className="shadow-lg">
-                  <Link to="/jobs/new">Post a Job</Link>
+                  <Link to="/jobs/new">{t('landing.hero.postJob')}</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="shadow-lg">
-                  <Link to="/auth/signup">Join as Provider</Link>
+                  <Link to="/auth/signup">{t('landing.hero.joinProvider')}</Link>
                 </Button>
               </div>
             </div>
@@ -137,8 +139,8 @@ export default function LandingPage() {
         <section className="py-16 md:py-20 px-4 bg-muted/30">
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Popular Services</h2>
-              <p className="text-muted-foreground">Choose from our most requested service categories</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.categories.title')}</h2>
+              <p className="text-muted-foreground">{t('landing.categories.subtitle')}</p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
               {categories.map((category) => (
@@ -157,7 +159,7 @@ export default function LandingPage() {
             <div className="text-center mt-8">
               <Button variant="outline" size="lg" asChild>
                 <Link to="/services">
-                  View All Services <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('landing.categories.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -168,8 +170,8 @@ export default function LandingPage() {
         <section className="py-16 md:py-20 px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
-              <p className="text-muted-foreground">Get started in three simple steps</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.howItWorks.title')}</h2>
+              <p className="text-muted-foreground">{t('landing.howItWorks.subtitle')}</p>
             </div>
             <div className="grid md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
               {steps.map((step, index) => (
@@ -192,7 +194,7 @@ export default function LandingPage() {
             <div className="text-center mt-12">
               <Button variant="outline" size="lg" asChild>
                 <Link to="/how-it-works">
-                  Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('landing.howItWorks.learnMore')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -203,8 +205,8 @@ export default function LandingPage() {
         <section className="py-16 md:py-20 px-4 bg-muted/30">
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">What People Say</h2>
-              <p className="text-muted-foreground">Trusted by thousands across Texas</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.testimonials.title')}</h2>
+              <p className="text-muted-foreground">{t('landing.testimonials.subtitle')}</p>
             </div>
             <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
               {testimonials.map((testimonial, index) => (
@@ -239,16 +241,16 @@ export default function LandingPage() {
           <div className="container mx-auto max-w-4xl">
             <div className="bg-gradient-to-br from-primary to-accent rounded-2xl p-8 md:p-12 text-center text-primary-foreground shadow-2xl">
               <Award className="h-16 w-16 mx-auto mb-6" />
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.cta.title')}</h2>
               <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-                Join thousands of satisfied customers and top-rated service providers on Service HUB today.
+                {t('landing.cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" variant="secondary" asChild className="shadow-lg">
-                  <Link to="/jobs/new">Post a Job Now</Link>
+                  <Link to="/jobs/new">{t('landing.cta.postJob')}</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="bg-white/10 hover:bg-white/20 text-white border-white/30 shadow-lg">
-                  <Link to="/auth/signup">Become a Provider</Link>
+                  <Link to="/auth/signup">{t('landing.cta.becomeProvider')}</Link>
                 </Button>
               </div>
             </div>
