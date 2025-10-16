@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -100,7 +102,8 @@ export default function Profile() {
   const completedJobsCount = completedJobs.length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
       <div className="bg-primary/5 border-b">
         <div className="container py-12">
           <div className="flex items-start gap-6">
@@ -355,6 +358,7 @@ export default function Profile() {
           </TabsContent>
         </Tabs>
       </div>
+      <Footer />
     </div>
   );
 }

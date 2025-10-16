@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -93,8 +95,11 @@ export default function EditProfile() {
   };
 
   return (
-    <div className="container max-w-4xl py-8">
-      <div className="space-y-6">
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 py-8 px-4">
+        <div className="container max-w-4xl">
+          <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Edit Profile</h1>
           <p className="text-muted-foreground">Update your personal information</p>
@@ -221,8 +226,11 @@ export default function EditProfile() {
               Cancel
             </Button>
           </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+    </main>
+    <Footer />
+  </div>
   );
 }
