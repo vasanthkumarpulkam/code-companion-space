@@ -27,9 +27,7 @@ export default function Dashboard() {
       .eq("id", user?.id)
       .maybeSingle();
 
-    if (error) {
-      console.error("Error fetching profile:", error);
-    } else {
+    if (!error) {
       setProfile(data);
     }
   };

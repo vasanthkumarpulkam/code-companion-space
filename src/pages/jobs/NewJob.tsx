@@ -50,10 +50,9 @@ export default function NewJob() {
     const fetchCategories = async () => {
       const { data, error } = await supabase.from('categories').select('*');
       if (error) {
-        console.error('Error fetching categories:', error);
         toast({ 
           title: 'Error loading categories', 
-          description: error.message, 
+          description: 'Failed to load job categories', 
           variant: 'destructive' 
         });
       }
@@ -86,17 +85,15 @@ export default function NewJob() {
       });
 
       if (error) {
-        console.error('Error posting job:', error);
         throw error;
       }
 
       toast({ title: 'Job posted successfully!' });
       navigate('/jobs');
     } catch (error: any) {
-      console.error('Job posting error:', error);
       toast({ 
         title: 'Error posting job', 
-        description: error.message || 'Failed to post job', 
+        description: 'Failed to post your job. Please try again.', 
         variant: 'destructive' 
       });
     } finally {

@@ -90,9 +90,7 @@ export function useAdvancedSearch(filters: SearchFilters) {
 
     const { data, error } = await query;
 
-    if (error) {
-      console.error('Error searching jobs:', error);
-    } else {
+    if (!error) {
       setJobs(data || []);
     }
 

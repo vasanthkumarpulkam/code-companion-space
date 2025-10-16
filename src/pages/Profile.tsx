@@ -38,10 +38,6 @@ export default function Profile() {
       .eq('id', uid)
       .maybeSingle();
 
-    if (error) {
-      console.error('Error fetching profile:', error);
-    }
-
     setProfile(data);
     setLoading(false);
   };

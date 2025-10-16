@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       setUserRole(data?.role as UserRole || 'customer');
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      // Silently default to customer role on error
       setUserRole('customer');
     }
   };

@@ -29,7 +29,6 @@ export function useNotifications() {
       .limit(50);
 
     if (error) {
-      console.error('Error fetching notifications:', error);
       return;
     }
 
