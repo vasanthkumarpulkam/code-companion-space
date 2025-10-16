@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export default function Dashboard() {
   const { user, userRole } = useAuth();
+  const { t } = useLanguage();
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
@@ -41,12 +43,12 @@ export default function Dashboard() {
           {/* Welcome Section */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">
-              Welcome back, {user?.user_metadata?.full_name || profile?.full_name || 'User'}!
+              {t('dashboard.welcome')}, {user?.user_metadata?.full_name || profile?.full_name || 'User'}!
             </h1>
             <p className="text-muted-foreground">
-              {userRole === 'customer' && 'Manage your posted jobs and find local service providers'}
-              {userRole === 'provider' && 'Browse available jobs and manage your bids'}
-              {userRole === 'admin' && 'Platform administration and oversight'}
+              {userRole === 'customer' && t('dashboard.customer.subtitle')}
+              {userRole === 'provider' && t('dashboard.provider.subtitle')}
+              {userRole === 'admin' && t('dashboard.admin.subtitle')}
             </p>
           </div>
 
@@ -64,7 +66,7 @@ export default function Dashboard() {
                   <div className="flex-1 w-full">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       <div>
-                        <h2 className="text-2xl font-bold">{profile.full_name || "Complete your profile"}</h2>
+                        <h2 className="text-2xl font-bold">{profile.full_name || t('dashboard.profile.complete')}</h2>
                         <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
                           {profile.location && (
                             <span className="flex items-center gap-1">
@@ -74,7 +76,7 @@ export default function Dashboard() {
                           )}
                           <span className="flex items-center gap-1">
                             <Calendar className="h-4 w-4" />
-                            Member since {new Date(profile.created_at).toLocaleDateString()}
+                            {t('dashboard.profile.memberSince')} {new Date(profile.created_at).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
@@ -82,13 +84,13 @@ export default function Dashboard() {
                         <Button variant="outline" asChild>
                           <Link to={`/profile/${user?.id}`}>
                             <User className="h-4 w-4 mr-2" />
-                            View Profile
+                            {t('dashboard.profile.viewProfile')}
                           </Link>
                         </Button>
                         <Button asChild>
                           <Link to="/profile/edit">
                             <Edit className="h-4 w-4 mr-2" />
-                            Edit
+                            {t('dashboard.profile.edit')}
                           </Link>
                         </Button>
                       </div>
@@ -98,7 +100,7 @@ export default function Dashboard() {
                     )}
                     {profile.role === "provider" && profile.skills && profile.skills.length > 0 && (
                       <div className="mt-4">
-                        <p className="text-sm font-semibold mb-2">Skills:</p>
+                        <p className="text-sm font-semibold mb-2">{t('dashboard.profile.skills')}</p>
                         <div className="flex flex-wrap gap-2">
                           {profile.skills.map((skill: string, index: number) => (
                             <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
@@ -121,32 +123,32 @@ export default function Dashboard() {
               <div className="grid gap-4 md:grid-cols-3">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.stats.activeJobs')}</CardTitle>
                     <Briefcase className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">0</div>
-                    <p className="text-xs text-muted-foreground">Jobs currently open</p>
+                    <p className="text-xs text-muted-foreground">{t('dashboard.stats.jobsOpen')}</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.stats.totalSpent')}</CardTitle>
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">$0</div>
-                    <p className="text-xs text-muted-foreground">On completed jobs</p>
+                    <p className="text-xs text-muted-foreground">{t('dashboard.stats.onCompleted')}</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Reviews Given</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.stats.reviewsGiven')}</CardTitle>
                     <Star className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">0</div>
-                    <p className="text-xs text-muted-foreground">Provider reviews</p>
+                    <p className="text-xs text-muted-foreground">{t('dashboard.stats.providerReviews')}</p>
                   </CardContent>
                 </Card>
               </div>
@@ -155,16 +157,16 @@ export default function Dashboard() {
               <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Post a New Job</CardTitle>
+                    <CardTitle>{t('dashboard.postJob.title')}</CardTitle>
                     <CardDescription>
-                      Describe your task and get bids from local providers
+                      {t('dashboard.postJob.description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button asChild className="w-full">
                       <Link to="/jobs/new">
                         <Plus className="mr-2 h-4 w-4" />
-                        Create Job Posting
+                        {t('dashboard.postJob.button')}
                       </Link>
                     </Button>
                   </CardContent>
@@ -172,16 +174,16 @@ export default function Dashboard() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Find Providers</CardTitle>
+                    <CardTitle>{t('dashboard.findProviders.title')}</CardTitle>
                     <CardDescription>
-                      Browse available service providers in your area
+                      {t('dashboard.findProviders.description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button variant="outline" asChild className="w-full">
                       <Link to="/services">
                         <Search className="mr-2 h-4 w-4" />
-                        Browse Services
+                        {t('dashboard.findProviders.button')}
                       </Link>
                     </Button>
                   </CardContent>
@@ -191,15 +193,15 @@ export default function Dashboard() {
               {/* Recent Jobs */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Jobs</CardTitle>
-                  <CardDescription>View and manage your job postings</CardDescription>
+                  <CardTitle>{t('dashboard.yourJobs.title')}</CardTitle>
+                  <CardDescription>{t('dashboard.yourJobs.description')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-12 text-muted-foreground">
                     <Briefcase className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p className="mb-4">You haven't posted any jobs yet</p>
+                    <p className="mb-4">{t('dashboard.yourJobs.empty')}</p>
                     <Button asChild>
-                      <Link to="/jobs/new">Post Your First Job</Link>
+                      <Link to="/jobs/new">{t('dashboard.yourJobs.firstJob')}</Link>
                     </Button>
                   </div>
                 </CardContent>
@@ -214,59 +216,59 @@ export default function Dashboard() {
               <div className="grid gap-4 md:grid-cols-3">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Bids</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.stats.activeBids')}</CardTitle>
                     <Briefcase className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">0</div>
-                    <p className="text-xs text-muted-foreground">Pending proposals</p>
+                    <p className="text-xs text-muted-foreground">{t('dashboard.stats.pendingProposals')}</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.stats.totalEarned')}</CardTitle>
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">$0</div>
-                    <p className="text-xs text-muted-foreground">From completed jobs</p>
+                    <p className="text-xs text-muted-foreground">{t('dashboard.stats.fromCompleted')}</p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Your Rating</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.stats.yourRating')}</CardTitle>
                     <Star className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">—</div>
-                    <p className="text-xs text-muted-foreground">No reviews yet</p>
+                    <p className="text-xs text-muted-foreground">{t('dashboard.stats.noReviews')}</p>
                   </CardContent>
                 </Card>
               </div>
 
               <Tabs defaultValue="recommended" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="recommended">Recommended Jobs</TabsTrigger>
-                  <TabsTrigger value="mybids">My Bids</TabsTrigger>
+                  <TabsTrigger value="recommended">{t('dashboard.tabs.recommended')}</TabsTrigger>
+                  <TabsTrigger value="mybids">{t('dashboard.tabs.mybids')}</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="recommended" className="mt-6">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Recommended for You</CardTitle>
-                      <CardDescription>Jobs matching your skills and location</CardDescription>
+                      <CardTitle>{t('dashboard.recommended.title')}</CardTitle>
+                      <CardDescription>{t('dashboard.recommended.description')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="text-center py-12 text-muted-foreground">
                         <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p className="mb-4">Complete your profile to see recommended jobs</p>
+                        <p className="mb-4">{t('dashboard.recommended.empty')}</p>
                         <Button asChild variant="outline">
-                          <Link to="/profile/edit">Complete Profile</Link>
+                          <Link to="/profile/edit">{t('dashboard.recommended.complete')}</Link>
                         </Button>
                       </div>
                       <div className="mt-4 text-center">
                         <Button asChild>
-                          <Link to="/jobs">Browse All Jobs</Link>
+                          <Link to="/jobs">{t('dashboard.recommended.browse')}</Link>
                         </Button>
                       </div>
                     </CardContent>
@@ -276,15 +278,15 @@ export default function Dashboard() {
                 <TabsContent value="mybids" className="mt-6">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Your Bids</CardTitle>
-                      <CardDescription>Track your active and past proposals</CardDescription>
+                      <CardTitle>{t('dashboard.yourBids.title')}</CardTitle>
+                      <CardDescription>{t('dashboard.yourBids.description')}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="text-center py-12 text-muted-foreground">
                         <Briefcase className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p className="mb-4">You haven't submitted any bids yet</p>
+                        <p className="mb-4">{t('dashboard.yourBids.empty')}</p>
                         <Button asChild>
-                          <Link to="/jobs">Browse Jobs</Link>
+                          <Link to="/jobs">{t('dashboard.yourBids.browse')}</Link>
                         </Button>
                       </div>
                     </CardContent>
@@ -300,7 +302,7 @@ export default function Dashboard() {
               <div className="grid gap-4 md:grid-cols-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.admin.totalUsers')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">0</div>
@@ -308,7 +310,7 @@ export default function Dashboard() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.admin.activeJobs')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">0</div>
@@ -316,7 +318,7 @@ export default function Dashboard() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Platform Fees</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.admin.platformFees')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">$0</div>
@@ -324,7 +326,7 @@ export default function Dashboard() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Reports</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t('dashboard.admin.reports')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">0</div>
@@ -334,12 +336,12 @@ export default function Dashboard() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Admin Tools</CardTitle>
-                  <CardDescription>Platform management and oversight</CardDescription>
+                  <CardTitle>{t('dashboard.admin.tools')}</CardTitle>
+                  <CardDescription>{t('dashboard.admin.toolsDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Button asChild>
-                    <Link to="/admin">Go to Admin Panel</Link>
+                    <Link to="/admin">{t('dashboard.admin.goToPanel')}</Link>
                   </Button>
                 </CardContent>
               </Card>
