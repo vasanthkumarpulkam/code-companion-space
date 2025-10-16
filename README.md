@@ -1,73 +1,153 @@
-# Welcome to your Lovable project
+# Service HUB
 
-## Project info
+A comprehensive marketplace platform that connects customers in Texas with local service providers across multiple categories including cleaning, moving, landscaping, handyman services, and events.
 
-**URL**: https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01
+## Features
 
-## How can I edit this code?
+### For Customers
+- Post jobs with detailed descriptions and budget
+- Receive competitive bids from verified providers
+- Real-time messaging with providers
+- In-app notifications for bid updates
+- Secure payment processing
+- Rate and review completed jobs
 
-There are several ways of editing your application.
+### For Providers
+- Browse and bid on available jobs
+- Build professional profiles with portfolios
+- Real-time job notifications
+- Secure payment collection
+- Build reputation through ratings
 
-**Use Lovable**
+### For Administrators
+- Comprehensive admin dashboard
+- User and job moderation
+- Content moderation and reporting
+- Fee management and analytics
+- Dispute resolution tools
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01) and start prompting.
+## Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+### Frontend
+- **React 18** with TypeScript
+- **Vite** for build tooling
+- **Tailwind CSS** for styling
+- **shadcn/ui** component library
+- **React Router** for navigation
+- **TanStack Query** for data fetching
 
-**Use your preferred IDE**
+### Backend
+- **Supabase** for:
+  - Authentication (Email, Google OAuth)
+  - PostgreSQL database with Row Level Security
+  - Real-time subscriptions
+  - File storage
+  - Edge Functions for serverless logic
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Payment Processing
+- **Stripe** for secure payment handling
+- Automatic 10% platform fee collection
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Additional Services
+- **Google Maps API** for location services
+- **Google Translate API** for Spanish translations
 
-Follow these steps:
+## Getting Started
+
+### Prerequisites
+- Node.js 18+ or Bun
+- Supabase account
+- Stripe account (for payments)
+- Google Cloud account (for Maps and Translate APIs)
+
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Step 1: Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Step 2: Navigate to the project directory
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Step 3: Install dependencies
+npm install
+# or
+bun install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Set up environment variables
+# Create .env file with:
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+# Step 5: Start development server
 npm run dev
+# or
+bun dev
 ```
 
-**Edit a file directly in GitHub**
+## Database Schema
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Core Tables
+- **profiles** - User profile information
+- **user_roles** - User role management (customer, provider, admin)
+- **categories** - Service categories
+- **jobs** - Job postings
+- **bids** - Bids on jobs
+- **messages** - In-app messaging
+- **reviews** - Ratings and reviews
+- **payments** - Payment tracking
+- **notifications** - User notifications
+- **notification_preferences** - Notification settings
+- **saved_searches** - Saved search filters
+- **user_reports** - Content moderation reports
 
-**Use GitHub Codespaces**
+## Key Features
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Real-time Features
+- Live job updates via Supabase Realtime
+- Instant bid notifications
+- Real-time messaging
+- Notification system
+- Live dashboard updates
 
-## What technologies are used for this project?
+### Multilingual Support
+- English and Spanish interface
+- Automatic job description translation
+- Browser language detection
+- User language preferences
 
-This project is built with:
+### Security
+- Row Level Security on all tables
+- Secure authentication via Supabase
+- PCI-compliant payments via Stripe
+- Content moderation and reporting
+- File upload validation
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Documentation
+- See `DEPLOYMENT.md` for deployment instructions
+- See `ACCESSIBILITY.md` for accessibility guidelines
+- See `SECURITY.md` for security policies
 
-## How can I deploy this project?
+## Testing
+Run the Supabase linter:
+```bash
+supabase db lint
+```
 
-Simply open [Lovable](https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01) and click on Share -> Publish.
+## Deployment
 
-## Can I connect a custom domain to my Lovable project?
+### Via Lovable (Recommended)
+Simply open [Lovable](https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01) and click on Share → Publish.
 
-Yes, you can!
+### Custom Domain
+To connect a custom domain, navigate to Project > Settings > Domains.
+Read more: [Custom Domain Setup](https://docs.lovable.dev/features/custom-domain)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Support
+For issues or questions:
+- Lovable Documentation: https://docs.lovable.dev
+- Supabase Documentation: https://supabase.com/docs
+- Project URL: https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## License
+[Your License Here]
