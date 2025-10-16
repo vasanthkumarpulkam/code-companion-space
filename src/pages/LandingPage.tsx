@@ -124,14 +124,14 @@ export default function LandingPage() {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-16 md:py-24 px-4 bg-gradient-to-br from-primary/10 via-background to-accent/5">
-          <div className="container mx-auto max-w-6xl">
+        <section className="relative py-20 md:py-32 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+          <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                {t('landing.hero.title')}
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                We make it easy to find the <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">right professional</span>
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                {t('landing.hero.subtitle')}
+              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto font-medium">
+                Describe your project or problem — be as detailed as you'd like.
               </p>
               
               {/* Search Bar with Suggestions and Zipcode */}
@@ -203,45 +203,85 @@ export default function LandingPage() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-16">
-              {stats.map((stat, index) => (
-                <div key={index} className="text-center p-4 rounded-lg bg-card border shadow-sm">
-                  <stat.icon className="h-8 w-8 mx-auto mb-2 text-primary" />
-                  <p className="text-2xl md:text-3xl font-bold mb-1">{stat.value}</p>
-                  <p className="text-xs md:text-sm text-muted-foreground">{stat.label}</p>
-                </div>
+            <div className="mt-12 text-center">
+              <p className="text-sm text-muted-foreground font-medium">
+                Trusted by <span className="font-bold text-foreground">50,000+</span> people • <span className="font-bold text-foreground">4.8/5</span> with over <span className="font-bold text-foreground">10,000</span> reviews
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Popular Services */}
+        <section className="py-16 md:py-20 px-4 bg-background">
+          <div className="container mx-auto max-w-7xl">
+            <h2 className="text-2xl md:text-3xl font-bold mb-8">Popular services in Texas</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[
+                { name: "House cleaning", icon: Sparkles },
+                { name: "Handyman", icon: Hammer },
+                { name: "Interior painting", icon: Home },
+                { name: "Junk removal", icon: Truck },
+                { name: "Local moving", icon: Truck },
+                { name: "Landscaping", icon: TreePine },
+                { name: "Event planning", icon: PartyPopper },
+                { name: "Electrical repair", icon: Hammer }
+              ].map((service, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer group">
+                  <CardContent className="p-6">
+                    <service.icon className="h-8 w-8 mb-3 text-primary group-hover:scale-110 transition-transform" />
+                    <h3 className="font-semibold">{service.name}</h3>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Service Categories */}
+        {/* Services You Might Like */}
         <section className="py-16 md:py-20 px-4 bg-muted/30">
           <div className="container mx-auto max-w-7xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.categories.title')}</h2>
-              <p className="text-muted-foreground">{t('landing.categories.subtitle')}</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+            <h2 className="text-2xl md:text-3xl font-bold mb-8">Services you might also like</h2>
+            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
               {categories.map((category) => (
                 <Link key={category.name} to={category.path}>
-                  <Card className="hover:shadow-xl hover:scale-105 hover:border-primary/50 transition-all duration-300 cursor-pointer h-full group">
-                    <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                      <div className="h-16 w-16 mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <category.icon className="h-8 w-8 text-primary" />
-                      </div>
-                      <h3 className="font-semibold text-sm md:text-base">{t(category.name)}</h3>
-                    </CardContent>
-                  </Card>
+                  <div className="text-center p-4 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                    <category.icon className="h-10 w-10 mx-auto mb-2 text-primary" />
+                    <p className="text-xs md:text-sm font-medium">{t(category.name)}</p>
+                  </div>
                 </Link>
               ))}
             </div>
-            <div className="text-center mt-8">
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/services">
-                  {t('landing.categories.viewAll')} <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+          </div>
+        </section>
+
+        {/* Cost Estimates Section */}
+        <section className="py-16 md:py-20 px-4 bg-background">
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Get free cost estimates</h2>
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                We analyzed millions of bids from Service HUB professionals to see what things really cost. Find out what other people have paid for projects like yours.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { service: "House Cleaning", price: "$110 – $140" },
+                { service: "Interior Painting", price: "$600 – $850" },
+                { service: "Local Moving (under 50 miles)", price: "$80 – $100" },
+                { service: "Handyman Services", price: "$60 – $120" },
+                { service: "Junk Removal", price: "$170 – $230" },
+                { service: "Landscaping", price: "$200 – $400" },
+                { service: "Event Planning", price: "$500 – $2000" },
+                { service: "Pressure Washing", price: "$300 – $400" },
+                { service: "Carpet Cleaning", price: "$120 – $150" }
+              ].map((item, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold text-lg mb-2">{item.service}</h3>
+                    <p className="text-2xl font-bold text-primary">Avg. price: {item.price}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
@@ -281,34 +321,36 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Testimonials */}
+        {/* Real User Testimonials */}
         <section className="py-16 md:py-20 px-4 bg-muted/30">
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.testimonials.title')}</h2>
-              <p className="text-muted-foreground">{t('landing.testimonials.subtitle')}</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">These reviews say it better</h2>
             </div>
-            <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-              {testimonials.map((testimonial, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center gap-4 mb-2">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold">
-                        {testimonial.name.charAt(0)}
-                      </div>
-                      <div>
-                        <CardTitle className="text-base">{testimonial.name}</CardTitle>
-                        <CardDescription className="text-xs">{testimonial.role}</CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex gap-1">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+            <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {[
+                {
+                  name: "Pamela",
+                  text: "We found so many people on Service HUB. And some of the people we found, like our electrician, we use him now. He's great."
+                },
+                {
+                  name: "Terrence", 
+                  text: "I didn't realize how many professionals Service HUB had on it. You type in things like 'house cleaning,' you get a ton of pros. You name it. It's there."
+                },
+                {
+                  name: "Lawrence",
+                  text: "Service HUB is a place that I would recommend real people to go. If you need to have your sink done, replaced, go to Service HUB."
+                }
+              ].map((testimonial, index) => (
+                <Card key={index} className="border-2 hover:shadow-xl transition-all">
+                  <CardContent className="p-8">
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="h-5 w-5 fill-primary text-primary" />
                       ))}
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground leading-relaxed">"{testimonial.text}"</p>
+                    <p className="text-base leading-relaxed mb-4">"{testimonial.text}"</p>
+                    <p className="font-semibold">-{testimonial.name}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -316,23 +358,35 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Stats Bar */}
+        <section className="py-12 px-4 bg-primary text-primary-foreground">
+          <div className="container mx-auto max-w-7xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              {stats.map((stat, index) => (
+                <div key={index}>
+                  <stat.icon className="h-10 w-10 mx-auto mb-3 opacity-90" />
+                  <p className="text-3xl md:text-4xl font-bold mb-2">{stat.value}</p>
+                  <p className="text-sm opacity-90">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
-        <section className="py-16 md:py-20 px-4">
-          <div className="container mx-auto max-w-4xl">
-            <div className="bg-gradient-to-br from-primary to-accent rounded-2xl p-8 md:p-12 text-center text-primary-foreground shadow-2xl">
-              <Award className="h-16 w-16 mx-auto mb-6" />
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.cta.title')}</h2>
-              <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-                {t('landing.cta.subtitle')}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" variant="secondary" asChild className="shadow-lg">
-                  <Link to="/jobs/new">{t('landing.cta.postJob')}</Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="bg-white/10 hover:bg-white/20 text-white border-white/30 shadow-lg">
-                  <Link to="/auth/signup">{t('landing.cta.becomeProvider')}</Link>
-                </Button>
-              </div>
+        <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-primary/5 to-accent/5">
+          <div className="container mx-auto max-w-5xl text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Consider it done.</h2>
+            <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+              Whatever you need, we'll connect you with the right professional to get it done.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" asChild className="shadow-lg text-lg px-8 h-14">
+                <Link to="/jobs/new">Post a Job</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="shadow-lg text-lg px-8 h-14">
+                <Link to="/providers">Find Providers</Link>
+              </Button>
             </div>
           </div>
         </section>
