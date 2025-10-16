@@ -132,6 +132,7 @@ export default function JobDetail() {
 
   const isOwner = user?.id === job.customer_id;
   const canBid = userRole === 'provider' && job.status === 'open' && !isOwner;
+  const needsAuth = !user && job.status === 'open';
 
   return (
     <div className="container py-8">
@@ -181,6 +182,27 @@ export default function JobDetail() {
               )}
             </CardContent>
           </Card>
+
+          {needsAuth && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Interested in this job?</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground">
+                  Login or sign up to submit a bid for this job
+                </p>
+                <div className="flex gap-2">
+                  <Button onClick={() => navigate('/auth/login')} className="flex-1">
+                    Login
+                  </Button>
+                  <Button onClick={() => navigate('/auth/signup')} variant="outline" className="flex-1">
+                    Sign Up
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {canBid && (
             <Card>
