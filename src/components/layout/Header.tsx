@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X, User, Home } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, User, Home, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -19,18 +19,30 @@ export const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, userRole, signOut } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-lg font-bold text-primary-foreground">SH</span>
-            </div>
-            <span className="text-xl font-bold">Service HUB</span>
-          </Link>
+          {/* Back Button and Logo */}
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="hover:bg-accent"
+              title="Go back"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                <span className="text-lg font-bold text-primary-foreground">SH</span>
+              </div>
+              <span className="text-xl font-bold">Service HUB</span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
