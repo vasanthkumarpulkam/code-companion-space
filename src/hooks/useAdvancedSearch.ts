@@ -27,7 +27,7 @@ export function useAdvancedSearch(filters: SearchFilters) {
       .select(`
         *,
         categories(name, icon),
-        profiles(full_name, avatar_url)
+        profiles!jobs_customer_id_fkey(full_name, avatar_url)
       `)
       .eq('status', 'open');
 

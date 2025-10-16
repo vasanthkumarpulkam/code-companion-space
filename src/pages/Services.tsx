@@ -42,7 +42,7 @@ export default function Services() {
       .select(`
         *,
         categories(name, icon),
-        profiles(full_name, avatar_url)
+        profiles!jobs_customer_id_fkey(full_name, avatar_url)
       `)
       .eq('status', 'open')
       .order('created_at', { ascending: false });
