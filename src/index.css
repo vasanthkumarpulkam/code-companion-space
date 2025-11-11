@@ -8,35 +8,44 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 222 47% 11%;
+    --background: 240 10% 97%;
+    --foreground: 240 15% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 240 15% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 240 15% 9%;
 
-    --primary: 217 91% 60%;
+    --primary: 263 85% 58%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 15% 9%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 5% 45%;
 
-    --accent: 142 76% 36%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 32 95% 58%;
+    --accent-foreground: 240 15% 9%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 263 85% 58%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(263 85% 58%), hsl(280 90% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(32 95% 58%), hsl(25 95% 53%));
+    --gradient-subtle: linear-gradient(180deg, hsl(240 10% 97%), hsl(250 15% 95%));
+    
+    --shadow-sm: 0 2px 8px -2px hsl(263 85% 58% / 0.1);
+    --shadow-md: 0 8px 24px -4px hsl(263 85% 58% / 0.15);
+    --shadow-lg: 0 20px 40px -8px hsl(263 85% 58% / 0.2);
+    --shadow-glow: 0 0 30px hsl(263 85% 58% / 0.3);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +109,37 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+  
+  .gradient-subtle {
+    background: var(--gradient-subtle);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-primary);
+  }
+  
+  .border-gradient {
+    border-image: var(--gradient-primary) 1;
   }
 }

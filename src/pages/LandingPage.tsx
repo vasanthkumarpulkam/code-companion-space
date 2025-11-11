@@ -124,14 +124,21 @@ export default function LandingPage() {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-32 px-4 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-          <div className="container mx-auto max-w-7xl">
+        <section className="relative py-20 md:py-32 px-4 overflow-hidden">
+          {/* Background with gradient and pattern */}
+          <div className="absolute inset-0 gradient-subtle"></div>
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, hsl(263 85% 58%) 1px, transparent 0)`,
+            backgroundSize: '48px 48px'
+          }}></div>
+          
+          <div className="container mx-auto max-w-7xl relative z-10">
             <div className="text-center mb-12">
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                We make it easy to find the <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">right professional</span>
+                Find trusted <span className="text-gradient">local professionals</span> for any task
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto font-medium">
-                Describe your project or problem — be as detailed as you'd like.
+              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto">
+                Connect with skilled service providers in your area. Get quotes, compare, and hire with confidence.
               </p>
               
               {/* Search Bar with Suggestions and Zipcode */}
@@ -190,13 +197,13 @@ export default function LandingPage() {
               </form>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" asChild className="shadow-lg">
+                <Button size="lg" asChild className="gradient-primary border-0 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
                   <Link to="/jobs/new">{t('landing.hero.postJob')}</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild className="shadow-lg">
+                <Button size="lg" variant="outline" asChild className="shadow-md border-2 hover:border-primary/50 hover:bg-primary/5 transition-all">
                   <Link to="/providers">Find Providers</Link>
                 </Button>
-                <Button size="lg" variant="secondary" asChild className="shadow-lg">
+                <Button size="lg" variant="secondary" asChild className="shadow-md hover:shadow-lg transition-all">
                   <Link to="/auth/signup">{t('landing.hero.joinProvider')}</Link>
                 </Button>
               </div>
@@ -212,9 +219,9 @@ export default function LandingPage() {
         </section>
 
         {/* Popular Services */}
-        <section className="py-16 md:py-20 px-4 bg-muted/30">
+        <section className="py-16 md:py-20 px-4 bg-card border-y">
           <div className="container mx-auto max-w-7xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">Popular services near you</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-foreground">Popular services near you</h2>
             
             {/* Category Tabs */}
             <div className="flex gap-3 mb-8 overflow-x-auto pb-2 hide-scrollbar">
@@ -231,8 +238,8 @@ export default function LandingPage() {
                   to={`/providers?skill=${encodeURIComponent(category.skill)}`}
                   className={`flex flex-col items-center gap-2 p-4 min-w-[110px] rounded-xl transition-all ${
                     index === 0 
-                      ? 'bg-background shadow-md border-2 border-primary/20' 
-                      : 'bg-background/50 hover:bg-background hover:shadow-md border-2 border-transparent hover:border-primary/20'
+                      ? 'bg-card shadow-lg border-2 border-primary' 
+                      : 'bg-card/50 hover:bg-card hover:shadow-md border-2 border-border hover:border-primary/30'
                   }`}
                 >
                   <category.icon className={`h-8 w-8 ${index === 0 ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -254,7 +261,7 @@ export default function LandingPage() {
                 <Link
                   key={service}
                   to={`/providers?skill=Handyman`}
-                  className="px-6 py-2.5 rounded-full border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-sm font-medium whitespace-nowrap"
+                  className="px-6 py-2.5 rounded-full border-2 border-border hover:border-primary hover:bg-primary/5 hover:shadow-md transition-all text-sm font-medium whitespace-nowrap"
                 >
                   {service}
                 </Link>
@@ -264,14 +271,14 @@ export default function LandingPage() {
         </section>
 
         {/* Services You Might Like */}
-        <section className="py-16 md:py-20 px-4 bg-muted/30">
+        <section className="py-16 md:py-20 px-4 gradient-subtle">
           <div className="container mx-auto max-w-7xl">
             <h2 className="text-2xl md:text-3xl font-bold mb-8">Services you might also like</h2>
             <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
               {categories.map((category) => (
                 <Link key={category.name} to={category.path}>
-                  <div className="text-center p-4 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
-                    <category.icon className="h-10 w-10 mx-auto mb-2 text-primary" />
+                  <div className="text-center p-4 rounded-xl hover:bg-card hover:shadow-lg border-2 border-transparent hover:border-primary/20 transition-all cursor-pointer group">
+                    <category.icon className="h-10 w-10 mx-auto mb-2 text-primary group-hover:scale-110 transition-transform" />
                     <p className="text-xs md:text-sm font-medium">{t(category.name)}</p>
                   </div>
                 </Link>
@@ -304,7 +311,7 @@ export default function LandingPage() {
                 <Link
                   key={item.service}
                   to={`/providers?skill=${encodeURIComponent(item.skill)}`}
-                  className="group relative overflow-hidden rounded-2xl border-2 border-border bg-card hover:shadow-xl hover:border-primary/30 transition-all duration-300"
+                  className="group relative overflow-hidden rounded-2xl border-2 border-border bg-card hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300"
                 >
                   {/* Image Placeholder with Gradient */}
                   <div className={`h-48 bg-gradient-to-br ${item.gradient} flex items-center justify-center relative overflow-hidden`}>
@@ -339,14 +346,14 @@ export default function LandingPage() {
               {steps.map((step, index) => (
                 <div key={index} className="text-center relative">
                   {index < steps.length - 1 && (
-                    <div className="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-gradient-to-r from-primary to-accent" />
+                    <div className="hidden md:block absolute top-8 left-1/2 w-full h-0.5 gradient-primary opacity-30" />
                   )}
                   <div className="flex justify-center mb-6 relative z-10">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl gradient-primary text-primary-foreground shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform">
                       <step.icon className="h-10 w-10" />
                     </div>
                   </div>
-                  <div className="bg-card border rounded-lg p-6 shadow-sm">
+                  <div className="bg-card border-2 rounded-2xl p-6 shadow-md hover:shadow-xl hover:border-primary/20 transition-all">
                     <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
                     <p className="text-muted-foreground">{step.description}</p>
                   </div>
@@ -364,7 +371,7 @@ export default function LandingPage() {
         </section>
 
         {/* Real User Testimonials */}
-        <section className="py-16 md:py-20 px-4 bg-muted/30">
+        <section className="py-16 md:py-20 px-4 gradient-subtle">
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">These reviews say it better</h2>
@@ -384,7 +391,7 @@ export default function LandingPage() {
                   text: "Service HUB is a place that I would recommend real people to go. If you need to have your sink done, replaced, go to Service HUB."
                 }
               ].map((testimonial, index) => (
-                <Card key={index} className="border-2 hover:shadow-xl transition-all">
+                <Card key={index} className="border-2 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all bg-card">
                   <CardContent className="p-8">
                     <div className="flex gap-1 mb-4">
                       {[...Array(5)].map((_, i) => (
@@ -401,8 +408,12 @@ export default function LandingPage() {
         </section>
 
         {/* Stats Bar */}
-        <section className="py-12 px-4 bg-primary text-primary-foreground">
-          <div className="container mx-auto max-w-7xl">
+        <section className="py-12 px-4 gradient-primary text-primary-foreground relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: '32px 32px'
+          }}></div>
+          <div className="container mx-auto max-w-7xl relative z-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               {stats.map((stat, index) => (
                 <div key={index}>
@@ -416,17 +427,23 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-primary/5 to-accent/5">
-          <div className="container mx-auto max-w-5xl text-center">
+        <section className="py-20 md:py-28 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 gradient-subtle"></div>
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, hsl(263 85% 58%) 1px, transparent 0)`,
+            backgroundSize: '48px 48px'
+          }}></div>
+          
+          <div className="container mx-auto max-w-5xl text-center relative z-10">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Consider it done.</h2>
             <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
               Whatever you need, we'll connect you with the right professional to get it done.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="shadow-lg text-lg px-8 h-14">
+              <Button size="lg" asChild className="gradient-primary border-0 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 text-lg px-8 h-14 transition-all">
                 <Link to="/jobs/new">Post a Job</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="shadow-lg text-lg px-8 h-14">
+              <Button size="lg" variant="outline" asChild className="shadow-md border-2 hover:border-primary/50 hover:bg-primary/5 text-lg px-8 h-14 transition-all">
                 <Link to="/providers">Find Providers</Link>
               </Button>
             </div>
