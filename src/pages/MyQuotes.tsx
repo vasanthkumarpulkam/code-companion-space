@@ -93,8 +93,8 @@ export default function MyQuotes() {
     }
   };
 
-  const pendingQuotes = quoteRequests.filter(q => q.status === 'pending' || q.status === 'quoted');
-  const completedQuotes = quoteRequests.filter(q => q.status === 'accepted' || q.status === 'declined');
+  const pendingQuotes = quoteRequests.filter(q => q.status === 'pending' || q.status === 'quoted' || q.status === 'accepted');
+  const completedQuotes = quoteRequests.filter(q => q.status === 'declined' || q.status === 'completed');
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -223,19 +223,25 @@ export default function MyQuotes() {
                                 </Button>
                               </div>
                             )}
+                            {request.status === 'accepted' && (
+                              <div className="space-y-2 mt-3 pt-3 border-t border-green-300 dark:border-green-700">
+                                <div className="flex items-center gap-2 text-green-700 dark:text-green-300 font-medium">
+                                  <CheckCircle className="h-5 w-5" />
+                                  <span>Quote Accepted</span>
+                                </div>
+                                <Button 
+                                  onClick={() => {
+                                    setSelectedQuote(request);
+                                    setChatOpen(true);
+                                  }}
+                                  className="w-full"
+                                >
+                                  <MessageSquare className="h-4 w-4 mr-2" />
+                                  Chat with Provider
+                                </Button>
+                              </div>
+                            )}
                           </div>
-                        ) : request.status === 'accepted' ? (
-                          <Button 
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedQuote(request);
-                              setChatOpen(true);
-                            }}
-                            className="w-full"
-                          >
-                            <MessageSquare className="h-4 w-4 mr-2" />
-                            Continue Discussion
-                          </Button>
                         ) : (
                           <div className="text-center p-4 bg-muted rounded-lg">
                             <p className="text-sm text-muted-foreground">
