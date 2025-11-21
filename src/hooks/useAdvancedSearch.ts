@@ -7,6 +7,7 @@ export interface SearchFilters {
   minBudget?: number;
   maxBudget?: number;
   location?: string;
+  locationCoords?: { lat: number; lng: number };
   radius?: number; // in miles
   datePosted?: 'today' | 'week' | 'month' | 'all';
   sortBy?: 'recent' | 'budget_high' | 'budget_low' | 'nearest';
@@ -69,9 +70,16 @@ export function useAdvancedSearch(filters: SearchFilters) {
       query = query.gte('created_at', dateThreshold.toISOString());
     }
 
-    // Location filter (simple text match for now)
+    // Location filter with radius-based search
     if (filters.location) {
-      query = query.ilike('location', `%${filters.location}%`);
+      if (filters.locationCoords && filters.radius && filters.radius > 0) {
+        // Use PostGIS for radius-based search (requires location_lat and location_lng)
+        // For now, filter by text and we'll do distance calculation client-side
+        query = query.not('location_lat', 'is', null).not('location_lng', 'is', null);
+      } else {
+        // Simple text-based location filter
+        query = query.ilike('location', `%${filters.location}%`);
+      }
     }
 
     // Sorting
@@ -90,12 +98,49 @@ export function useAdvancedSearch(filters: SearchFilters) {
 
     const { data, error } = await query;
 
-    if (!error) {
-      setJobs(data || []);
+    if (!error && data) {
+      let filteredJobs = data;
+
+      // Client-side radius filtering if coordinates provided
+      if (filters.locationCoords && filters.radius && filters.radius > 0) {
+        filteredJobs = data.filter((job: any) => {
+          if (!job.location_lat || !job.location_lng) return false;
+          
+          const distance = calculateDistance(
+            filters.locationCoords!.lat,
+            filters.locationCoords!.lng,
+            job.location_lat,
+            job.location_lng
+          );
+          
+          return distance <= filters.radius!;
+        });
+      }
+
+      setJobs(filteredJobs);
     }
 
     setLoading(false);
   };
 
   return { jobs, loading, refetch: searchJobs };
+}
+
+// Haversine formula to calculate distance between two coordinates
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3959; // Earth's radius in miles
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  
+  const a = 
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function toRad(degrees: number): number {
+  return degrees * (Math.PI / 180);
 }

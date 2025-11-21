@@ -871,10 +871,7 @@ export type Database = {
         Args: { user_email: string }
         Returns: undefined
       }
-      get_user_average_rating: {
-        Args: { user_id: string }
-        Returns: number
-      }
+      get_user_average_rating: { Args: { user_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
