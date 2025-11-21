@@ -144,43 +144,32 @@ export default function LandingPage() {
             backgroundSize: '48px 48px'
           }}></div>
           
-          {/* Decorative Elements - Left Side */}
+          {/* Angular Decorative Elements - Left Side */}
           <div className="absolute left-0 top-0 w-64 h-64 md:w-96 md:h-96 -translate-x-1/2 -translate-y-1/4 pointer-events-none">
             <svg viewBox="0 0 400 400" className="w-full h-full">
-              {/* Main Circle */}
-              <circle cx="200" cy="200" r="180" fill="hsl(var(--primary))" opacity="0.15" />
               {/* Diagonal Stripes Pattern */}
               <defs>
-                <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
-                  <line x1="0" y1="0" x2="0" y2="10" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.3" />
+                <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+                  <line x1="0" y1="0" x2="0" y2="8" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.25" />
                 </pattern>
               </defs>
-              <circle cx="200" cy="200" r="100" fill="url(#diagonalStripes)" opacity="0.4" />
+              <rect x="50" y="80" width="180" height="180" fill="url(#diagonalStripes)" opacity="0.6" transform="rotate(-15 140 170)" />
+              <rect x="120" y="150" width="100" height="100" fill="hsl(var(--primary))" opacity="0.08" transform="rotate(25 170 200)" />
             </svg>
           </div>
           
-          {/* Decorative Elements - Right Side */}
+          {/* Angular Decorative Elements - Right Side */}
           <div className="absolute right-0 top-0 w-72 h-72 md:w-[500px] md:h-[500px] translate-x-1/3 -translate-y-1/4 pointer-events-none hidden md:block">
             <svg viewBox="0 0 500 500" className="w-full h-full">
-              {/* Large Curved Shape */}
-              <circle cx="250" cy="250" r="220" fill="hsl(var(--accent))" opacity="0.12" />
-              {/* Smaller Accent Circle */}
-              <circle cx="350" cy="150" r="60" fill="hsl(var(--primary))" opacity="0.15" />
-              {/* Ring Element */}
-              <circle cx="320" cy="120" r="35" fill="none" stroke="hsl(142 76% 36%)" strokeWidth="4" opacity="0.4" />
+              <rect x="200" y="150" width="200" height="200" fill="hsl(var(--accent))" opacity="0.1" transform="rotate(20 300 250)" />
+              <rect x="280" y="100" width="120" height="120" fill="none" stroke="hsl(var(--primary))" strokeWidth="3" opacity="0.3" transform="rotate(-10 340 160)" />
+              <rect x="320" y="180" width="80" height="80" fill="hsl(142 76% 36%)" opacity="0.15" transform="rotate(35 360 220)" />
             </svg>
           </div>
           
-          {/* Dots Pattern - Right Bottom */}
-          <div className="absolute right-8 top-1/2 grid grid-cols-4 gap-2 pointer-events-none opacity-30 hidden lg:block">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="w-1.5 h-1.5 rounded-full bg-foreground"></div>
-            ))}
-          </div>
-          
-          {/* Small Accent Shapes */}
-          <div className="absolute left-1/4 bottom-12 w-3 h-3 rounded-full bg-primary opacity-40 animate-pulse hidden md:block"></div>
-          <div className="absolute right-1/3 top-20 w-2 h-2 rounded-full bg-accent opacity-50 animate-pulse hidden md:block"></div>
+          {/* Small Accent Squares */}
+          <div className="absolute left-1/4 bottom-12 w-4 h-4 bg-primary opacity-30 transform rotate-45 hidden md:block"></div>
+          <div className="absolute right-1/3 top-20 w-3 h-3 bg-accent opacity-40 transform rotate-12 hidden md:block"></div>
           
           <div className="container mx-auto max-w-7xl relative z-10">
             <div className="text-center mb-8 md:mb-12">
@@ -312,7 +301,11 @@ export default function LandingPage() {
         </section>
 
         {/* Popular Services */}
-        <section className="py-10 md:py-16 lg:py-20 px-4 bg-card border-y">
+        <section className="py-10 md:py-16 lg:py-20 px-4 bg-card border-y relative overflow-hidden">
+          {/* Decorative Elements */}
+          <div className="absolute top-10 left-10 w-16 h-16 border-2 border-primary/20 transform rotate-45 hidden lg:block"></div>
+          <div className="absolute bottom-20 right-20 w-12 h-12 bg-accent/10 transform rotate-12 hidden lg:block"></div>
+          
           <div className="container mx-auto max-w-7xl">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-foreground">Popular services near you</h2>
             
@@ -364,7 +357,19 @@ export default function LandingPage() {
         </section>
 
         {/* Services You Might Like */}
-        <section className="py-10 md:py-16 lg:py-20 px-4 gradient-subtle">
+        <section className="py-10 md:py-16 lg:py-20 px-4 gradient-subtle relative overflow-hidden">
+          {/* Decorative Stripe Pattern */}
+          <div className="absolute left-0 top-1/2 w-24 h-32 opacity-20 hidden md:block">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <defs>
+                <pattern id="stripePattern" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+                  <line x1="0" y1="0" x2="0" y2="6" stroke="hsl(var(--primary))" strokeWidth="1" />
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#stripePattern)" />
+            </svg>
+          </div>
+          
           <div className="container mx-auto max-w-7xl">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-8">Services you might also like</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
@@ -381,7 +386,12 @@ export default function LandingPage() {
         </section>
 
         {/* Cost Estimates Section */}
-        <section className="py-8 md:py-12 lg:py-16 px-4 bg-muted/30">
+        <section className="py-8 md:py-12 lg:py-16 px-4 bg-muted/30 relative overflow-hidden">
+          {/* Decorative Squares */}
+          <div className="absolute top-16 right-16 w-20 h-20 bg-accent/10 transform rotate-45 hidden xl:block"></div>
+          <div className="absolute bottom-10 left-10 w-16 h-16 border-2 border-primary/15 transform -rotate-12 hidden lg:block"></div>
+          <div className="absolute top-1/2 left-1/4 w-3 h-3 bg-primary/30 transform rotate-45 hidden md:block"></div>
+          
           <div className="container mx-auto max-w-7xl">
             <div className="mb-6 md:mb-8">
               <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2 md:mb-3">Get free cost estimates</h2>
@@ -428,7 +438,16 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works */}
-        <section className="py-16 md:py-20 px-4">
+        <section className="py-16 md:py-20 px-4 relative overflow-hidden">
+          {/* Angular Decorative Elements */}
+          <div className="absolute right-10 top-10 w-24 h-24 opacity-15 hidden lg:block">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <rect x="10" y="10" width="80" height="80" fill="none" stroke="hsl(var(--accent))" strokeWidth="2" transform="rotate(15 50 50)" />
+              <rect x="30" y="30" width="40" height="40" fill="hsl(var(--primary))" opacity="0.3" transform="rotate(-15 50 50)" />
+            </svg>
+          </div>
+          <div className="absolute left-16 bottom-16 w-14 h-14 bg-primary/10 transform -rotate-45 hidden md:block"></div>
+          
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('landing.howItWorks.title')}</h2>
@@ -463,7 +482,20 @@ export default function LandingPage() {
         </section>
 
         {/* Real User Testimonials */}
-        <section className="py-16 md:py-20 px-4 gradient-subtle">
+        <section className="py-16 md:py-20 px-4 gradient-subtle relative overflow-hidden">
+          {/* Decorative Diagonal Lines */}
+          <div className="absolute top-0 left-1/4 w-32 h-40 opacity-15 hidden xl:block">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <defs>
+                <pattern id="diagonalLines" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(60)">
+                  <line x1="0" y1="0" x2="0" y2="10" stroke="hsl(var(--primary))" strokeWidth="1.5" />
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#diagonalLines)" />
+            </svg>
+          </div>
+          <div className="absolute bottom-10 right-1/3 w-5 h-5 bg-accent/30 transform rotate-45 hidden lg:block"></div>
+          
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">These reviews say it better</h2>
@@ -501,6 +533,10 @@ export default function LandingPage() {
 
         {/* Stats Bar */}
         <section className="py-12 px-4 gradient-primary text-primary-foreground relative overflow-hidden">
+          {/* Small Accent Elements */}
+          <div className="absolute left-20 top-1/2 w-4 h-4 border-2 border-white/25 transform rotate-45 hidden xl:block"></div>
+          <div className="absolute right-32 top-1/2 w-3 h-3 bg-white/25 transform -rotate-12 hidden xl:block"></div>
+          
           <div className="absolute inset-0 opacity-10" style={{
             backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
             backgroundSize: '32px 32px'
@@ -525,6 +561,20 @@ export default function LandingPage() {
             backgroundImage: `radial-gradient(circle at 2px 2px, hsl(263 85% 58%) 1px, transparent 0)`,
             backgroundSize: '48px 48px'
           }}></div>
+          
+          {/* Large Decorative Elements */}
+          <div className="absolute left-0 bottom-0 w-48 h-48 opacity-20 -translate-x-1/4 translate-y-1/4 hidden lg:block">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <rect x="20" y="20" width="160" height="160" fill="hsl(var(--primary))" opacity="0.2" transform="rotate(25 100 100)" />
+              <rect x="60" y="60" width="80" height="80" fill="none" stroke="hsl(var(--accent))" strokeWidth="3" opacity="0.4" transform="rotate(-20 100 100)" />
+            </svg>
+          </div>
+          <div className="absolute right-0 top-0 w-40 h-40 opacity-20 translate-x-1/4 -translate-y-1/4 hidden lg:block">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <rect x="40" y="40" width="120" height="120" fill="hsl(var(--accent))" opacity="0.25" transform="rotate(-15 100 100)" />
+              <rect x="70" y="70" width="60" height="60" fill="hsl(var(--primary))" opacity="0.15" transform="rotate(30 100 100)" />
+            </svg>
+          </div>
           
           <div className="container mx-auto max-w-5xl text-center relative z-10">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Consider it done.</h2>
