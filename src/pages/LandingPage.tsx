@@ -157,7 +157,7 @@ export default function LandingPage() {
                 </CardHeader>
                 <CardContent>
                   <Button asChild className="w-full gradient-primary">
-                    <Link to="/request-service">Post a Job</Link>
+                    <Link to="/jobs/new">Post a Job</Link>
                   </Button>
                 </CardContent>
               </Card>
