@@ -146,8 +146,8 @@ export default function LandingPage() {
           
           <div className="container mx-auto max-w-7xl relative z-10">
             <div className="text-center mb-8 md:mb-12">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-tight px-2">
-                Find trusted local pros for <span className="text-gradient">any project</span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 md:mb-4 leading-tight px-2">
+                Trusted help, <span className="text-gradient">when and how you need it</span>
               </h1>
               <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4 leading-relaxed">
                 Service HUB makes it easy to find trusted local pros, schedule services, and get your projects done fast.
