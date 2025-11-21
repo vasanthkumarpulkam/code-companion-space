@@ -22,6 +22,8 @@ export type Database = {
           job_id: string
           proposal: string
           provider_id: string
+          responded_at: string | null
+          response_notes: string | null
           status: string
           updated_at: string
         }
@@ -32,6 +34,8 @@ export type Database = {
           job_id: string
           proposal: string
           provider_id: string
+          responded_at?: string | null
+          response_notes?: string | null
           status?: string
           updated_at?: string
         }
@@ -42,6 +46,8 @@ export type Database = {
           job_id?: string
           proposal?: string
           provider_id?: string
+          responded_at?: string | null
+          response_notes?: string | null
           status?: string
           updated_at?: string
         }
@@ -101,6 +107,8 @@ export type Database = {
           awarded_provider_id: string | null
           budget: number
           category_id: string
+          completed_at: string | null
+          completion_notes: string | null
           created_at: string | null
           customer_id: string
           description: string
@@ -118,6 +126,8 @@ export type Database = {
           awarded_provider_id?: string | null
           budget: number
           category_id: string
+          completed_at?: string | null
+          completion_notes?: string | null
           created_at?: string | null
           customer_id: string
           description: string
@@ -135,6 +145,8 @@ export type Database = {
           awarded_provider_id?: string | null
           budget?: number
           category_id?: string
+          completed_at?: string | null
+          completion_notes?: string | null
           created_at?: string | null
           customer_id?: string
           description?: string
@@ -407,6 +419,36 @@ export type Database = {
           location?: string | null
           phone?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      provider_badges: {
+        Row: {
+          badge_type: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          issued_at: string | null
+          provider_id: string
+          verified_by: string | null
+        }
+        Insert: {
+          badge_type: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          issued_at?: string | null
+          provider_id: string
+          verified_by?: string | null
+        }
+        Update: {
+          badge_type?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          issued_at?: string | null
+          provider_id?: string
+          verified_by?: string | null
         }
         Relationships: []
       }

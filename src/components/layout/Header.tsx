@@ -82,6 +82,11 @@ export const Header = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard" className="cursor-pointer">{t('nav.dashboard')}</Link>
                   </DropdownMenuItem>
+                  {userRole === 'provider' && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/provider-dashboard" className="cursor-pointer">Provider Dashboard</Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem asChild>
                     <Link to={`/profile/${user.id}`} className="cursor-pointer">{t('nav.profile')}</Link>
                   </DropdownMenuItem>

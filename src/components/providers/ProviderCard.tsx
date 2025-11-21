@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import ProviderBadges from '@/components/providers/ProviderBadges';
 
 interface ProviderCardProps {
   provider: any;
@@ -79,7 +80,7 @@ export default function ProviderCard({ provider }: ProviderCardProps) {
               <p className="text-sm text-muted-foreground line-clamp-1">
                 {settings?.bio_headline || 'Professional Service Provider'}
               </p>
-              <div className="flex items-center gap-3 mt-2">
+              <div className="flex items-center gap-3 mt-2 flex-wrap">
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <span className="text-sm font-medium">
@@ -94,6 +95,9 @@ export default function ProviderCard({ provider }: ProviderCardProps) {
                     Available Now
                   </Badge>
                 )}
+              </div>
+              <div className="mt-2">
+                <ProviderBadges providerId={provider.id} inline />
               </div>
             </div>
           </div>
