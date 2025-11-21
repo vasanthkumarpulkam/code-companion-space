@@ -145,21 +145,22 @@ export default function LandingPage() {
             </div>
 
             {/* Three Customer Options - USP Cards */}
-            <div className={`grid grid-cols-1 ${userRole === 'provider' ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3'} gap-4 md:gap-6 max-w-6xl mx-auto mb-8 md:mb-12 px-4`}>
+            <div className={`grid grid-cols-1 ${userRole === 'provider' ? 'sm:grid-cols-2' : 'sm:grid-cols-3'} gap-3 md:gap-4 max-w-4xl mx-auto mb-8 md:mb-10 px-4`}>
               {/* Option 1: Post & Get Quotes - Hidden for providers */}
               {userRole !== 'provider' && (
-                <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
-                  <CardHeader className="pb-3 md:pb-6">
-                    <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform">
-                      <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+                <Card className="border hover:border-primary/50 hover:shadow-lg transition-all duration-300 group bg-card/50 backdrop-blur-sm overflow-hidden relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <CardHeader className="pb-2 relative z-10">
+                    <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-md">
+                      <MessageCircle className="h-5 w-5 text-white" />
                     </div>
-                    <CardTitle className="text-lg md:text-xl">Post Job, Get Quotes</CardTitle>
-                    <CardDescription className="text-sm md:text-base">
-                      Post once, receive multiple competitive quotes from nearby providers. No need to contact each one.
+                    <CardTitle className="text-base font-semibold">Post Job, Get Quotes</CardTitle>
+                    <CardDescription className="text-xs leading-relaxed">
+                      Receive multiple competitive quotes from nearby providers.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="pt-0">
-                    <Button asChild className="w-full gradient-primary h-11 md:h-12 text-sm md:text-base">
+                  <CardContent className="pt-3 relative z-10">
+                    <Button asChild className="w-full gradient-primary h-9 text-sm font-medium shadow-sm">
                       <Link to="/jobs/new">Post a Job</Link>
                     </Button>
                   </CardContent>
@@ -167,37 +168,39 @@ export default function LandingPage() {
               )}
 
               {/* Option 2: Browse Top Providers */}
-              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
-                <CardHeader className="pb-3 md:pb-6">
-                  <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform">
-                    <Award className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+              <Card className="border hover:border-primary/50 hover:shadow-lg transition-all duration-300 group bg-card/50 backdrop-blur-sm overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <CardHeader className="pb-2 relative z-10">
+                  <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-md">
+                    <Award className="h-5 w-5 text-white" />
                   </div>
-                  <CardTitle className="text-lg md:text-xl">Browse Top Pros</CardTitle>
-                  <CardDescription className="text-sm md:text-base">
-                    Instantly contact and hire highly-rated professionals from our curated directory.
+                  <CardTitle className="text-base font-semibold">Browse Top Pros</CardTitle>
+                  <CardDescription className="text-xs leading-relaxed">
+                    Hire highly-rated professionals from our curated directory.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <Button asChild variant="outline" className="w-full border-2 h-11 md:h-12 text-sm md:text-base">
-                    <Link to="/top-providers">View Top Providers</Link>
+                <CardContent className="pt-3 relative z-10">
+                  <Button asChild variant="outline" className="w-full border h-9 text-sm font-medium hover:bg-accent/10">
+                    <Link to="/top-providers">View Providers</Link>
                   </Button>
                 </CardContent>
               </Card>
 
               {/* Option 3: Negotiate Pricing */}
-              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
-                <CardHeader className="pb-3 md:pb-6">
-                  <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform">
-                    <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+              <Card className="border hover:border-primary/50 hover:shadow-lg transition-all duration-300 group bg-card/50 backdrop-blur-sm overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <CardHeader className="pb-2 relative z-10">
+                  <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-secondary to-secondary/80 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform shadow-md">
+                    <TrendingUp className="h-5 w-5 text-white" />
                   </div>
-                  <CardTitle className="text-lg md:text-xl">Flexible Pricing</CardTitle>
-                  <CardDescription className="text-sm md:text-base">
-                    Providers set their own competitive rates. Negotiate and choose the best offer for your budget.
+                  <CardTitle className="text-base font-semibold">Flexible Pricing</CardTitle>
+                  <CardDescription className="text-xs leading-relaxed">
+                    Negotiate rates and choose the best offer for your budget.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <Button asChild variant="secondary" className="w-full h-11 md:h-12 text-sm md:text-base">
-                    <Link to="/providers">Search All Providers</Link>
+                <CardContent className="pt-3 relative z-10">
+                  <Button asChild variant="secondary" className="w-full h-9 text-sm font-medium shadow-sm">
+                    <Link to="/providers">Search Providers</Link>
                   </Button>
                 </CardContent>
               </Card>
