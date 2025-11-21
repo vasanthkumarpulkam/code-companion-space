@@ -12,7 +12,8 @@ import ProviderCard from "@/components/providers/ProviderCard";
 
 export default function Providers() {
   const [searchParams] = useSearchParams();
-  const skillParam = searchParams.get('skill');
+  const serviceParam = searchParams.get('service'); // From wizard redirect
+  const skillParam = searchParams.get('skill'); // From other links
   
   const [providers, setProviders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,10 +22,25 @@ export default function Providers() {
   const [availableOnly, setAvailableOnly] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
 
+  // Set category from service parameter on mount
+  useEffect(() => {
+    if (serviceParam && categories.length > 0) {
+      const category = categories.find(c => c.slug === serviceParam);
+      if (category) {
+        setSelectedCategory(category.id);
+      }
+    }
+  }, [serviceParam, categories]);
+
   useEffect(() => {
     fetchCategories();
-    fetchProviders();
-  }, [selectedCategory, availableOnly, skillParam]);
+  }, []);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      fetchProviders();
+    }
+  }, [selectedCategory, availableOnly, skillParam, serviceParam, categories]);
 
   const fetchCategories = async () => {
     const { data } = await supabase
@@ -73,9 +89,22 @@ export default function Providers() {
     if (data) {
       let filteredData = data;
       
+      // Filter by category if selected
+      if (selectedCategory && selectedCategory !== 'all') {
+        const category = categories.find(c => c.id === selectedCategory);
+        if (category) {
+          filteredData = filteredData.filter(provider => 
+            provider.provider_skills?.some((skill: any) => 
+              skill.skill_name.toLowerCase().includes(category.name.toLowerCase()) ||
+              category.name.toLowerCase().includes(skill.skill_name.toLowerCase())
+            )
+          );
+        }
+      }
+      
       // Filter by skill if skill parameter is provided
       if (skillParam) {
-        filteredData = data.filter(provider => 
+        filteredData = filteredData.filter(provider => 
           provider.provider_skills?.some((skill: any) => 
             skill.skill_name.toLowerCase().includes(skillParam.toLowerCase())
           )
@@ -122,11 +151,13 @@ export default function Providers() {
         <section className="py-12 px-4 bg-gradient-to-b from-primary/5 to-background">
           <div className="container mx-auto max-w-6xl">
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">
-              {skillParam ? `Find ${skillParam} Professionals` : 'Find Trusted Professionals'}
+              {(serviceParam || skillParam) 
+                ? `Find ${categories.find(c => c.slug === serviceParam)?.name || skillParam} Professionals` 
+                : 'Find Trusted Professionals'}
             </h1>
             <p className="text-xl text-muted-foreground text-center mb-8">
-              {skillParam 
-                ? `Browse skilled ${skillParam.toLowerCase()} providers ready to help with your next project`
+              {(serviceParam || skillParam)
+                ? `Browse skilled ${(categories.find(c => c.slug === serviceParam)?.name || skillParam).toLowerCase()} providers ready to help with your next project`
                 : 'Browse skilled providers ready to help with your next project'
               }
             </p>
