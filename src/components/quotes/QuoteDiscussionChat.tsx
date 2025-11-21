@@ -98,29 +98,37 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
   const sendMessage = async () => {
     if (!newMessage.trim() || !quoteRequest) return;
 
+    console.log('Sending message:', {
+      sender_id: user?.id,
+      recipient_id: otherUserId,
+      quote_request_id: quoteRequest.id,
+      isCustomer
+    });
+
     setSendingMessage(true);
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert({
           sender_id: user?.id,
           recipient_id: otherUserId,
           quote_request_id: quoteRequest.id,
           content: newMessage
-        });
+        })
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Message send error:', error);
+        throw error;
+      }
 
+      console.log('Message sent successfully:', data);
       setNewMessage('');
-      setMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        sender_id: user?.id,
-        recipient_id: otherUserId,
-        quote_request_id: quoteRequest.id,
-        content: newMessage,
-        created_at: new Date().toISOString()
-      }]);
+      
+      // Refresh messages instead of optimistically adding
+      fetchMessages();
     } catch (error: any) {
+      console.error('Failed to send message:', error);
       toast({ 
         title: 'Error sending message', 
         description: error.message, 
