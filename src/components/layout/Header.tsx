@@ -103,6 +103,9 @@ export const Header = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/chats" className="cursor-pointer">{t('nav.messages')}</Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-quotes" className="cursor-pointer">My Quotes</Link>
+                  </DropdownMenuItem>
                   {userRole === 'admin' && (
                     <>
                       <DropdownMenuSeparator />

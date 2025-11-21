@@ -7,9 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
-import { Briefcase, DollarSign, Star, Plus, Search, MessageCircle, User, MapPin, Calendar, Edit } from 'lucide-react';
+import { Briefcase, DollarSign, Star, Plus, Search, MessageCircle, User, MapPin, Calendar, Edit, Mail } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { QuoteRequestCard } from '@/components/providers/QuoteRequestCard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Dashboard() {
   const { user, userRole } = useAuth();
@@ -25,13 +28,19 @@ export default function Dashboard() {
     totalUsers: 0,
     totalJobsAdmin: 0,
     platformFees: 0,
-    reports: 0
+    reports: 0,
+    pendingQuotes: 0
   });
+  const [quoteRequests, setQuoteRequests] = useState<any[]>([]);
+  const [loadingQuotes, setLoadingQuotes] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchProfile();
       fetchStats();
+      if (userRole === 'provider') {
+        fetchQuoteRequests();
+      }
     }
   }, [user, userRole]);
 
@@ -66,10 +75,11 @@ export default function Dashboard() {
       }));
     } else if (userRole === 'provider') {
       // Fetch provider stats
-      const [bidsData, paymentsData, reviewsData] = await Promise.all([
+      const [bidsData, paymentsData, reviewsData, quotesData] = await Promise.all([
         supabase.from('bids').select('id', { count: 'exact', head: true }).eq('provider_id', user?.id).eq('status', 'pending'),
         supabase.from('payments').select('provider_fee').eq('provider_id', user?.id).eq('status', 'completed'),
-        supabase.from('reviews').select('rating').eq('reviewed_id', user?.id)
+        supabase.from('reviews').select('rating').eq('reviewed_id', user?.id),
+        supabase.from('quote_requests').select('id', { count: 'exact', head: true }).eq('provider_id', user?.id).eq('status', 'pending')
       ]);
 
       const totalEarned = paymentsData.data?.reduce((sum, p) => sum + Number(p.provider_fee), 0) || 0;
@@ -81,7 +91,8 @@ export default function Dashboard() {
         ...prev,
         activeBids: bidsData.count || 0,
         totalEarned,
-        rating: avgRating
+        rating: avgRating,
+        pendingQuotes: quotesData.count || 0
       }));
     } else if (userRole === 'admin') {
       // Fetch admin stats
@@ -104,6 +115,28 @@ export default function Dashboard() {
         platformFees,
         reports: reportsData.count || 0
       }));
+    }
+  };
+
+  const fetchQuoteRequests = async () => {
+    setLoadingQuotes(true);
+    try {
+      const { data, error } = await supabase
+        .from('quote_requests')
+        .select(`
+          *,
+          profiles:customer_id (full_name, email, location),
+          categories (name)
+        `)
+        .eq('provider_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setQuoteRequests(data || []);
+    } catch (error) {
+      console.error('Error fetching quote requests:', error);
+    } finally {
+      setLoadingQuotes(false);
     }
   };
 
@@ -319,11 +352,60 @@ export default function Dashboard() {
                 </Card>
               </div>
 
-              <Tabs defaultValue="recommended" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+              <Tabs defaultValue="quotes" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="quotes" className="relative">
+                    Quote Requests
+                    {stats.pendingQuotes > 0 && (
+                      <Badge className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-red-600 text-xs">
+                        {stats.pendingQuotes}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
                   <TabsTrigger value="recommended">{t('dashboard.tabs.recommended')}</TabsTrigger>
                   <TabsTrigger value="mybids">{t('dashboard.tabs.mybids')}</TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="quotes" className="mt-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Mail className="h-5 w-5" />
+                        Direct Quote Requests
+                      </CardTitle>
+                      <CardDescription>
+                        Customers who contacted you directly for quotes
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {loadingQuotes ? (
+                        <div className="space-y-4">
+                          {[1, 2, 3].map((i) => (
+                            <Skeleton key={i} className="h-48 w-full" />
+                          ))}
+                        </div>
+                      ) : quoteRequests.length === 0 ? (
+                        <div className="text-center py-12 text-muted-foreground">
+                          <Mail className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                          <p className="mb-4">No quote requests yet</p>
+                          <p className="text-sm">
+                            Customers can request quotes from your profile page
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {quoteRequests.map((request) => (
+                            <QuoteRequestCard
+                              key={request.id}
+                              request={request}
+                              onResponded={fetchQuoteRequests}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
                 
                 <TabsContent value="recommended" className="mt-6">
                   <Card>

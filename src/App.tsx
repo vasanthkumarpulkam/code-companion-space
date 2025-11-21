@@ -31,6 +31,7 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import RequestService from "./pages/RequestService";
 import ServiceRequestWizard from "./pages/ServiceRequestWizard";
+import MyQuotes from "./pages/MyQuotes";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Chats />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/my-quotes" 
+              element={
+                <ProtectedRoute>
+                  <MyQuotes />
                 </ProtectedRoute>
               } 
             />
