@@ -7,7 +7,7 @@ interface JobMapViewProps {
   center?: { lat: number; lng: number };
 }
 
-export function JobMapView({ jobs, center = { lat: 31.9686, lng: -99.9018 } }: JobMapViewProps) {
+export function JobMapView({ jobs, center }: JobMapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]);
@@ -19,12 +19,21 @@ export function JobMapView({ jobs, center = { lat: 31.9686, lng: -99.9018 } }: J
 
     const google = (window as any).google;
     
+    const mapCenter = center || { lat: 31.9686, lng: -99.9018 }; // Default to Texas center
+    
     const newMap = new google.maps.Map(mapRef.current, {
-      center,
-      zoom: 7,
+      center: mapCenter,
+      zoom: center ? 10 : 7, // Zoom in more if user provided location
       mapTypeControl: false,
       fullscreenControl: false,
       streetViewControl: false,
+      styles: [
+        {
+          featureType: 'poi',
+          elementType: 'labels',
+          stylers: [{ visibility: 'off' }]
+        }
+      ]
     });
 
     const newInfoWindow = new google.maps.InfoWindow();
@@ -52,25 +61,26 @@ export function JobMapView({ jobs, center = { lat: 31.9686, lng: -99.9018 } }: J
           title: job.title,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: '#2563eb',
-            fillOpacity: 0.8,
+            scale: 12,
+            fillColor: 'hsl(var(--primary))',
+            fillOpacity: 0.9,
             strokeColor: '#ffffff',
-            strokeWeight: 2,
+            strokeWeight: 3,
           },
+          animation: google.maps.Animation.DROP,
         });
 
         marker.addListener('click', () => {
           infoWindow.setContent(`
-            <div style="padding: 8px; max-width: 250px;">
-              <h3 style="font-weight: 600; margin: 0 0 8px 0; font-size: 16px;">${job.title}</h3>
-              <p style="margin: 4px 0; color: #6b7280; font-size: 14px;">${job.category?.name || 'Uncategorized'}</p>
-              <p style="margin: 8px 0; font-size: 14px;">${job.description.substring(0, 100)}...</p>
-              <div style="display: flex; align-items: center; gap: 8px; margin: 8px 0;">
-                <span style="font-weight: 600; color: #16a34a; font-size: 18px;">$${job.budget}</span>
-                <span style="color: #6b7280; font-size: 12px;">${job.location}</span>
+            <div style="padding: 12px; max-width: 280px; font-family: system-ui, -apple-system, sans-serif;">
+              <h3 style="font-weight: 600; margin: 0 0 8px 0; font-size: 16px; color: #111827;">${job.title}</h3>
+              <p style="margin: 4px 0; color: #9333ea; font-size: 13px; font-weight: 500;">${job.category?.name || 'Uncategorized'}</p>
+              <p style="margin: 8px 0; font-size: 14px; color: #4b5563; line-height: 1.4;">${job.description.substring(0, 100)}...</p>
+              <div style="display: flex; align-items: center; gap: 8px; margin: 12px 0; padding: 8px; background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(249, 115, 22, 0.1)); border-radius: 6px;">
+                <span style="font-weight: 700; background: linear-gradient(135deg, #9333ea, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 20px;">$${job.budget}</span>
+                <span style="color: #6b7280; font-size: 12px;">📍 ${job.location}</span>
               </div>
-              <a href="/jobs/${job.id}" style="display: inline-block; margin-top: 8px; padding: 6px 12px; background: #2563eb; color: white; text-decoration: none; border-radius: 6px; font-size: 14px;">View Details</a>
+              <a href="/jobs/${job.id}" style="display: inline-block; width: 100%; text-align: center; margin-top: 8px; padding: 8px 16px; background: linear-gradient(135deg, #9333ea, #7c3aed); color: white; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; transition: all 0.2s;">View Details →</a>
             </div>
           `);
           infoWindow.open(map, marker);
