@@ -10,12 +10,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const categories = [
-  { name: "category.cleaning", icon: Sparkles, path: "/services/cleaning" },
-  { name: "category.moving", icon: Truck, path: "/services/moving" },
-  { name: "category.landscaping", icon: TreePine, path: "/services/landscaping" },
-  { name: "category.handyman", icon: Hammer, path: "/services/handyman" },
-  { name: "category.events", icon: PartyPopper, path: "/services/events" },
-  { name: "category.other", icon: MoreHorizontal, path: "/services/other" },
+  { name: "category.cleaning", icon: Sparkles, path: "/request-service/cleaning" },
+  { name: "category.moving", icon: Truck, path: "/request-service/moving" },
+  { name: "category.landscaping", icon: TreePine, path: "/request-service/landscaping" },
+  { name: "category.handyman", icon: Hammer, path: "/request-service/handyman" },
+  { name: "category.events", icon: PartyPopper, path: "/request-service/events" },
+  { name: "category.other", icon: MoreHorizontal, path: "/request-service/other" },
 ];
 
 export default function LandingPage() {
@@ -198,7 +198,7 @@ export default function LandingPage() {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" asChild className="gradient-primary border-0 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
-                  <Link to="/jobs/new">{t('landing.hero.postJob')}</Link>
+                  <Link to="/request-service">{t('landing.hero.postJob')}</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild className="shadow-md border-2 hover:border-primary/50 hover:bg-primary/5 transition-all">
                   <Link to="/providers">Find Providers</Link>
@@ -226,16 +226,16 @@ export default function LandingPage() {
             {/* Category Tabs */}
             <div className="flex gap-3 mb-8 overflow-x-auto pb-2 hide-scrollbar">
               {[
-                { name: 'Cleaning', icon: Sparkles, skill: 'Cleaning' },
-                { name: 'Handyman', icon: Hammer, skill: 'Handyman' },
-                { name: 'Moving', icon: Truck, skill: 'Moving' },
-                { name: 'Landscaping', icon: TreePine, skill: 'Landscaping' },
-                { name: 'Events', icon: PartyPopper, skill: 'Events' },
-                { name: 'Other', icon: MoreHorizontal, skill: 'Other' },
+                { name: 'Cleaning', icon: Sparkles, slug: 'cleaning' },
+                { name: 'Handyman', icon: Hammer, slug: 'handyman' },
+                { name: 'Moving', icon: Truck, slug: 'moving' },
+                { name: 'Landscaping', icon: TreePine, slug: 'landscaping' },
+                { name: 'Events', icon: PartyPopper, slug: 'events' },
+                { name: 'Other', icon: MoreHorizontal, slug: 'other' },
               ].map((category, index) => (
                 <Link
                   key={category.name}
-                  to={`/providers?skill=${encodeURIComponent(category.skill)}`}
+                  to={`/request-service/${category.slug}`}
                   className={`flex flex-col items-center gap-2 p-4 min-w-[110px] rounded-xl transition-all ${
                     index === 0 
                       ? 'bg-card shadow-lg border-2 border-primary' 
@@ -251,16 +251,16 @@ export default function LandingPage() {
             {/* Service Pills */}
             <div className="flex flex-wrap gap-3">
               {[
-                'General Furniture Assembly',
-                'IKEA Assembly',
-                'Crib Assembly',
-                'PAX Assembly',
-                'Bookshelf Assembly',
-                'Desk Assembly',
+                'Furniture Assembly',
+                'TV Mounting',
+                'Shelf Installation',
+                'Deep Cleaning',
+                'Move In/Move Out Cleaning',
+                'Lawn Mowing',
               ].map((service) => (
                 <Link
                   key={service}
-                  to={`/providers?skill=Handyman`}
+                  to={`/request-service/${service.toLowerCase().includes('clean') ? 'cleaning' : service.toLowerCase().includes('lawn') ? 'landscaping' : 'handyman'}/${encodeURIComponent(service)}`}
                   className="px-6 py-2.5 rounded-full border-2 border-border hover:border-primary hover:bg-primary/5 hover:shadow-md transition-all text-sm font-medium whitespace-nowrap"
                 >
                   {service}
@@ -299,28 +299,24 @@ export default function LandingPage() {
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { service: 'Furniture Assembly', price: 'Projects starting at $49', skill: 'Handyman', gradient: 'from-orange-100 to-orange-200' },
-                { service: 'Mount Art or Shelves', price: 'Projects starting at $65', skill: 'Handyman', gradient: 'from-blue-100 to-blue-200' },
-                { service: 'Home & Apartment Cleaning', price: 'Projects starting at $49', skill: 'Cleaning', gradient: 'from-green-100 to-green-200' },
-                { service: 'Minor Plumbing Repairs', price: 'Projects starting at $74', skill: 'Handyman', gradient: 'from-purple-100 to-purple-200' },
-                { service: 'Electrical Help', price: 'Projects starting at $69', skill: 'Handyman', gradient: 'from-yellow-100 to-yellow-200' },
-                { service: 'Local Moving', price: 'Projects starting at $80', skill: 'Moving', gradient: 'from-red-100 to-red-200' },
-                { service: 'Landscaping', price: 'Projects starting at $200', skill: 'Landscaping', gradient: 'from-emerald-100 to-emerald-200' },
-                { service: 'Event Setup', price: 'Projects starting at $150', skill: 'Events', gradient: 'from-pink-100 to-pink-200' },
+                { service: 'Furniture Assembly', price: 'Projects starting at $49', category: 'handyman', gradient: 'from-orange-100 to-orange-200', icon: Hammer },
+                { service: 'Shelf Installation', price: 'Projects starting at $65', category: 'handyman', gradient: 'from-blue-100 to-blue-200', icon: Hammer },
+                { service: 'Deep Cleaning', price: 'Projects starting at $49', category: 'cleaning', gradient: 'from-green-100 to-green-200', icon: Sparkles },
+                { service: 'Minor Repairs', price: 'Projects starting at $74', category: 'handyman', gradient: 'from-purple-100 to-purple-200', icon: Hammer },
+                { service: 'TV Mounting', price: 'Projects starting at $69', category: 'handyman', gradient: 'from-yellow-100 to-yellow-200', icon: Hammer },
+                { service: 'Help Moving', price: 'Projects starting at $80', category: 'moving', gradient: 'from-red-100 to-red-200', icon: Truck },
+                { service: 'Lawn Mowing', price: 'Projects starting at $200', category: 'landscaping', gradient: 'from-emerald-100 to-emerald-200', icon: TreePine },
+                { service: 'Event Setup', price: 'Projects starting at $150', category: 'events', gradient: 'from-pink-100 to-pink-200', icon: PartyPopper },
               ].map((item) => (
                 <Link
                   key={item.service}
-                  to={`/providers?skill=${encodeURIComponent(item.skill)}`}
+                  to={`/request-service/${item.category}/${encodeURIComponent(item.service)}`}
                   className="group relative overflow-hidden rounded-2xl border-2 border-border bg-card hover:shadow-xl hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-1 transition-all duration-300"
                 >
                   {/* Image Placeholder with Gradient */}
                   <div className={`h-48 bg-gradient-to-br ${item.gradient} flex items-center justify-center relative overflow-hidden`}>
                     <div className="absolute inset-0 opacity-20">
-                      {item.skill === 'Cleaning' && <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
-                      {item.skill === 'Handyman' && <Hammer className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
-                      {item.skill === 'Moving' && <Truck className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
-                      {item.skill === 'Landscaping' && <TreePine className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
-                      {item.skill === 'Events' && <PartyPopper className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />}
+                      <item.icon className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-24 w-24" />
                     </div>
                   </div>
                   
