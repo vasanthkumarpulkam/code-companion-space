@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Sparkles, Home, Truck, TreePine, Hammer, PartyPopper, MoreHorizontal, CheckCircle, MessageCircle, Star, Search, Shield, Clock, Users, TrendingUp, ArrowRight, Award, MapPin } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const categories = [
@@ -21,6 +22,7 @@ const categories = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { userRole } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [zipcode, setZipcode] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -143,24 +145,26 @@ export default function LandingPage() {
             </div>
 
             {/* Three Customer Options - USP Cards */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
-              {/* Option 1: Post & Get Quotes */}
-              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <MessageCircle className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-xl">Post Job, Get Quotes</CardTitle>
-                  <CardDescription className="text-base">
-                    Post once, receive multiple competitive quotes from nearby providers. No need to contact each one.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild className="w-full gradient-primary">
-                    <Link to="/jobs/new">Post a Job</Link>
-                  </Button>
-                </CardContent>
-              </Card>
+            <div className={`grid ${userRole === 'provider' ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-6 max-w-6xl mx-auto mb-12`}>
+              {/* Option 1: Post & Get Quotes - Hidden for providers */}
+              {userRole !== 'provider' && (
+                <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
+                  <CardHeader>
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <MessageCircle className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">Post Job, Get Quotes</CardTitle>
+                    <CardDescription className="text-base">
+                      Post once, receive multiple competitive quotes from nearby providers. No need to contact each one.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button asChild className="w-full gradient-primary">
+                      <Link to="/jobs/new">Post a Job</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Option 2: Browse Top Providers */}
               <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
