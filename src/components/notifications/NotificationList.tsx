@@ -14,13 +14,15 @@ export function NotificationList() {
     markAsRead(notification.id);
     
     // Navigate based on notification type
-    if (notification.type === 'quote_received' || notification.type === 'quote_accepted') {
+    if (notification.type === 'new_message') {
+      navigate('/chats');
+    } else if (notification.type === 'quote_received' || notification.type === 'quote_accepted') {
       navigate('/my-quotes');
     } else if (notification.data?.job_id) {
       navigate(`/jobs/${notification.data.job_id}`);
     } else if (notification.data?.jobId) {
       navigate(`/jobs/${notification.data.jobId}`);
-    } else if (notification.data?.messageId) {
+    } else if (notification.data?.messageId || notification.data?.message_id) {
       navigate('/chats');
     }
   };
