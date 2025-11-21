@@ -97,28 +97,28 @@ export default function EditProfile() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 py-8 px-4">
+      <main className="flex-1 py-4 sm:py-8 px-4">
         <div className="container max-w-4xl">
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Edit Profile</h1>
-          <p className="text-muted-foreground">Update your personal information</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Edit Profile</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Update your personal information</p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Profile Photo</CardTitle>
-            <CardDescription>Upload a profile picture</CardDescription>
+            <CardTitle className="text-lg sm:text-xl">Profile Photo</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Upload a profile picture</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-6">
-              <Avatar className="h-24 w-24">
-                <AvatarFallback className="text-2xl">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
+                <AvatarFallback className="text-xl sm:text-2xl">
                   {profile?.full_name?.[0] || 'U'}
                 </AvatarFallback>
               </Avatar>
-              <div className="space-y-2">
-                <Button variant="outline">
+              <div className="space-y-2 text-center sm:text-left w-full sm:w-auto">
+                <Button variant="outline" className="w-full sm:w-auto">
                   <Upload className="mr-2 h-4 w-4" />
                   Upload Photo
                 </Button>
@@ -133,9 +133,9 @@ export default function EditProfile() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Basic Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 sm:space-y-5">
               <div>
                 <Label htmlFor="full_name">Full Name</Label>
                 <Input
@@ -213,8 +213,8 @@ export default function EditProfile() {
             </CardContent>
           </Card>
 
-          <div className="flex gap-3">
-            <Button type="submit" disabled={loading}>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto h-11">
               <Save className="mr-2 h-4 w-4" />
               {loading ? 'Saving...' : 'Save Changes'}
             </Button>
@@ -222,6 +222,7 @@ export default function EditProfile() {
               type="button" 
               variant="outline" 
               onClick={() => navigate(-1)}
+              className="w-full sm:w-auto h-11"
             >
               Cancel
             </Button>

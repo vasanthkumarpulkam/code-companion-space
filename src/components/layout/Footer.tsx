@@ -6,25 +6,25 @@ export const Footer = () => {
   
   return (
     <footer className="w-full border-t bg-background">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand */}
-          <div className="space-y-3">
+          <div className="space-y-3 col-span-1 sm:col-span-2 md:col-span-1">
             <div className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">SH</span>
+              <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary">
+                <span className="text-base sm:text-lg font-bold text-primary-foreground">SH</span>
               </div>
-              <span className="text-lg font-bold">Service HUB</span>
+              <span className="text-base sm:text-lg font-bold">Service HUB</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               {t('footer.tagline')}
             </p>
           </div>
 
           {/* Company */}
           <div>
-            <h3 className="font-semibold mb-3">{t('footer.company')}</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="font-semibold mb-3 text-sm sm:text-base">{t('footer.company')}</h3>
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <Link to="/how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
                   {t('nav.howItWorks')}
@@ -45,8 +45,8 @@ export const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h3 className="font-semibold mb-3">{t('footer.legal')}</h3>
-            <ul className="space-y-2 text-sm">
+            <h3 className="font-semibold mb-3 text-sm sm:text-base">{t('footer.legal')}</h3>
+            <ul className="space-y-2 text-xs sm:text-sm">
               <li>
                 <Link to="/legal/terms" className="text-muted-foreground hover:text-foreground transition-colors">
                   {t('footer.termsOfService')}
@@ -62,9 +62,9 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold mb-3">{t('footer.contact')}</h3>
-            <ul className="space-y-2 text-sm">
-              <li className="text-muted-foreground">
+            <h3 className="font-semibold mb-3 text-sm sm:text-base">{t('footer.contact')}</h3>
+            <ul className="space-y-2 text-xs sm:text-sm">
+              <li className="text-muted-foreground break-words">
                 {t('footer.email')}: support@servicehub.com
               </li>
               <li className="text-muted-foreground">
@@ -74,7 +74,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
+        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t text-center text-xs sm:text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Service HUB. All rights reserved.</p>
         </div>
       </div>

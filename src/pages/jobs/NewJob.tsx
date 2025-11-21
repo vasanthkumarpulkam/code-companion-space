@@ -112,14 +112,14 @@ export default function NewJob() {
   const progress = (step / 4) * 100;
 
   return (
-    <div className="container max-w-3xl py-8">
+    <div className="container max-w-3xl py-4 sm:py-8 px-4">
       <Card>
-        <CardHeader>
-          <CardTitle>Post a New Job</CardTitle>
-          <CardDescription>Step {step} of 4</CardDescription>
-          <Progress value={progress} className="mt-2" />
+        <CardHeader className="space-y-3">
+          <CardTitle className="text-xl sm:text-2xl">Post a New Job</CardTitle>
+          <CardDescription className="text-sm sm:text-base">Step {step} of 4</CardDescription>
+          <Progress value={progress} className="mt-2 h-2" />
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {step === 1 && (
@@ -244,20 +244,20 @@ export default function NewJob() {
                 </div>
               )}
 
-              <div className="flex justify-between pt-4">
+              <div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 sm:pt-6">
                 {step > 1 && (
-                  <Button type="button" variant="outline" onClick={prevStep}>
+                  <Button type="button" variant="outline" onClick={prevStep} className="w-full sm:w-auto order-2 sm:order-1">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back
                   </Button>
                 )}
                 {step < 4 ? (
-                  <Button type="button" onClick={nextStep} className="ml-auto">
+                  <Button type="button" onClick={nextStep} className="w-full sm:w-auto sm:ml-auto order-1 sm:order-2">
                     Next
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ) : (
-                  <Button type="submit" disabled={loading} className="ml-auto">
+                  <Button type="submit" disabled={loading} className="w-full sm:w-auto sm:ml-auto order-1 sm:order-2">
                     <Check className="mr-2 h-4 w-4" />
                     {loading ? 'Posting...' : 'Publish Job'}
                   </Button>

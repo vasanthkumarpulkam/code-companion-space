@@ -35,23 +35,23 @@ export default function Jobs() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container py-8">
-        <div className="flex justify-between items-center mb-8">
+      <div className="container py-4 sm:py-8 px-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gradient">Browse Jobs</h1>
-            <p className="text-muted-foreground">Find your next opportunity in Texas</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gradient">Browse Jobs</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Find your next opportunity in Texas</p>
           </div>
-          <Link to="/jobs/new">
-            <Button className="gradient-primary shadow-glow">
+          <Link to="/jobs/new" className="w-full sm:w-auto">
+            <Button className="gradient-primary shadow-glow w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               Post a Job
             </Button>
           </Link>
         </div>
 
-        <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-          {/* Sidebar with Location & Filters */}
-          <div className="space-y-6">
+        <div className="grid lg:grid-cols-[280px_1fr] gap-4 sm:gap-6">
+          {/* Sidebar with Location & Filters - Collapsible on mobile */}
+          <div className="space-y-4 sm:space-y-6">
             <LocationSearch
               value={filters.location || ''}
               radius={filters.radius || 25}
@@ -62,25 +62,25 @@ export default function Jobs() {
           </div>
 
           {/* Main Content */}
-          <div className="space-y-6">
-            <Card className="p-4">
-              <div className="flex gap-4">
+          <div className="space-y-4 sm:space-y-6">
+            <Card className="p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search by title or description..."
+                    placeholder="Search jobs..."
                     value={filters.query || ''}
                     onChange={(e) => handleSearchChange(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-10 sm:h-11"
                   />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 justify-end">
                   <Button
                     variant={viewMode === 'list' ? 'default' : 'outline'}
                     size="icon"
                     onClick={() => setViewMode('list')}
                     title="List View"
-                    className={viewMode === 'list' ? 'gradient-primary' : ''}
+                    className={`h-10 w-10 sm:h-11 sm:w-11 ${viewMode === 'list' ? 'gradient-primary' : ''}`}
                   >
                     <List className="h-4 w-4" />
                   </Button>
@@ -89,7 +89,7 @@ export default function Jobs() {
                     size="icon"
                     onClick={() => setViewMode('map')}
                     title="Map View"
-                    className={viewMode === 'map' ? 'gradient-primary' : ''}
+                    className={`h-10 w-10 sm:h-11 sm:w-11 ${viewMode === 'map' ? 'gradient-primary' : ''}`}
                   >
                     <Map className="h-4 w-4" />
                   </Button>
@@ -137,10 +137,10 @@ export default function Jobs() {
         </div>
       </div>
 
-      <Link to="/jobs/new">
+      <Link to="/jobs/new" className="hidden sm:block">
         <Button
           size="lg"
-          className="fixed bottom-6 right-6 rounded-full shadow-lg"
+          className="fixed bottom-6 right-6 rounded-full shadow-lg z-50"
         >
           <Plus className="mr-2 h-5 w-5" />
           Post Job
