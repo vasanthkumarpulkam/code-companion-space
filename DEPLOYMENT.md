@@ -37,16 +37,23 @@
 - [ ] Performance optimization complete
 - [ ] Accessibility audit passed
 
-## Lovable Deployment
+## Production Deployment
 
-### Automatic Deployment
-Lovable automatically deploys your application when you make changes in the editor.
+### Deployment Options
 
-### Production URL
-Your app is available at: `https://[your-project-name].lovable.app`
+**Vercel** (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables
+3. Deploy with automatic CI/CD
+
+**Netlify**
+1. Connect repository to Netlify
+2. Set build command: `npm run build`
+3. Set publish directory: `dist`
+4. Configure environment variables
 
 ### Custom Domain Setup
-1. Go to Project Settings → Domains
+1. Go to your hosting provider's domain settings
 2. Add your custom domain
 3. Update DNS records as instructed
 4. Wait for SSL certificate provisioning
@@ -180,9 +187,9 @@ COPY (SELECT * FROM profiles) TO '/tmp/profiles_backup.csv' CSV HEADER;
 ## Rollback Procedure
 
 ### Rolling Back Application Code
-1. In Lovable, go to History tab
-2. Find the working version
-3. Click "Restore" to roll back
+1. Use Git to revert to previous commit
+2. Push reverted code to trigger redeployment
+3. Or use hosting platform's rollback feature
 
 ### Rolling Back Database Changes
 1. Use Supabase point-in-time recovery
@@ -257,7 +264,7 @@ ALTER TABLE old_table ADD COLUMN old_column TEXT;
 4. Check secret keys
 
 ### Getting Help
-- Lovable Support: https://lovable.dev/support
+- Vercel Support: https://vercel.com/support
 - Supabase Support: https://supabase.com/support
 - Stripe Support: https://support.stripe.com
 
