@@ -144,6 +144,44 @@ export default function LandingPage() {
             backgroundSize: '48px 48px'
           }}></div>
           
+          {/* Decorative Elements - Left Side */}
+          <div className="absolute left-0 top-0 w-64 h-64 md:w-96 md:h-96 -translate-x-1/2 -translate-y-1/4 pointer-events-none">
+            <svg viewBox="0 0 400 400" className="w-full h-full">
+              {/* Main Circle */}
+              <circle cx="200" cy="200" r="180" fill="hsl(var(--primary))" opacity="0.15" />
+              {/* Diagonal Stripes Pattern */}
+              <defs>
+                <pattern id="diagonalStripes" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+                  <line x1="0" y1="0" x2="0" y2="10" stroke="hsl(var(--primary))" strokeWidth="2" opacity="0.3" />
+                </pattern>
+              </defs>
+              <circle cx="200" cy="200" r="100" fill="url(#diagonalStripes)" opacity="0.4" />
+            </svg>
+          </div>
+          
+          {/* Decorative Elements - Right Side */}
+          <div className="absolute right-0 top-0 w-72 h-72 md:w-[500px] md:h-[500px] translate-x-1/3 -translate-y-1/4 pointer-events-none hidden md:block">
+            <svg viewBox="0 0 500 500" className="w-full h-full">
+              {/* Large Curved Shape */}
+              <circle cx="250" cy="250" r="220" fill="hsl(var(--accent))" opacity="0.12" />
+              {/* Smaller Accent Circle */}
+              <circle cx="350" cy="150" r="60" fill="hsl(var(--primary))" opacity="0.15" />
+              {/* Ring Element */}
+              <circle cx="320" cy="120" r="35" fill="none" stroke="hsl(142 76% 36%)" strokeWidth="4" opacity="0.4" />
+            </svg>
+          </div>
+          
+          {/* Dots Pattern - Right Bottom */}
+          <div className="absolute right-8 top-1/2 grid grid-cols-4 gap-2 pointer-events-none opacity-30 hidden lg:block">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="w-1.5 h-1.5 rounded-full bg-foreground"></div>
+            ))}
+          </div>
+          
+          {/* Small Accent Shapes */}
+          <div className="absolute left-1/4 bottom-12 w-3 h-3 rounded-full bg-primary opacity-40 animate-pulse hidden md:block"></div>
+          <div className="absolute right-1/3 top-20 w-2 h-2 rounded-full bg-accent opacity-50 animate-pulse hidden md:block"></div>
+          
           <div className="container mx-auto max-w-7xl relative z-10">
             <div className="text-center mb-8 md:mb-12">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 md:mb-4 leading-tight px-2">
