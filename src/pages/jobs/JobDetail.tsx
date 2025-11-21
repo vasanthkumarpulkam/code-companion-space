@@ -124,18 +124,18 @@ export default function JobDetail() {
   const needsAuth = !user && job.status === 'open';
 
   return (
-    <div className="container py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+    <div className="container py-4 sm:py-8 px-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           <Card>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <Badge>{job.categories?.name}</Badge>
-                  <CardTitle className="text-3xl">{job.title}</CardTitle>
+            <CardHeader className="space-y-3 sm:space-y-4">
+              <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
+                <div className="space-y-2 flex-1">
+                  <Badge className="text-xs">{job.categories?.name}</Badge>
+                  <CardTitle className="text-xl sm:text-2xl lg:text-3xl break-words">{job.title}</CardTitle>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant={job.status === 'open' ? 'default' : 'secondary'} className="text-xs">
                     {job.status}
                   </Badge>
                   {canComplete && (
@@ -146,29 +146,29 @@ export default function JobDetail() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" />
+                  <DollarSign className="h-4 w-4 flex-shrink-0" />
                   <span className="font-semibold">${job.budget}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>{job.location}</span>
+                <div className="flex items-center gap-2 min-w-0">
+                  <MapPin className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{job.location}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{new Date(job.created_at).toLocaleDateString()}</span>
+                  <Calendar className="h-4 w-4 flex-shrink-0" />
+                  <span className="whitespace-nowrap">{new Date(job.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
 
               <div className="prose max-w-none">
-                <h3 className="text-lg font-semibold">Description</h3>
-                <p className="text-muted-foreground">{job.description}</p>
+                <h3 className="text-base sm:text-lg font-semibold">Description</h3>
+                <p className="text-sm sm:text-base text-muted-foreground whitespace-pre-wrap break-words">{job.description}</p>
               </div>
 
               {job.description_spanish && (
-                <Button variant="outline" size="sm">
-                  <Languages className="mr-2 h-4 w-4" />
+                <Button variant="outline" size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
+                  <Languages className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                   View in Spanish
                 </Button>
               )}
@@ -181,14 +181,14 @@ export default function JobDetail() {
                 <CardTitle>Interested in this job?</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground">
                   Login or sign up to submit a bid for this job
                 </p>
-                <div className="flex gap-2">
-                  <Button onClick={() => navigate('/auth/login')} className="flex-1">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <Button onClick={() => navigate('/auth/login')} className="flex-1 h-11">
                     Login
                   </Button>
-                  <Button onClick={() => navigate('/auth/signup')} variant="outline" className="flex-1">
+                  <Button onClick={() => navigate('/auth/signup')} variant="outline" className="flex-1 h-11">
                     Sign Up
                   </Button>
                 </div>
@@ -272,23 +272,23 @@ export default function JobDetail() {
           )}
         </div>
 
-        <aside className="space-y-6">
+        <aside className="space-y-4 sm:space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Posted By</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Posted By</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-sm sm:text-base font-medium">
                   {job.profiles?.full_name?.[0] || 'U'}
                 </div>
-                <div>
-                  <p className="font-medium">{job.profiles?.full_name || 'Anonymous'}</p>
-                  <p className="text-sm text-muted-foreground">Customer</p>
+                <div className="min-w-0">
+                  <p className="font-medium text-sm sm:text-base truncate">{job.profiles?.full_name || 'Anonymous'}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Customer</p>
                 </div>
               </div>
               {!isOwner && (
-                <Button variant="outline" className="w-full mt-4">
+                <Button variant="outline" className="w-full mt-4 h-10 sm:h-11 text-sm">
                   <MessageSquare className="mr-2 h-4 w-4" />
                   Message
                 </Button>

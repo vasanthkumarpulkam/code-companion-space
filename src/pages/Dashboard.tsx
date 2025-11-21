@@ -196,33 +196,35 @@ export default function Dashboard() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 w-full">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex flex-col gap-4">
                       <div>
-                        <h2 className="text-2xl font-bold">{profile.full_name || t('dashboard.profile.complete')}</h2>
-                        <div className="flex flex-wrap items-center gap-4 mt-2 text-muted-foreground">
+                        <h2 className="text-xl sm:text-2xl font-bold">{profile.full_name || t('dashboard.profile.complete')}</h2>
+                        <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 text-sm text-muted-foreground">
                           {profile.location && (
                             <span className="flex items-center gap-1">
-                              <MapPin className="h-4 w-4" />
-                              {profile.location}
+                              <MapPin className="h-4 w-4 flex-shrink-0" />
+                              <span className="truncate">{profile.location}</span>
                             </span>
                           )}
                           <span className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
-                            {t('dashboard.profile.memberSince')} {new Date(profile.created_at).toLocaleDateString()}
+                            <Calendar className="h-4 w-4 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm">{t('dashboard.profile.memberSince')} {new Date(profile.created_at).toLocaleDateString()}</span>
                           </span>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" asChild>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <Button variant="outline" asChild className="w-full sm:w-auto justify-center">
                           <Link to={`/profile/${user?.id}`}>
                             <User className="h-4 w-4 mr-2" />
-                            {t('dashboard.profile.viewProfile')}
+                            <span className="hidden sm:inline">{t('dashboard.profile.viewProfile')}</span>
+                            <span className="sm:hidden">View Profile</span>
                           </Link>
                         </Button>
-                        <Button asChild>
+                        <Button asChild className="w-full sm:w-auto justify-center">
                           <Link to="/profile/edit">
                             <Edit className="h-4 w-4 mr-2" />
-                            {t('dashboard.profile.edit')}
+                            <span className="hidden sm:inline">{t('dashboard.profile.edit')}</span>
+                            <span className="sm:hidden">Edit</span>
                           </Link>
                         </Button>
                       </div>
@@ -378,18 +380,25 @@ export default function Dashboard() {
                 </Card>
               </div>
 
-              <Tabs defaultValue="quotes" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="quotes" className="relative">
-                    Quote Requests
+          <Tabs defaultValue="quotes" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 h-auto">
+                  <TabsTrigger value="quotes" className="relative text-xs sm:text-sm px-2 py-3">
+                    <span className="hidden sm:inline">Quote Requests</span>
+                    <span className="sm:hidden">Quotes</span>
                     {stats.pendingQuotes > 0 && (
-                      <Badge className="ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-red-600 text-xs">
+                      <Badge className="ml-1 sm:ml-2 h-5 w-5 rounded-full p-0 flex items-center justify-center bg-red-600 text-xs">
                         {stats.pendingQuotes}
                       </Badge>
                     )}
                   </TabsTrigger>
-                  <TabsTrigger value="recommended">{t('dashboard.tabs.recommended')}</TabsTrigger>
-                  <TabsTrigger value="mybids">{t('dashboard.tabs.mybids')}</TabsTrigger>
+                  <TabsTrigger value="recommended" className="text-xs sm:text-sm px-2 py-3">
+                    <span className="hidden sm:inline">{t('dashboard.tabs.recommended')}</span>
+                    <span className="sm:hidden">Jobs</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="mybids" className="text-xs sm:text-sm px-2 py-3">
+                    <span className="hidden sm:inline">{t('dashboard.tabs.mybids')}</span>
+                    <span className="sm:hidden">Bids</span>
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="quotes" className="mt-6">
