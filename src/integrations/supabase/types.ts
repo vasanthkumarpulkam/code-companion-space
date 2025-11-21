@@ -202,9 +202,12 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          deleted_at: string | null
+          edited_at: string | null
           id: string
           job_id: string | null
           media_url: string | null
+          original_content: string | null
           quote_request_id: string | null
           read_at: string | null
           recipient_id: string
@@ -213,9 +216,12 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           job_id?: string | null
           media_url?: string | null
+          original_content?: string | null
           quote_request_id?: string | null
           read_at?: string | null
           recipient_id: string
@@ -224,9 +230,12 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
           job_id?: string | null
           media_url?: string | null
+          original_content?: string | null
           quote_request_id?: string | null
           read_at?: string | null
           recipient_id?: string
