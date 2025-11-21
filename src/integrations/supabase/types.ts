@@ -203,8 +203,9 @@ export type Database = {
           content: string
           created_at: string
           id: string
-          job_id: string
+          job_id: string | null
           media_url: string | null
+          quote_request_id: string | null
           read_at: string | null
           recipient_id: string
           sender_id: string
@@ -213,8 +214,9 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
-          job_id: string
+          job_id?: string | null
           media_url?: string | null
+          quote_request_id?: string | null
           read_at?: string | null
           recipient_id: string
           sender_id: string
@@ -223,8 +225,9 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
-          job_id?: string
+          job_id?: string | null
           media_url?: string | null
+          quote_request_id?: string | null
           read_at?: string | null
           recipient_id?: string
           sender_id?: string
@@ -235,6 +238,13 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_quote_request_id_fkey"
+            columns: ["quote_request_id"]
+            isOneToOne: false
+            referencedRelation: "quote_requests"
             referencedColumns: ["id"]
           },
           {
