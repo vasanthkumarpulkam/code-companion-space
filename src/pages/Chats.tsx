@@ -41,23 +41,65 @@ export default function Chats() {
   const fetchThreads = async () => {
     if (!user) return;
 
-    const { data } = await supabase
+    // Fetch all messages for the user
+    const { data: messagesData } = await supabase
       .from('messages')
-      .select('job_id, quote_request_id, jobs(title), quote_requests(title), sender_id, recipient_id, profiles!messages_sender_id_fkey(full_name), profiles!messages_recipient_id_fkey(full_name)')
+      .select('id, job_id, quote_request_id, sender_id, recipient_id, content, created_at')
       .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
       .order('created_at', { ascending: false });
 
-    if (data) {
-      // Group by job_id or quote_request_id and get unique threads
-      const uniqueThreads = data.reduce((acc: any[], msg: any) => {
-        const threadKey = msg.job_id || msg.quote_request_id;
-        if (!acc.find(t => (t.job_id || t.quote_request_id) === threadKey)) {
-          acc.push(msg);
-        }
-        return acc;
-      }, []);
-      setThreads(uniqueThreads);
+    if (!messagesData || messagesData.length === 0) {
+      setThreads([]);
+      return;
     }
+
+    // Group by job_id or quote_request_id to get unique threads
+    const uniqueThreads = messagesData.reduce((acc: any[], msg: any) => {
+      const threadKey = msg.job_id || msg.quote_request_id;
+      if (!acc.find(t => (t.job_id || t.quote_request_id) === threadKey)) {
+        acc.push(msg);
+      }
+      return acc;
+    }, []);
+
+    // Fetch related data for each thread
+    const threadsWithData = await Promise.all(
+      uniqueThreads.map(async (thread) => {
+        // Get other user profile
+        const otherUserId = thread.sender_id === user.id ? thread.recipient_id : thread.sender_id;
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', otherUserId)
+          .single();
+
+        // Get job or quote title
+        let title = 'Conversation';
+        if (thread.job_id) {
+          const { data: job } = await supabase
+            .from('jobs')
+            .select('title')
+            .eq('id', thread.job_id)
+            .single();
+          title = job?.title || 'Job Discussion';
+        } else if (thread.quote_request_id) {
+          const { data: quote } = await supabase
+            .from('quote_requests')
+            .select('title')
+            .eq('id', thread.quote_request_id)
+            .single();
+          title = quote?.title || 'Quote Discussion';
+        }
+
+        return {
+          ...thread,
+          otherUserName: profile?.full_name || 'User',
+          title,
+        };
+      })
+    );
+
+    setThreads(threadsWithData);
   };
 
   const fetchMessages = async (threadId: string) => {
@@ -114,31 +156,27 @@ export default function Chats() {
                   const threadId = thread.job_id || thread.quote_request_id;
                   const threadTitle = thread.jobs?.title || thread.quote_requests?.title || 'Conversation';
                   return (
-                    <button
-                      key={threadId}
-                      onClick={() => setSelectedThread(threadId)}
-                      className={`w-full p-3 rounded-lg text-left hover:bg-accent transition-colors ${
-                        selectedThread === threadId ? 'bg-accent' : ''
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback>
-                            {thread.sender_id === user?.id
-                              ? thread.profiles?.full_name?.[0] || 'U'
-                              : thread.profiles?.full_name?.[0] || 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{threadTitle}</p>
-                          <p className="text-sm text-muted-foreground truncate">
-                            {thread.sender_id === user?.id
-                              ? thread.profiles?.full_name
-                              : thread.profiles?.full_name}
-                          </p>
-                        </div>
+                  <button
+                    key={threadId}
+                    onClick={() => setSelectedThread(threadId)}
+                    className={`w-full p-3 rounded-lg text-left hover:bg-accent transition-colors ${
+                      selectedThread === threadId ? 'bg-accent' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarFallback>
+                          {thread.otherUserName?.[0] || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{thread.title}</p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {thread.otherUserName}
+                        </p>
                       </div>
-                    </button>
+                    </div>
+                  </button>
                   );
                 })}
               </div>
