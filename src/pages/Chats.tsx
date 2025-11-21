@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Send, Paperclip, Image as ImageIcon, X, Search, Edit2, Trash2, Check } from 'lucide-react';
+import { Send, Paperclip, Image as ImageIcon, X, Search, Edit2, Trash2, Check, Mic, Square } from 'lucide-react';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -43,9 +43,14 @@ export default function Chats() {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingContent, setEditingContent] = useState('');
   const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMessageReceived = useCallback(() => {
     fetchThreads();
@@ -405,6 +410,125 @@ export default function Chats() {
     return message.content.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        await sendVoiceMessage(audioBlob);
+        
+        // Stop all tracks
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+
+      // Start timer
+      recordingIntervalRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+
+      toast({
+        title: 'Recording started',
+        description: 'Speak your message',
+      });
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      toast({
+        title: 'Microphone access denied',
+        description: 'Please allow microphone access to send voice messages',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+      }
+    }
+  };
+
+  const sendVoiceMessage = async (audioBlob: Blob) => {
+    if (!user || !selectedThread) return;
+
+    const thread = threads.find(t => (t.job_id || t.quote_request_id) === selectedThread);
+    if (!thread) return;
+
+    const recipientId = thread.sender_id === user.id ? thread.recipient_id : thread.sender_id;
+    const isJobThread = !!thread.job_id;
+
+    // Upload audio file
+    const fileExt = 'webm';
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+    const { data, error: uploadError } = await supabase.storage
+      .from('chat-media')
+      .upload(fileName, audioBlob);
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload voice message',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('chat-media')
+      .getPublicUrl(data.path);
+
+    // Send message with audio
+    const { error } = await supabase.from('messages').insert({
+      ...(isJobThread ? { job_id: selectedThread } : { quote_request_id: selectedThread }),
+      sender_id: user.id,
+      recipient_id: recipientId,
+      content: '🎤 Voice message',
+      media_url: publicUrl,
+    });
+
+    if (!error) {
+      fetchMessages(selectedThread);
+      toast({
+        title: 'Voice message sent',
+        description: `${recordingTime}s recording sent`,
+      });
+    } else {
+      toast({
+        title: 'Send failed',
+        description: 'Failed to send voice message',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const formatRecordingTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="container max-w-7xl py-8">
       <div className="flex items-center justify-between mb-6">
@@ -497,6 +621,16 @@ export default function Chats() {
                                   alt="Shared media" 
                                   className="rounded max-h-64 w-auto"
                                 />
+                              ) : message.media_url.match(/\.(webm|mp3|ogg|wav|m4a)$/i) || message.content === '🎤 Voice message' ? (
+                                <audio 
+                                  controls 
+                                  className="max-w-full"
+                                  preload="metadata"
+                                >
+                                  <source src={message.media_url} type="audio/webm" />
+                                  <source src={message.media_url} type="audio/mpeg" />
+                                  Your browser does not support audio playback.
+                                </audio>
                               ) : (
                                 <a 
                                   href={message.media_url} 
@@ -629,6 +763,23 @@ export default function Chats() {
                       </Button>
                     </div>
                   )}
+                  {isRecording && (
+                    <div className="mb-3 flex items-center gap-3 p-3 bg-destructive/10 rounded-lg">
+                      <div className="flex items-center gap-2 flex-1">
+                        <div className="h-3 w-3 bg-destructive rounded-full animate-pulse" />
+                        <span className="text-sm font-medium">Recording...</span>
+                        <span className="text-sm text-muted-foreground">{formatRecordingTime(recordingTime)}</span>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={stopRecording}
+                      >
+                        <Square className="h-4 w-4 mr-1 fill-current" />
+                        Stop
+                      </Button>
+                    </div>
+                  )}
                   <div className="flex gap-2">
                     <input
                       ref={fileInputRef}
@@ -641,8 +792,17 @@ export default function Chats() {
                       variant="outline" 
                       size="icon"
                       onClick={() => fileInputRef.current?.click()}
+                      disabled={isRecording}
                     >
                       <ImageIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={isRecording ? stopRecording : startRecording}
+                      className={isRecording ? 'bg-destructive/10' : ''}
+                    >
+                      <Mic className={`h-4 w-4 ${isRecording ? 'text-destructive' : ''}`} />
                     </Button>
                     <Input
                       placeholder="Type a message..."
@@ -652,8 +812,12 @@ export default function Chats() {
                         handleTyping();
                       }}
                       onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                      disabled={isRecording}
                     />
-                    <Button onClick={sendMessage} disabled={!newMessage.trim() && !uploadedFile}>
+                    <Button 
+                      onClick={sendMessage} 
+                      disabled={(!newMessage.trim() && !uploadedFile) || isRecording}
+                    >
                       <Send className="h-4 w-4" />
                     </Button>
                   </div>
