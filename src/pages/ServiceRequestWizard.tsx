@@ -28,6 +28,12 @@ export default function ServiceRequestWizard() {
   });
 
   const decodedSubcategory = decodeURIComponent(subcategory || '');
+  const decodedCategory = category || '';
+
+  // Determine if this service needs specific questions
+  const isAssemblyService = decodedSubcategory.toLowerCase().includes('assembly');
+  const isMovingService = decodedCategory === 'moving';
+  const isCleaningService = decodedCategory === 'cleaning';
 
   const handleNext = () => {
     if (step === 1 && !taskData.location.street) {
@@ -103,26 +109,95 @@ export default function ServiceRequestWizard() {
 
           {step === 2 && (
             <Card className="p-8">
-              <h2 className="text-2xl font-semibold mb-6">Your Items</h2>
-              <p className="text-muted-foreground mb-6">
-                What type of furniture do you need assembled or disassembled?
-              </p>
-              <RadioGroup value={taskData.itemType} onValueChange={(val) => setTaskData(prev => ({...prev, itemType: val}))}>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="ikea" id="ikea" />
-                    <Label htmlFor="ikea" className="flex-1 cursor-pointer">IKEA furniture items only</Label>
-                  </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="non-ikea" id="non-ikea" />
-                    <Label htmlFor="non-ikea" className="flex-1 cursor-pointer">Other furniture items (non-IKEA)</Label>
-                  </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="both" id="both" />
-                    <Label htmlFor="both" className="flex-1 cursor-pointer">Both IKEA and non-IKEA furniture</Label>
-                  </div>
-                </div>
-              </RadioGroup>
+              {isAssemblyService ? (
+                <>
+                  <h2 className="text-2xl font-semibold mb-6">Your Items</h2>
+                  <p className="text-muted-foreground mb-6">
+                    What type of furniture do you need assembled?
+                  </p>
+                  <RadioGroup value={taskData.itemType} onValueChange={(val) => setTaskData(prev => ({...prev, itemType: val}))}>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="ikea" id="ikea" />
+                        <Label htmlFor="ikea" className="flex-1 cursor-pointer">IKEA furniture items only</Label>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="non-ikea" id="non-ikea" />
+                        <Label htmlFor="non-ikea" className="flex-1 cursor-pointer">Other furniture items (non-IKEA)</Label>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="both" id="both" />
+                        <Label htmlFor="both" className="flex-1 cursor-pointer">Both IKEA and non-IKEA furniture</Label>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </>
+              ) : isMovingService ? (
+                <>
+                  <h2 className="text-2xl font-semibold mb-6">Moving Details</h2>
+                  <p className="text-muted-foreground mb-6">
+                    What type of help do you need?
+                  </p>
+                  <RadioGroup value={taskData.itemType} onValueChange={(val) => setTaskData(prev => ({...prev, itemType: val}))}>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="loading" id="loading" />
+                        <Label htmlFor="loading" className="flex-1 cursor-pointer">Loading a truck/vehicle</Label>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="unloading" id="unloading" />
+                        <Label htmlFor="unloading" className="flex-1 cursor-pointer">Unloading a truck/vehicle</Label>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="both-move" id="both-move" />
+                        <Label htmlFor="both-move" className="flex-1 cursor-pointer">Full move (loading & unloading)</Label>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </>
+              ) : isCleaningService ? (
+                <>
+                  <h2 className="text-2xl font-semibold mb-6">Cleaning Details</h2>
+                  <p className="text-muted-foreground mb-6">
+                    What type of space needs cleaning?
+                  </p>
+                  <RadioGroup value={taskData.itemType} onValueChange={(val) => setTaskData(prev => ({...prev, itemType: val}))}>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="apartment" id="apartment" />
+                        <Label htmlFor="apartment" className="flex-1 cursor-pointer">Apartment or Condo</Label>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="house" id="house" />
+                        <Label htmlFor="house" className="flex-1 cursor-pointer">House</Label>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="office" id="office" />
+                        <Label htmlFor="office" className="flex-1 cursor-pointer">Office or Commercial Space</Label>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-semibold mb-6">Service Type</h2>
+                  <p className="text-muted-foreground mb-6">
+                    Choose the option that best describes your needs
+                  </p>
+                  <RadioGroup value={taskData.itemType} onValueChange={(val) => setTaskData(prev => ({...prev, itemType: val}))}>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="standard" id="standard" />
+                        <Label htmlFor="standard" className="flex-1 cursor-pointer">Standard service</Label>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-accent/50 cursor-pointer">
+                        <RadioGroupItem value="premium" id="premium" />
+                        <Label htmlFor="premium" className="flex-1 cursor-pointer">Premium/Detailed service</Label>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </>
+              )}
               <Button onClick={handleNext} size="lg" className="w-full mt-8 gradient-primary">
                 Continue
               </Button>

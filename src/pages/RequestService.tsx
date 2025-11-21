@@ -1,48 +1,140 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { supabase } from '@/integrations/supabase/client';
 import { 
-  Wrench, Drill, Truck, Sparkles, Trees, Hammer, 
-  Paintbrush, Flame, ArrowRight 
+  Sparkles, Truck, TreePine, Hammer, PartyPopper, 
+  MoreHorizontal, ArrowRight 
 } from 'lucide-react';
 
-const mainCategories = [
-  { id: 'assembly', name: 'Assembly', icon: Wrench, color: 'from-blue-50 to-blue-100' },
-  { id: 'mounting', name: 'Mounting', icon: Drill, color: 'from-teal-50 to-teal-100' },
-  { id: 'moving', name: 'Moving', icon: Truck, color: 'from-green-50 to-green-100' },
-  { id: 'cleaning', name: 'Cleaning', icon: Sparkles, color: 'from-purple-50 to-purple-100' },
-  { id: 'outdoor', name: 'Outdoor Help', icon: Trees, color: 'from-emerald-50 to-emerald-100' },
-  { id: 'repairs', name: 'Home Repairs', icon: Hammer, color: 'from-orange-50 to-orange-100' },
-  { id: 'painting', name: 'Painting', icon: Paintbrush, color: 'from-pink-50 to-pink-100' },
-  { id: 'trending', name: 'Trending', icon: Flame, color: 'from-red-50 to-red-100' },
-];
+const iconMap: Record<string, any> = {
+  Sparkles,
+  Truck,
+  TreePine,
+  Hammer,
+  PartyPopper,
+  MoreHorizontal,
+};
 
-const subcategories: Record<string, string[]> = {
-  assembly: ['General Furniture Assembly', 'IKEA Assembly', 'Crib Assembly', 'Bookshelf Assembly', 'Desk Assembly'],
-  mounting: ['Hang Art, Mirror & Decor', 'Install Blinds & Window Treatments', 'Mount & Anchor Furniture', 'Install Shelves, Rods & Hooks', 'Other Mounting', 'TV Mounting'],
-  moving: ['Help Moving', 'Flat-Rate Move by Dolly™', 'Trash & Furniture Removal', 'Heavy Lifting & Loading', 'Rearrange Furniture', 'Junk Haul Away'],
-  cleaning: ['Cleaning', 'Spring Cleaning', 'Apartment Cleaning', 'Deep Clean', 'Garage Cleaning', 'Move Out Clean'],
-  outdoor: ['Lawn Mowing', 'Gardening', 'Tree Trimming', 'Pressure Washing', 'Landscaping Design'],
-  repairs: ['Plumbing', 'Electrical', 'Carpentry', 'Drywall Repair', 'Door Repair'],
-  painting: ['Interior Painting', 'Exterior Painting', 'Cabinet Painting', 'Touch-Up Paint'],
-  trending: ['Smart Home Setup', 'Furniture Refinishing', 'Wallpaper Installation', 'Holiday Decorating'],
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string | null;
+  subcategories?: string[];
+}
+
+// TaskRabbit-style subcategories for each service type
+const serviceSubcategories: Record<string, string[]> = {
+  cleaning: [
+    'General Cleaning',
+    'Deep Cleaning',
+    'Move In/Move Out Cleaning',
+    'Post-Construction Cleaning',
+    'Carpet Cleaning',
+    'Window Cleaning',
+  ],
+  moving: [
+    'Help Moving',
+    'Heavy Lifting & Loading',
+    'Packing Services',
+    'Unpacking Services',
+    'Furniture Rearranging',
+    'Junk Removal',
+  ],
+  landscaping: [
+    'Lawn Mowing',
+    'Lawn Care',
+    'Gardening',
+    'Tree Trimming',
+    'Landscape Design',
+    'Yard Cleanup',
+  ],
+  handyman: [
+    'Furniture Assembly',
+    'TV Mounting',
+    'Shelf Installation',
+    'Minor Repairs',
+    'Door & Lock Repair',
+    'Drywall Repair',
+  ],
+  events: [
+    'Event Setup',
+    'Party Help',
+    'Bartending',
+    'Catering Help',
+    'Event Cleanup',
+    'Photography',
+  ],
+  other: [
+    'Personal Assistant',
+    'Delivery',
+    'Errands',
+    'Wait in Line',
+    'Pet Care',
+    'Organization',
+  ],
 };
 
 export default function RequestService() {
   const { category } = useParams();
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState(category || '');
+  const [selectedCategory, setSelectedCategory] = useState<string>(category || '');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleCategoryClick = (catId: string) => {
-    setSelectedCategory(catId);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (category) {
+      setSelectedCategory(category);
+    }
+  }, [category]);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      
+      if (data) {
+        // Map database categories and add subcategories
+        const categoriesWithSubs = data.map(cat => ({
+          ...cat,
+          subcategories: serviceSubcategories[cat.slug] || serviceSubcategories.other
+        }));
+        setCategories(categoriesWithSubs);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubcategoryClick = (subcategory: string) => {
-    navigate(`/request-service/${selectedCategory}/${encodeURIComponent(subcategory)}`);
+  const getIcon = (iconName: string | null) => {
+    if (!iconName) return MoreHorizontal;
+    return iconMap[iconName] || MoreHorizontal;
   };
+
+  const handleCategoryClick = (slug: string) => {
+    setSelectedCategory(slug);
+    navigate(`/request-service/${slug}`);
+  };
+
+  const handleSubcategoryClick = (subcategory: string, categorySlug: string) => {
+    navigate(`/request-service/${categorySlug}/${encodeURIComponent(subcategory)}`);
+  };
+
+  const selectedCategoryData = categories.find(c => c.slug === selectedCategory);
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,47 +150,65 @@ export default function RequestService() {
           </p>
 
           {/* Main Categories */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-12">
-            {mainCategories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => handleCategoryClick(cat.id)}
-                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all hover:shadow-md ${
-                  selectedCategory === cat.id
-                    ? 'border-primary bg-primary/5 shadow-sm'
-                    : 'border-border bg-card hover:border-primary/50'
-                }`}
-              >
-                <div className={`p-3 rounded-full bg-gradient-to-br ${cat.color}`}>
-                  <cat.icon className={`h-6 w-6 ${selectedCategory === cat.id ? 'text-primary' : 'text-muted-foreground'}`} />
-                </div>
-                <span className={`text-sm font-medium text-center ${
-                  selectedCategory === cat.id ? 'text-primary' : 'text-foreground'
-                }`}>
-                  {cat.name}
-                </span>
-                {selectedCategory === cat.id && (
-                  <div className="w-full h-1 bg-primary rounded-full" />
-                )}
-              </button>
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
+              {[...Array(6)].map((_, i) => (
+                <Skeleton key={i} className="h-32 rounded-xl" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
+              {categories.map((cat) => {
+                const Icon = getIcon(cat.icon);
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => handleCategoryClick(cat.slug)}
+                    className={`flex flex-col items-center gap-3 p-5 rounded-xl border-2 transition-all hover:shadow-lg hover:scale-105 ${
+                      selectedCategory === cat.slug
+                        ? 'border-primary bg-primary/10 shadow-sm'
+                        : 'border-border bg-card hover:border-primary/50'
+                    }`}
+                  >
+                    <div className={`p-3 rounded-full transition-colors ${
+                      selectedCategory === cat.slug ? 'bg-primary/20' : 'bg-muted'
+                    }`}>
+                      <Icon className={`h-6 w-6 ${
+                        selectedCategory === cat.slug ? 'text-primary' : 'text-muted-foreground'
+                      }`} />
+                    </div>
+                    <span className={`text-sm font-medium text-center ${
+                      selectedCategory === cat.slug ? 'text-primary' : 'text-foreground'
+                    }`}>
+                      {cat.name}
+                    </span>
+                    {selectedCategory === cat.slug && (
+                      <div className="w-full h-1 bg-primary rounded-full" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Subcategories */}
-          {selectedCategory && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <span className="text-sm">
-                  Select a specific service for {mainCategories.find(c => c.id === selectedCategory)?.name}
+          {selectedCategoryData && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-semibold text-foreground">
+                  {selectedCategoryData.name} Services
+                </h2>
+                <span className="text-sm text-muted-foreground">
+                  ({selectedCategoryData.subcategories?.length || 0} options)
                 </span>
               </div>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {subcategories[selectedCategory]?.map((sub) => (
+                {selectedCategoryData.subcategories?.map((sub) => (
                   <Card
                     key={sub}
-                    className="cursor-pointer hover:shadow-md hover:border-primary/50 transition-all group"
-                    onClick={() => handleSubcategoryClick(sub)}
+                    className="cursor-pointer hover:shadow-lg hover:border-primary transition-all group"
+                    onClick={() => handleSubcategoryClick(sub, selectedCategoryData.slug)}
                   >
                     <CardContent className="p-6 flex items-center justify-between">
                       <span className="font-medium text-foreground group-hover:text-primary transition-colors">
