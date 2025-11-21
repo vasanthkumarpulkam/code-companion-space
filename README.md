@@ -140,6 +140,6 @@ supabase db lint
 For issues or questions:
 
 - Supabase Documentation: https://supabase.com/docs
-- Project URL: https://lovable.dev/projects/4cc8ae52-e130-4a91-8d9d-64eae0adfb01
+- Google Maps API Documentation: https://developers.google.com/maps/documentation
 
 
