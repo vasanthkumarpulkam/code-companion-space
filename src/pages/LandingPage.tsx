@@ -10,6 +10,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
+// Import service images
+import furnitureAssemblyImg from "@/assets/services/furniture-assembly.jpg";
+import shelfInstallationImg from "@/assets/services/shelf-installation.jpg";
+import deepCleaningImg from "@/assets/services/deep-cleaning.jpg";
+import minorRepairsImg from "@/assets/services/minor-repairs.jpg";
+import tvMountingImg from "@/assets/services/tv-mounting.jpg";
+import helpMovingImg from "@/assets/services/help-moving.jpg";
+import lawnMowingImg from "@/assets/services/lawn-mowing.jpg";
+import eventSetupImg from "@/assets/services/event-setup.jpg";
+
 const categories = [
   { name: "category.cleaning", icon: Sparkles, path: "/request-service/cleaning" },
   { name: "category.moving", icon: Truck, path: "/request-service/moving" },
@@ -344,23 +354,28 @@ export default function LandingPage() {
             
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2.5 md:gap-3 lg:gap-4">
               {[
-                { service: 'Furniture Assembly', price: '$49', category: 'handyman', bg: 'from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/30', icon: Hammer, iconColor: 'text-orange-300 dark:text-orange-700' },
-                { service: 'Shelf Installation', price: '$65', category: 'handyman', bg: 'from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30', icon: Hammer, iconColor: 'text-blue-300 dark:text-blue-700' },
-                { service: 'Deep Cleaning', price: '$49', category: 'cleaning', bg: 'from-emerald-50 to-emerald-100 dark:from-emerald-950/30 dark:to-emerald-900/30', icon: Sparkles, iconColor: 'text-emerald-300 dark:text-emerald-700' },
-                { service: 'Minor Repairs', price: '$74', category: 'handyman', bg: 'from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30', icon: Hammer, iconColor: 'text-purple-300 dark:text-purple-700' },
-                { service: 'TV Mounting', price: '$69', category: 'handyman', bg: 'from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/30', icon: Hammer, iconColor: 'text-amber-300 dark:text-amber-700' },
-                { service: 'Help Moving', price: '$80', category: 'moving', bg: 'from-rose-50 to-rose-100 dark:from-rose-950/30 dark:to-rose-900/30', icon: Truck, iconColor: 'text-rose-300 dark:text-rose-700' },
-                { service: 'Lawn Mowing', price: '$200', category: 'landscaping', bg: 'from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30', icon: TreePine, iconColor: 'text-green-300 dark:text-green-700' },
-                { service: 'Event Setup', price: '$150', category: 'events', bg: 'from-pink-50 to-pink-100 dark:from-pink-950/30 dark:to-pink-900/30', icon: PartyPopper, iconColor: 'text-pink-300 dark:text-pink-700' },
+                { service: 'Furniture Assembly', price: '$49', category: 'handyman', image: furnitureAssemblyImg },
+                { service: 'Shelf Installation', price: '$65', category: 'handyman', image: shelfInstallationImg },
+                { service: 'Deep Cleaning', price: '$49', category: 'cleaning', image: deepCleaningImg },
+                { service: 'Minor Repairs', price: '$74', category: 'handyman', image: minorRepairsImg },
+                { service: 'TV Mounting', price: '$69', category: 'handyman', image: tvMountingImg },
+                { service: 'Help Moving', price: '$80', category: 'moving', image: helpMovingImg },
+                { service: 'Lawn Mowing', price: '$200', category: 'landscaping', image: lawnMowingImg },
+                { service: 'Event Setup', price: '$150', category: 'events', image: eventSetupImg },
               ].map((item) => (
                 <Link
                   key={item.service}
                   to={`/request-service/${item.category}/${encodeURIComponent(item.service)}`}
                   className="group relative overflow-hidden rounded-lg md:rounded-xl bg-background hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  {/* Icon Background */}
-                  <div className={`h-24 sm:h-28 md:h-32 bg-gradient-to-br ${item.bg} flex items-center justify-center relative`}>
-                    <item.icon className={`h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 ${item.iconColor} group-hover:scale-110 transition-transform duration-300`} strokeWidth={1.5} />
+                  {/* Service Image */}
+                  <div className="h-24 sm:h-28 md:h-32 overflow-hidden relative bg-muted">
+                    <img 
+                      src={item.image} 
+                      alt={item.service}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
                   </div>
                   
                   {/* Content */}
