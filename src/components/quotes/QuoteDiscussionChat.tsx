@@ -58,20 +58,12 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
       const { data, error } = await supabase
         .from('messages')
         .select('*')
-        .or(`sender_id.eq.${user?.id},recipient_id.eq.${user?.id}`)
-        .or(`sender_id.eq.${otherUserId},recipient_id.eq.${otherUserId}`)
+        .eq('quote_request_id', quoteRequest.id)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       
-      // Filter messages that are between these two users only
-      const filteredMessages = data?.filter(
-        msg => 
-          (msg.sender_id === user?.id && msg.recipient_id === otherUserId) ||
-          (msg.sender_id === otherUserId && msg.recipient_id === user?.id)
-      ) || [];
-      
-      setMessages(filteredMessages);
+      setMessages(data || []);
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
@@ -88,10 +80,10 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `recipient_id=eq.${user?.id}`
+          filter: `quote_request_id=eq.${quoteRequest.id}`
         },
         (payload) => {
-          if (payload.new.sender_id === otherUserId) {
+          if (payload.new.sender_id === otherUserId || payload.new.sender_id === user?.id) {
             setMessages(prev => [...prev, payload.new]);
           }
         }
@@ -108,23 +100,26 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
 
     setSendingMessage(true);
     try {
-      // We need a job_id for messages, so we'll need to create a placeholder or use the quote_request_id
-      // For now, let's create a special format job_id that references the quote
-      const pseudoJobId = '00000000-0000-0000-0000-000000000000'; // We'll use a null UUID as placeholder
-      
       const { error } = await supabase
         .from('messages')
         .insert({
           sender_id: user?.id,
           recipient_id: otherUserId,
-          job_id: pseudoJobId, // Placeholder - messages table requires this
-          content: `[Quote Discussion for "${quoteRequest.title}"]\n${newMessage}`
+          quote_request_id: quoteRequest.id,
+          content: newMessage
         });
 
       if (error) throw error;
 
       setNewMessage('');
-      fetchMessages();
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        sender_id: user?.id,
+        recipient_id: otherUserId,
+        quote_request_id: quoteRequest.id,
+        content: newMessage,
+        created_at: new Date().toISOString()
+      }]);
     } catch (error: any) {
       toast({ 
         title: 'Error sending message', 
@@ -190,7 +185,7 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
                         }`}
                       >
                         <p className="text-sm whitespace-pre-wrap break-words">
-                          {message.content.replace(/^\[Quote Discussion for "[^"]+"\]\n/, '')}
+                          {message.content}
                         </p>
                         <p className={`text-xs mt-1 ${isMine ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                           {new Date(message.created_at).toLocaleTimeString([], { 
