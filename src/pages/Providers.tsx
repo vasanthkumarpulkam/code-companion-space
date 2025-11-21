@@ -142,6 +142,14 @@ export default function Providers() {
     provider.provider_settings?.bio_headline?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getDisplayCategory = () => {
+    if (serviceParam) {
+      const category = categories.find(c => c.slug === serviceParam);
+      return category?.name || serviceParam;
+    }
+    return skillParam || 'Service';
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -152,12 +160,12 @@ export default function Providers() {
           <div className="container mx-auto max-w-6xl">
             <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">
               {(serviceParam || skillParam) 
-                ? `Find ${categories.find(c => c.slug === serviceParam)?.name || skillParam} Professionals` 
+                ? `Find ${getDisplayCategory()} Professionals` 
                 : 'Find Trusted Professionals'}
             </h1>
             <p className="text-xl text-muted-foreground text-center mb-8">
               {(serviceParam || skillParam)
-                ? `Browse skilled ${(categories.find(c => c.slug === serviceParam)?.name || skillParam).toLowerCase()} providers ready to help with your next project`
+                ? `Browse skilled ${getDisplayCategory().toLowerCase()} providers ready to help with your next project`
                 : 'Browse skilled providers ready to help with your next project'
               }
             </p>
