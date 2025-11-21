@@ -135,21 +135,79 @@ export default function LandingPage() {
           <div className="container mx-auto max-w-7xl relative z-10">
             <div className="text-center mb-12">
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                Find trusted <span className="text-gradient">local professionals</span> for any task
+                Your local service marketplace with <span className="text-gradient">3 ways to hire</span>
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-                Connect with skilled service providers in your area. Get quotes, compare, and hire with confidence.
+              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+                Post jobs for quotes, browse top-rated pros, or negotiate directly—flexibility you won't find anywhere else.
               </p>
-              
-              {/* Search Bar with Suggestions and Zipcode */}
-              <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-8">
+            </div>
+
+            {/* Three Customer Options - USP Cards */}
+            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+              {/* Option 1: Post & Get Quotes */}
+              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <MessageCircle className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Post Job, Get Quotes</CardTitle>
+                  <CardDescription className="text-base">
+                    Post once, receive multiple competitive quotes from nearby providers. No need to contact each one.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button asChild className="w-full gradient-primary">
+                    <Link to="/request-service">Post a Job</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Option 2: Browse Top Providers */}
+              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Award className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Browse Top Pros</CardTitle>
+                  <CardDescription className="text-base">
+                    Instantly contact and hire highly-rated professionals from our curated directory.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button asChild variant="outline" className="w-full border-2">
+                    <Link to="/top-providers">View Top Providers</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Option 3: Negotiate Pricing */}
+              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <TrendingUp className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Flexible Pricing</CardTitle>
+                  <CardDescription className="text-base">
+                    Providers set their own competitive rates. Negotiate and choose the best offer for your budget.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button asChild variant="secondary" className="w-full">
+                    <Link to="/providers">Search All Providers</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Search Bar */}
+            <div className="max-w-3xl mx-auto mb-8">
+              <form onSubmit={handleSearch}>
                 <div className="flex flex-col md:flex-row gap-3">
-                  {/* Service Search with Dropdown */}
                   <div ref={searchRef} className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
                     <Input
                       type="text"
-                      placeholder="What service do you need? (e.g., house cleaning, moving help...)"
+                      placeholder="What service do you need?"
                       className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -171,8 +229,6 @@ export default function LandingPage() {
                       </div>
                     )}
                   </div>
-
-                  {/* Zipcode Search */}
                   <div className="relative md:w-48">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <Input
@@ -184,29 +240,11 @@ export default function LandingPage() {
                       maxLength={5}
                     />
                   </div>
-
-                  {/* Search Button */}
-                  <Button 
-                    type="submit" 
-                    size="lg" 
-                    className="h-14 px-8 shadow-lg"
-                  >
+                  <Button type="submit" size="lg" className="h-14 px-8 shadow-lg">
                     Search
                   </Button>
                 </div>
               </form>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" asChild className="gradient-primary border-0 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
-                  <Link to="/request-service">{t('landing.hero.postJob')}</Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="shadow-md border-2 hover:border-primary/50 hover:bg-primary/5 transition-all">
-                  <Link to="/providers">Find Providers</Link>
-                </Button>
-                <Button size="lg" variant="secondary" asChild className="shadow-md hover:shadow-lg transition-all">
-                  <Link to="/auth/signup">{t('landing.hero.joinProvider')}</Link>
-                </Button>
-              </div>
             </div>
 
             {/* Trust Indicators */}

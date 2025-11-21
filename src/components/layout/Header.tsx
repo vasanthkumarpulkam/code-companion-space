@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, User, Home, ArrowLeft } from "lucide-react";
+import { Menu, X, User, Home, ArrowLeft, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -52,6 +52,10 @@ export const Header = () => {
             </Link>
             <Link to="/services" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               {t('jobs.findJobs')}
+            </Link>
+            <Link to="/top-providers" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1">
+              <Award className="h-4 w-4" />
+              Top Providers
             </Link>
             <Link to="/providers" className="text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
               {t('header.findProviders')}
