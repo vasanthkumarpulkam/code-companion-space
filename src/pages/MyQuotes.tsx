@@ -7,20 +7,18 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MapPin, Calendar, DollarSign, User, CheckCircle, X } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, User, CheckCircle, X, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { QuoteDiscussionChat } from '@/components/quotes/QuoteDiscussionChat';
+import { useRealtimeQuotes } from '@/hooks/useRealtimeQuotes';
 
 export default function MyQuotes() {
   const { user } = useAuth();
   const [quoteRequests, setQuoteRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      fetchQuoteRequests();
-    }
-  }, [user]);
+  const [selectedQuote, setSelectedQuote] = useState<any>(null);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const fetchQuoteRequests = async () => {
     setLoading(true);
@@ -44,6 +42,14 @@ export default function MyQuotes() {
       setLoading(false);
     }
   };
+
+  useRealtimeQuotes(user?.id, fetchQuoteRequests);
+
+  useEffect(() => {
+    if (user) {
+      fetchQuoteRequests();
+    }
+  }, [user]);
 
   const handleAccept = async (requestId: string) => {
     try {
@@ -186,25 +192,50 @@ export default function MyQuotes() {
                               </p>
                             )}
                             {request.status === 'quoted' && (
-                              <div className="flex gap-2">
+                              <div className="space-y-2">
+                                <div className="flex gap-2">
+                                  <Button 
+                                    onClick={() => handleAccept(request.id)}
+                                    className="flex-1"
+                                  >
+                                    <CheckCircle className="h-4 w-4 mr-2" />
+                                    Accept Quote
+                                  </Button>
+                                  <Button 
+                                    variant="outline"
+                                    onClick={() => handleDecline(request.id)}
+                                    className="flex-1"
+                                  >
+                                    <X className="h-4 w-4 mr-2" />
+                                    Decline
+                                  </Button>
+                                </div>
                                 <Button 
-                                  onClick={() => handleAccept(request.id)}
-                                  className="flex-1"
+                                  variant="secondary"
+                                  onClick={() => {
+                                    setSelectedQuote(request);
+                                    setChatOpen(true);
+                                  }}
+                                  className="w-full"
                                 >
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  Accept Quote
-                                </Button>
-                                <Button 
-                                  variant="outline"
-                                  onClick={() => handleDecline(request.id)}
-                                  className="flex-1"
-                                >
-                                  <X className="h-4 w-4 mr-2" />
-                                  Decline
+                                  <MessageSquare className="h-4 w-4 mr-2" />
+                                  Discuss Quote
                                 </Button>
                               </div>
                             )}
                           </div>
+                        ) : request.status === 'accepted' ? (
+                          <Button 
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedQuote(request);
+                              setChatOpen(true);
+                            }}
+                            className="w-full"
+                          >
+                            <MessageSquare className="h-4 w-4 mr-2" />
+                            Continue Discussion
+                          </Button>
                         ) : (
                           <div className="text-center p-4 bg-muted rounded-lg">
                             <p className="text-sm text-muted-foreground">
@@ -258,6 +289,12 @@ export default function MyQuotes() {
           </Tabs>
         </div>
       </main>
+
+      <QuoteDiscussionChat 
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        quoteRequest={selectedQuote}
+      />
 
       <Footer />
     </div>
