@@ -44,6 +44,32 @@ export default function Dashboard() {
     }
   }, [user, userRole]);
 
+  // Real-time updates for quotes
+  useEffect(() => {
+    if (!user || userRole !== 'provider') return;
+
+    const channel = supabase
+      .channel('quote-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'quote_requests',
+          filter: `provider_id=eq.${user.id}`
+        },
+        () => {
+          fetchQuoteRequests();
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, userRole]);
+
   const fetchProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")

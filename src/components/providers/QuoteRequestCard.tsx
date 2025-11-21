@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, DollarSign, Clock, User } from 'lucide-react';
+import { MapPin, Calendar, DollarSign, Clock, User, MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { QuoteDiscussionChat } from '@/components/quotes/QuoteDiscussionChat';
 
 interface QuoteRequestCardProps {
   request: any;
@@ -18,6 +19,7 @@ export function QuoteRequestCard({ request, onResponded }: QuoteRequestCardProps
   const [quotedAmount, setQuotedAmount] = useState('');
   const [responseNotes, setResponseNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const handleRespond = async () => {
     if (!quotedAmount || parseFloat(quotedAmount) <= 0) {
@@ -134,6 +136,17 @@ export function QuoteRequestCard({ request, onResponded }: QuoteRequestCardProps
           </Button>
         )}
 
+        {(request.status === 'quoted' || request.status === 'accepted') && (
+          <Button 
+            variant="outline" 
+            onClick={() => setChatOpen(true)}
+            className="w-full"
+          >
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Discuss Quote
+          </Button>
+        )}
+
         {responding && (
           <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
             <div>
@@ -185,6 +198,12 @@ export function QuoteRequestCard({ request, onResponded }: QuoteRequestCardProps
           </div>
         )}
       </CardContent>
+
+      <QuoteDiscussionChat 
+        open={chatOpen}
+        onOpenChange={setChatOpen}
+        quoteRequest={request}
+      />
     </Card>
   );
 }

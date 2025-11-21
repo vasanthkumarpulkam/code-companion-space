@@ -14,7 +14,11 @@ export function NotificationList() {
     markAsRead(notification.id);
     
     // Navigate based on notification type
-    if (notification.data?.jobId) {
+    if (notification.type === 'quote_received' || notification.type === 'quote_accepted') {
+      navigate('/my-quotes');
+    } else if (notification.data?.job_id) {
+      navigate(`/jobs/${notification.data.job_id}`);
+    } else if (notification.data?.jobId) {
       navigate(`/jobs/${notification.data.jobId}`);
     } else if (notification.data?.messageId) {
       navigate('/chats');
