@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Star, MapPin, Briefcase, MessageSquare, Calendar, Award, CheckCircle, DollarSign, Clock } from 'lucide-react';
 import { QuickQuoteDialog } from '@/components/providers/QuickQuoteDialog';
+import ProviderBadges from '@/components/providers/ProviderBadges';
 import { toast } from '@/hooks/use-toast';
 
 export default function Profile() {
@@ -156,32 +157,37 @@ export default function Profile() {
                 <p className="text-lg font-medium">{providerSettings.bio_headline}</p>
               )}
 
-              {isProvider && providerSettings && (
-                <div className="flex gap-4 flex-wrap">
-                  {providerSettings.hourly_rate && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3" />
-                      ${providerSettings.hourly_rate}/hr
-                    </Badge>
+              {isProvider && (
+                <>
+                  <ProviderBadges providerId={uid!} />
+                  {providerSettings && (
+                    <div className="flex gap-4 flex-wrap">
+                      {providerSettings.hourly_rate && (
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <DollarSign className="h-3 w-3" />
+                          ${providerSettings.hourly_rate}/hr
+                        </Badge>
+                      )}
+                      {providerSettings.response_time_hours && (
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          ~{providerSettings.response_time_hours}h {t('profile.response')}
+                        </Badge>
+                      )}
+                      {providerSettings.accepts_instant_bookings && (
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <CheckCircle className="h-3 w-3" />
+                          {t('profile.instantBooking')}
+                        </Badge>
+                      )}
+                      {providerSettings.available_now && (
+                        <Badge className="bg-green-600 flex items-center gap-1">
+                          {t('profile.availableNow')}
+                        </Badge>
+                      )}
+                    </div>
                   )}
-                  {providerSettings.response_time_hours && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      ~{providerSettings.response_time_hours}h {t('profile.response')}
-                    </Badge>
-                  )}
-                  {providerSettings.accepts_instant_bookings && (
-                    <Badge variant="secondary" className="flex items-center gap-1">
-                      <CheckCircle className="h-3 w-3" />
-                      {t('profile.instantBooking')}
-                    </Badge>
-                  )}
-                  {providerSettings.available_now && (
-                    <Badge className="bg-green-600 flex items-center gap-1">
-                      {t('profile.availableNow')}
-                    </Badge>
-                  )}
-                </div>
+                </>
               )}
 
               <div className="flex gap-3">
