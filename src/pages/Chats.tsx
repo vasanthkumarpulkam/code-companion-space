@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Send, Paperclip, Image as ImageIcon, X, Search, Edit2, Trash2, Check, Mic, Square } from 'lucide-react';
+import { Send, Paperclip, Image as ImageIcon, X, Search, Edit2, Trash2, Check, Mic, Square, ArrowLeft } from 'lucide-react';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -30,6 +31,7 @@ import {
 export default function Chats() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [threads, setThreads] = useState<any[]>([]);
   const [selectedThread, setSelectedThread] = useState<string | null>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -532,7 +534,17 @@ export default function Chats() {
   return (
     <div className="container max-w-7xl py-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Messages</h1>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="h-9 w-9"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-3xl font-bold">Messages</h1>
+        </div>
         {selectedThread && (
           <div className="relative w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
