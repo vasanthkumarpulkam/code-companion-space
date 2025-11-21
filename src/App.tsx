@@ -17,6 +17,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
+import ProviderDashboard from "./pages/ProviderDashboard";
 import Providers from "./pages/Providers";
 import Jobs from "./pages/jobs/Jobs";
 import NewJob from "./pages/jobs/NewJob";
@@ -57,6 +58,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/provider-dashboard" 
+              element={
+                <ProtectedRoute>
+                  <ProviderDashboard />
                 </ProtectedRoute>
               } 
             />

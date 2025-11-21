@@ -7,9 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
-import { MapPin, DollarSign, Calendar, MessageSquare, Award, Languages, Flag } from 'lucide-react';
+import { MapPin, DollarSign, Calendar, MessageSquare, Award, Languages, Flag, CheckCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import BidCard from '@/components/jobs/BidCard';
+import BidSubmissionForm from '@/components/jobs/BidSubmissionForm';
+import JobCompletionDialog from '@/components/jobs/JobCompletionDialog';
 import { useRealtimeBids } from '@/hooks/useRealtimeBids';
 import { ReportDialog } from '@/components/jobs/ReportDialog';
 import { analytics } from '@/utils/analytics';
@@ -131,7 +133,9 @@ export default function JobDetail() {
   }
 
   const isOwner = user?.id === job.customer_id;
+  const isAwardedProvider = user?.id === job.awarded_provider_id;
   const canBid = userRole === 'provider' && job.status === 'open' && !isOwner;
+  const canComplete = (isOwner || isAwardedProvider) && (job.status === 'awarded' || job.status === 'in_progress');
   const needsAuth = !user && job.status === 'open';
 
   return (
@@ -149,6 +153,9 @@ export default function JobDetail() {
                   <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
                     {job.status}
                   </Badge>
+                  {canComplete && (
+                    <JobCompletionDialog jobId={id!} onComplete={fetchJobDetails} />
+                  )}
                   {!isOwner && <ReportDialog jobId={id} />}
                 </div>
               </div>
@@ -205,34 +212,11 @@ export default function JobDetail() {
           )}
 
           {canBid && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Submit Your Bid</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Bid Amount ($)</label>
-                  <Input
-                    type="number"
-                    value={bidAmount}
-                    onChange={(e) => setBidAmount(e.target.value)}
-                    placeholder="Enter your bid"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Proposal</label>
-                  <Textarea
-                    value={bidProposal}
-                    onChange={(e) => setBidProposal(e.target.value)}
-                    placeholder="Explain why you're the best fit for this job..."
-                    className="min-h-32"
-                  />
-                </div>
-                <Button onClick={submitBid} disabled={submitting} className="w-full">
-                  {submitting ? 'Submitting...' : 'Submit Bid'}
-                </Button>
-              </CardContent>
-            </Card>
+            <BidSubmissionForm
+              jobId={id!}
+              jobBudget={job.budget}
+              onSuccess={fetchBids}
+            />
           )}
 
           <Card>
