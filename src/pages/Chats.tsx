@@ -7,9 +7,25 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Send, Paperclip, Image as ImageIcon, X } from 'lucide-react';
+import { Send, Paperclip, Image as ImageIcon, X, Search, Edit2, Trash2, Check } from 'lucide-react';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function Chats() {
   const { user } = useAuth();
@@ -23,6 +39,10 @@ export default function Chats() {
   const [otherUserTyping, setOtherUserTyping] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [uploadPreview, setUploadPreview] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState('');
+  const [deletingMessageId, setDeletingMessageId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -189,6 +209,7 @@ export default function Chats() {
       .select('*, profiles!messages_sender_id_fkey(full_name)')
       .eq(isJobThread ? 'job_id' : 'quote_request_id', threadId)
       .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
     setMessages(data || []);
@@ -305,9 +326,101 @@ export default function Chats() {
     }
   };
 
+  const startEditMessage = (message: any) => {
+    setEditingMessageId(message.id);
+    setEditingContent(message.content);
+  };
+
+  const cancelEdit = () => {
+    setEditingMessageId(null);
+    setEditingContent('');
+  };
+
+  const saveEdit = async (messageId: string) => {
+    if (!editingContent.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Message cannot be empty',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const originalMessage = messages.find(m => m.id === messageId);
+    
+    const { error } = await supabase
+      .from('messages')
+      .update({
+        content: editingContent.trim(),
+        edited_at: new Date().toISOString(),
+        original_content: originalMessage?.original_content || originalMessage?.content,
+      })
+      .eq('id', messageId);
+
+    if (!error) {
+      setEditingMessageId(null);
+      setEditingContent('');
+      if (selectedThread) {
+        fetchMessages(selectedThread);
+      }
+      toast({
+        title: 'Message updated',
+        description: 'Your message has been edited',
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: 'Failed to edit message',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const deleteMessage = async (messageId: string) => {
+    const { error } = await supabase
+      .from('messages')
+      .delete()
+      .eq('id', messageId);
+
+    if (!error) {
+      if (selectedThread) {
+        fetchMessages(selectedThread);
+      }
+      toast({
+        title: 'Message deleted',
+        description: 'Your message has been removed',
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete message',
+        variant: 'destructive',
+      });
+    }
+    setDeletingMessageId(null);
+  };
+
+  const filteredMessages = messages.filter(message => {
+    if (!searchQuery.trim()) return true;
+    return message.content.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
   return (
     <div className="container max-w-7xl py-8">
-      <h1 className="text-3xl font-bold mb-6">Messages</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">Messages</h1>
+        {selectedThread && (
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search messages..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        )}
+      </div>
 
       <Card className="h-[600px]">
         <div className="grid grid-cols-12 h-full">
@@ -362,7 +475,7 @@ export default function Chats() {
               <>
                 <ScrollArea className="flex-1 p-4">
                   <div className="space-y-4">
-                    {messages.map((message) => (
+                    {filteredMessages.map((message) => (
                       <div
                         key={message.id}
                         className={`flex ${
@@ -397,10 +510,72 @@ export default function Chats() {
                               )}
                             </div>
                           )}
-                          <p>{message.content}</p>
-                          <p className="text-xs mt-1 opacity-70">
-                            {new Date(message.created_at).toLocaleTimeString()}
-                          </p>
+                          
+                          {editingMessageId === message.id ? (
+                            <div className="space-y-2">
+                              <Input
+                                value={editingContent}
+                                onChange={(e) => setEditingContent(e.target.value)}
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter' && !e.shiftKey) {
+                                    saveEdit(message.id);
+                                  } else if (e.key === 'Escape') {
+                                    cancelEdit();
+                                  }
+                                }}
+                                className="bg-background"
+                              />
+                              <div className="flex gap-2">
+                                <Button size="sm" onClick={() => saveEdit(message.id)}>
+                                  <Check className="h-3 w-3 mr-1" />
+                                  Save
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={cancelEdit}>
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-start justify-between gap-2">
+                                <p className="flex-1">{message.content}</p>
+                                {message.sender_id === user?.id && (
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button 
+                                        variant="ghost" 
+                                        size="icon" 
+                                        className="h-6 w-6 opacity-50 hover:opacity-100"
+                                      >
+                                        <span className="text-xs">⋮</span>
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                      <DropdownMenuItem onClick={() => startEditMessage(message)}>
+                                        <Edit2 className="h-4 w-4 mr-2" />
+                                        Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem 
+                                        onClick={() => setDeletingMessageId(message.id)}
+                                        className="text-destructive"
+                                      >
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <p className="text-xs opacity-70">
+                                  {new Date(message.created_at).toLocaleTimeString()}
+                                </p>
+                                {message.edited_at && (
+                                  <span className="text-xs opacity-60 italic">(edited)</span>
+                                )}
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -492,6 +667,26 @@ export default function Chats() {
           </div>
         </div>
       </Card>
+
+      <AlertDialog open={!!deletingMessageId} onOpenChange={() => setDeletingMessageId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Message</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this message? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => deletingMessageId && deleteMessage(deletingMessageId)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
