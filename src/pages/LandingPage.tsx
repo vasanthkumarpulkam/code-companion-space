@@ -333,40 +333,40 @@ export default function LandingPage() {
         </section>
 
         {/* Cost Estimates Section */}
-        <section className="py-10 md:py-16 lg:py-20 px-4 bg-muted/30">
+        <section className="py-8 md:py-12 lg:py-16 px-4 bg-muted/30">
           <div className="container mx-auto max-w-7xl">
-            <div className="mb-8 md:mb-10">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 md:mb-4">Get free cost estimates</h2>
-              <p className="text-sm md:text-base lg:text-lg text-muted-foreground max-w-3xl">
-                We analyzed millions of bids from Service HUB professionals to see what things really cost. Find out what other people have paid for projects like yours.
+            <div className="mb-6 md:mb-8">
+              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2 md:mb-3">Get free cost estimates</h2>
+              <p className="text-xs md:text-sm text-muted-foreground max-w-2xl">
+                We analyzed millions of bids from Service HUB professionals to see what things really cost.
               </p>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2.5 md:gap-3 lg:gap-4">
               {[
-                { service: 'Furniture Assembly', price: '$49', category: 'handyman', bg: 'bg-gradient-to-br from-orange-100/80 to-orange-200/80 dark:from-orange-900/20 dark:to-orange-800/20', icon: Hammer, iconColor: 'text-orange-400/40 dark:text-orange-400/30' },
-                { service: 'Shelf Installation', price: '$65', category: 'handyman', bg: 'bg-gradient-to-br from-blue-100/80 to-blue-200/80 dark:from-blue-900/20 dark:to-blue-800/20', icon: Hammer, iconColor: 'text-blue-400/40 dark:text-blue-400/30' },
-                { service: 'Deep Cleaning', price: '$49', category: 'cleaning', bg: 'bg-gradient-to-br from-emerald-100/80 to-emerald-200/80 dark:from-emerald-900/20 dark:to-emerald-800/20', icon: Sparkles, iconColor: 'text-emerald-400/40 dark:text-emerald-400/30' },
-                { service: 'Minor Repairs', price: '$74', category: 'handyman', bg: 'bg-gradient-to-br from-purple-100/80 to-purple-200/80 dark:from-purple-900/20 dark:to-purple-800/20', icon: Hammer, iconColor: 'text-purple-400/40 dark:text-purple-400/30' },
-                { service: 'TV Mounting', price: '$69', category: 'handyman', bg: 'bg-gradient-to-br from-yellow-100/80 to-yellow-200/80 dark:from-yellow-900/20 dark:to-yellow-800/20', icon: Hammer, iconColor: 'text-yellow-500/40 dark:text-yellow-400/30' },
-                { service: 'Help Moving', price: '$80', category: 'moving', bg: 'bg-gradient-to-br from-rose-100/80 to-rose-200/80 dark:from-rose-900/20 dark:to-rose-800/20', icon: Truck, iconColor: 'text-rose-400/40 dark:text-rose-400/30' },
-                { service: 'Lawn Mowing', price: '$200', category: 'landscaping', bg: 'bg-gradient-to-br from-green-100/80 to-green-200/80 dark:from-green-900/20 dark:to-green-800/20', icon: TreePine, iconColor: 'text-green-400/40 dark:text-green-400/30' },
-                { service: 'Event Setup', price: '$150', category: 'events', bg: 'bg-gradient-to-br from-pink-100/80 to-pink-200/80 dark:from-pink-900/20 dark:to-pink-800/20', icon: PartyPopper, iconColor: 'text-pink-400/40 dark:text-pink-400/30' },
+                { service: 'Furniture Assembly', price: '$49', category: 'handyman', bg: 'from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/30', icon: Hammer, iconColor: 'text-orange-300 dark:text-orange-700' },
+                { service: 'Shelf Installation', price: '$65', category: 'handyman', bg: 'from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30', icon: Hammer, iconColor: 'text-blue-300 dark:text-blue-700' },
+                { service: 'Deep Cleaning', price: '$49', category: 'cleaning', bg: 'from-emerald-50 to-emerald-100 dark:from-emerald-950/30 dark:to-emerald-900/30', icon: Sparkles, iconColor: 'text-emerald-300 dark:text-emerald-700' },
+                { service: 'Minor Repairs', price: '$74', category: 'handyman', bg: 'from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30', icon: Hammer, iconColor: 'text-purple-300 dark:text-purple-700' },
+                { service: 'TV Mounting', price: '$69', category: 'handyman', bg: 'from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/30', icon: Hammer, iconColor: 'text-amber-300 dark:text-amber-700' },
+                { service: 'Help Moving', price: '$80', category: 'moving', bg: 'from-rose-50 to-rose-100 dark:from-rose-950/30 dark:to-rose-900/30', icon: Truck, iconColor: 'text-rose-300 dark:text-rose-700' },
+                { service: 'Lawn Mowing', price: '$200', category: 'landscaping', bg: 'from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30', icon: TreePine, iconColor: 'text-green-300 dark:text-green-700' },
+                { service: 'Event Setup', price: '$150', category: 'events', bg: 'from-pink-50 to-pink-100 dark:from-pink-950/30 dark:to-pink-900/30', icon: PartyPopper, iconColor: 'text-pink-300 dark:text-pink-700' },
               ].map((item) => (
                 <Link
                   key={item.service}
                   to={`/request-service/${item.category}/${encodeURIComponent(item.service)}`}
-                  className="group relative overflow-hidden rounded-xl md:rounded-2xl bg-background border border-border/50 hover:shadow-lg hover:border-border transition-all duration-200"
+                  className="group relative overflow-hidden rounded-lg md:rounded-xl bg-background hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                 >
                   {/* Icon Background */}
-                  <div className={`h-32 sm:h-36 md:h-44 lg:h-52 ${item.bg} flex items-center justify-center relative`}>
-                    <item.icon className={`h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28 ${item.iconColor} group-hover:scale-110 transition-transform duration-300`} strokeWidth={1.5} />
+                  <div className={`h-24 sm:h-28 md:h-32 bg-gradient-to-br ${item.bg} flex items-center justify-center relative`}>
+                    <item.icon className={`h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 ${item.iconColor} group-hover:scale-110 transition-transform duration-300`} strokeWidth={1.5} />
                   </div>
                   
                   {/* Content */}
-                  <div className="p-3 md:p-4 lg:p-5 bg-background">
-                    <h3 className="font-semibold text-sm md:text-base lg:text-lg mb-1 text-foreground">{item.service}</h3>
-                    <p className="text-xs md:text-sm text-muted-foreground">Projects starting at {item.price}</p>
+                  <div className="p-2.5 md:p-3 bg-background">
+                    <h3 className="font-semibold text-xs md:text-sm mb-0.5 text-foreground leading-tight">{item.service}</h3>
+                    <p className="text-[10px] md:text-xs text-muted-foreground">Starting at {item.price}</p>
                   </div>
                 </Link>
               ))}
