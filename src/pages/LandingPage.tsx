@@ -149,8 +149,8 @@ export default function LandingPage() {
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-tight px-2">
                 Find trusted local pros for <span className="text-gradient">any project</span>
               </h1>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto px-4">
-                Post jobs, browse professionals, or get instant quotes—all in one place.
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-8 max-w-3xl mx-auto px-4">
+                Service HUB makes it easy to find trusted local pros, schedule services, and get your projects done fast.
               </p>
             </div>
 
