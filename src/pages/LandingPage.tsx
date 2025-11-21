@@ -147,10 +147,10 @@ export default function LandingPage() {
           <div className="container mx-auto max-w-7xl relative z-10">
             <div className="text-center mb-8 md:mb-12">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-tight px-2">
-                Your local service marketplace with <span className="text-gradient">3 ways to hire</span>
+                Find trusted local pros for <span className="text-gradient">any project</span>
               </h1>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 max-w-3xl mx-auto px-4">
-                Post jobs for quotes, browse top-rated pros, or negotiate directly—flexibility you won't find anywhere else.
+                Post jobs for competitive quotes, browse top-rated professionals, or request direct quotes—your project, your way.
               </p>
             </div>
 
