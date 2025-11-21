@@ -19,6 +19,7 @@ import Signup from "./pages/auth/Signup";
 import Dashboard from "./pages/Dashboard";
 import ProviderDashboard from "./pages/ProviderDashboard";
 import Providers from "./pages/Providers";
+import TopProviders from "./pages/TopProviders";
 import Jobs from "./pages/jobs/Jobs";
 import NewJob from "./pages/jobs/NewJob";
 import JobDetail from "./pages/jobs/JobDetail";
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/services" element={<Services />} />
             <Route path="/providers" element={<Providers />} />
+            <Route path="/top-providers" element={<TopProviders />} />
             <Route path="/services/:category" element={<ServiceCategory />} />
             <Route path="/support" element={<Support />} />
             <Route path="/legal/terms" element={<TermsOfService />} />
