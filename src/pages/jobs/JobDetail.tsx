@@ -12,6 +12,7 @@ import { toast } from '@/hooks/use-toast';
 import BidCard from '@/components/jobs/BidCard';
 import BidSubmissionForm from '@/components/jobs/BidSubmissionForm';
 import JobCompletionDialog from '@/components/jobs/JobCompletionDialog';
+import ReviewForm from '@/components/reviews/ReviewForm';
 import { useRealtimeBids } from '@/hooks/useRealtimeBids';
 import { ReportDialog } from '@/components/jobs/ReportDialog';
 import { analytics } from '@/utils/analytics';
@@ -22,10 +23,8 @@ export default function JobDetail() {
   const navigate = useNavigate();
   const [job, setJob] = useState<any>(null);
   const [bids, setBids] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [bidAmount, setBidAmount] = useState('');
-  const [bidProposal, setBidProposal] = useState('');
-  const [submitting, setSubmitting] = useState(false);
 
   const fetchBidsCallback = useCallback(() => {
     fetchBids();
@@ -37,7 +36,17 @@ export default function JobDetail() {
   useEffect(() => {
     fetchJobDetails();
     fetchBids();
+    fetchReviews();
   }, [id]);
+
+  const fetchReviews = async () => {
+    const { data } = await supabase
+      .from('reviews')
+      .select('*, profiles!reviews_reviewer_id_fkey(full_name)')
+      .eq('job_id', id);
+
+    setReviews(data || []);
+  };
 
   const fetchJobDetails = async () => {
     const { data, error } = await supabase
@@ -62,32 +71,6 @@ export default function JobDetail() {
 
     const { data } = await query;
     setBids(data || []);
-  };
-
-  const submitBid = async () => {
-    if (!user || !bidAmount || !bidProposal) return;
-
-    setSubmitting(true);
-    try {
-      const { error } = await supabase.from('bids').insert({
-        job_id: id,
-        provider_id: user.id,
-        amount: parseFloat(bidAmount),
-        proposal: bidProposal,
-      });
-
-      if (error) throw error;
-
-      toast({ title: 'Bid submitted successfully!' });
-      analytics.trackBidSubmitted(id!, parseFloat(bidAmount));
-      setBidAmount('');
-      setBidProposal('');
-      fetchBids();
-    } catch (error: any) {
-      toast({ title: 'Error submitting bid', description: error.message, variant: 'destructive' });
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   const awardBid = async (bidId: string, providerId: string) => {
@@ -136,6 +119,8 @@ export default function JobDetail() {
   const isAwardedProvider = user?.id === job.awarded_provider_id;
   const canBid = userRole === 'provider' && job.status === 'open' && !isOwner;
   const canComplete = (isOwner || isAwardedProvider) && (job.status === 'awarded' || job.status === 'in_progress');
+  const canReview = job.status === 'completed' && (isOwner || isAwardedProvider);
+  const hasReviewed = reviews.some((r) => r.reviewer_id === user?.id);
   const needsAuth = !user && job.status === 'open';
 
   return (
@@ -235,9 +220,56 @@ export default function JobDetail() {
                     onAward={() => awardBid(bid.id, bid.provider_id)}
                   />
                 ))
-              )}
+               )}
             </CardContent>
           </Card>
+
+          {canReview && !hasReviewed && job.awarded_provider_id && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Leave a Review</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">
+                  Share your experience working on this job
+                </p>
+                <ReviewForm
+                  jobId={id!}
+                  reviewedId={isOwner ? job.awarded_provider_id : job.customer_id}
+                  reviewedName={isOwner ? 'Provider' : job.profiles?.full_name || 'Customer'}
+                  onSuccess={fetchReviews}
+                />
+              </CardContent>
+            </Card>
+          )}
+
+          {reviews.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Reviews</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {reviews.map((review) => (
+                  <div key={review.id} className="border-b last:border-0 pb-4 last:pb-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <p className="font-medium">{review.profiles?.full_name}</p>
+                      <div className="flex">
+                        {Array.from({ length: review.rating }).map((_, i) => (
+                          <Award key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    </div>
+                    {review.comment && (
+                      <p className="text-sm text-muted-foreground">{review.comment}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(review.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <aside className="space-y-6">

@@ -7,11 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Briefcase, DollarSign, AlertTriangle, Settings, FileText, Eye } from 'lucide-react';
+import { Users, Briefcase, DollarSign, AlertTriangle, Settings, FileText, Eye, Award } from 'lucide-react';
 import { FinancialReports } from '@/components/admin/FinancialReports';
 import { DisputeResolution } from '@/components/admin/DisputeResolution';
 import { UserManagement } from '@/components/admin/UserManagement';
 import { PlatformSettings } from '@/components/admin/PlatformSettings';
+import { BadgeManagement } from '@/components/admin/BadgeManagement';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -166,6 +167,10 @@ export default function Admin() {
               <AlertTriangle className="h-4 w-4 mr-2" />
               Disputes
             </TabsTrigger>
+            <TabsTrigger value="badges">
+              <Award className="h-4 w-4 mr-2" />
+              Badges
+            </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
               Settings
@@ -227,6 +232,10 @@ export default function Admin() {
 
           <TabsContent value="disputes">
             <DisputeResolution />
+          </TabsContent>
+
+          <TabsContent value="badges">
+            <BadgeManagement />
           </TabsContent>
 
           <TabsContent value="settings">
