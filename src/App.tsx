@@ -27,6 +27,8 @@ import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import RequestService from "./pages/RequestService";
+import ServiceRequestWizard from "./pages/ServiceRequestWizard";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +60,9 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+            <Route path="/request-service" element={<RequestService />} />
+            <Route path="/request-service/:category" element={<RequestService />} />
+            <Route path="/request-service/:category/:subcategory" element={<ServiceRequestWizard />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route 
               path="/jobs/new" 
