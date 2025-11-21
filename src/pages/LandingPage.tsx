@@ -122,11 +122,11 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header hideBackButton />
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-32 px-4 overflow-hidden">
+        <section className="relative py-12 md:py-20 lg:py-32 px-4 overflow-hidden">
           {/* Background with gradient and pattern */}
           <div className="absolute inset-0 gradient-subtle"></div>
           <div className="absolute inset-0 opacity-[0.03]" style={{
@@ -135,31 +135,31 @@ export default function LandingPage() {
           }}></div>
           
           <div className="container mx-auto max-w-7xl relative z-10">
-            <div className="text-center mb-12">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            <div className="text-center mb-8 md:mb-12">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 leading-tight px-2">
                 Your local service marketplace with <span className="text-gradient">3 ways to hire</span>
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 max-w-3xl mx-auto px-4">
                 Post jobs for quotes, browse top-rated pros, or negotiate directly—flexibility you won't find anywhere else.
               </p>
             </div>
 
             {/* Three Customer Options - USP Cards */}
-            <div className={`grid ${userRole === 'provider' ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-6 max-w-6xl mx-auto mb-12`}>
+            <div className={`grid grid-cols-1 ${userRole === 'provider' ? 'sm:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3'} gap-4 md:gap-6 max-w-6xl mx-auto mb-8 md:mb-12 px-4`}>
               {/* Option 1: Post & Get Quotes - Hidden for providers */}
               {userRole !== 'provider' && (
                 <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
-                  <CardHeader>
-                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <MessageCircle className="h-6 w-6 text-primary" />
+                  <CardHeader className="pb-3 md:pb-6">
+                    <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform">
+                      <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                     </div>
-                    <CardTitle className="text-xl">Post Job, Get Quotes</CardTitle>
-                    <CardDescription className="text-base">
+                    <CardTitle className="text-lg md:text-xl">Post Job, Get Quotes</CardTitle>
+                    <CardDescription className="text-sm md:text-base">
                       Post once, receive multiple competitive quotes from nearby providers. No need to contact each one.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <Button asChild className="w-full gradient-primary">
+                  <CardContent className="pt-0">
+                    <Button asChild className="w-full gradient-primary h-11 md:h-12 text-sm md:text-base">
                       <Link to="/jobs/new">Post a Job</Link>
                     </Button>
                   </CardContent>
@@ -168,17 +168,17 @@ export default function LandingPage() {
 
               {/* Option 2: Browse Top Providers */}
               <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Award className="h-6 w-6 text-primary" />
+                <CardHeader className="pb-3 md:pb-6">
+                  <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform">
+                    <Award className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-xl">Browse Top Pros</CardTitle>
-                  <CardDescription className="text-base">
+                  <CardTitle className="text-lg md:text-xl">Browse Top Pros</CardTitle>
+                  <CardDescription className="text-sm md:text-base">
                     Instantly contact and hire highly-rated professionals from our curated directory.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <Button asChild variant="outline" className="w-full border-2">
+                <CardContent className="pt-0">
+                  <Button asChild variant="outline" className="w-full border-2 h-11 md:h-12 text-sm md:text-base">
                     <Link to="/top-providers">View Top Providers</Link>
                   </Button>
                 </CardContent>
@@ -186,17 +186,17 @@ export default function LandingPage() {
 
               {/* Option 3: Negotiate Pricing */}
               <Card className="border-2 hover:border-primary hover:shadow-xl transition-all group">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <TrendingUp className="h-6 w-6 text-primary" />
+                <CardHeader className="pb-3 md:pb-6">
+                  <div className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-primary/10 flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform">
+                    <TrendingUp className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-xl">Flexible Pricing</CardTitle>
-                  <CardDescription className="text-base">
+                  <CardTitle className="text-lg md:text-xl">Flexible Pricing</CardTitle>
+                  <CardDescription className="text-sm md:text-base">
                     Providers set their own competitive rates. Negotiate and choose the best offer for your budget.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <Button asChild variant="secondary" className="w-full">
+                <CardContent className="pt-0">
+                  <Button asChild variant="secondary" className="w-full h-11 md:h-12 text-sm md:text-base">
                     <Link to="/providers">Search All Providers</Link>
                   </Button>
                 </CardContent>
@@ -204,15 +204,15 @@ export default function LandingPage() {
             </div>
 
             {/* Search Bar */}
-            <div className="max-w-3xl mx-auto mb-8">
+            <div className="max-w-3xl mx-auto mb-6 md:mb-8 px-4">
               <form onSubmit={handleSearch}>
-                <div className="flex flex-col md:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
                   <div ref={searchRef} className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+                    <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-muted-foreground z-10" />
                     <Input
                       type="text"
                       placeholder="What service do you need?"
-                      className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
+                      className="pl-10 md:pl-12 pr-4 h-12 md:h-14 text-sm md:text-base shadow-lg border-2"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onFocus={() => searchQuery && setShowSuggestions(true)}
@@ -224,27 +224,27 @@ export default function LandingPage() {
                             key={category.id}
                             type="button"
                             onClick={() => handleSuggestionClick(category.name)}
-                            className="w-full text-left px-4 py-3 hover:bg-accent transition-colors flex items-center gap-3"
+                            className="w-full text-left px-3 md:px-4 py-2 md:py-3 hover:bg-accent transition-colors flex items-center gap-2 md:gap-3"
                           >
-                            <Search className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-medium">{category.name}</span>
+                            <Search className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+                            <span className="font-medium text-sm md:text-base">{category.name}</span>
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
-                  <div className="relative md:w-48">
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <div className="relative sm:w-40 md:w-48">
+                    <MapPin className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
                     <Input
                       type="text"
                       placeholder="Zipcode"
-                      className="pl-12 pr-4 h-14 text-base shadow-lg border-2"
+                      className="pl-10 md:pl-12 pr-4 h-12 md:h-14 text-sm md:text-base shadow-lg border-2"
                       value={zipcode}
                       onChange={(e) => setZipcode(e.target.value)}
                       maxLength={5}
                     />
                   </div>
-                  <Button type="submit" size="lg" className="h-14 px-8 shadow-lg">
+                  <Button type="submit" size="lg" className="h-12 md:h-14 px-6 md:px-8 shadow-lg text-sm md:text-base">
                     Search
                   </Button>
                 </div>
@@ -252,8 +252,8 @@ export default function LandingPage() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="mt-12 text-center">
-              <p className="text-sm text-muted-foreground font-medium">
+            <div className="mt-8 md:mt-12 text-center px-4">
+              <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                 Trusted by <span className="font-bold text-foreground">50,000+</span> people • <span className="font-bold text-foreground">4.8/5</span> with over <span className="font-bold text-foreground">10,000</span> reviews
               </p>
             </div>
@@ -261,9 +261,9 @@ export default function LandingPage() {
         </section>
 
         {/* Popular Services */}
-        <section className="py-16 md:py-20 px-4 bg-card border-y">
+        <section className="py-10 md:py-16 lg:py-20 px-4 bg-card border-y">
           <div className="container mx-auto max-w-7xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-foreground">Popular services near you</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-foreground">Popular services near you</h2>
             
             {/* Category Tabs */}
             <div className="flex gap-3 mb-8 overflow-x-auto pb-2 hide-scrollbar">
@@ -313,10 +313,10 @@ export default function LandingPage() {
         </section>
 
         {/* Services You Might Like */}
-        <section className="py-16 md:py-20 px-4 gradient-subtle">
+        <section className="py-10 md:py-16 lg:py-20 px-4 gradient-subtle">
           <div className="container mx-auto max-w-7xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">Services you might also like</h2>
-            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-8">Services you might also like</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
               {categories.map((category) => (
                 <Link key={category.name} to={category.path}>
                   <div className="text-center p-4 rounded-xl hover:bg-card hover:shadow-lg border-2 border-transparent hover:border-primary/20 transition-all cursor-pointer group">
