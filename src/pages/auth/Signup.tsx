@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 
 const signupSchema = z.object({
@@ -34,11 +34,12 @@ export default function Signup() {
   const { signUp, signInWithGoogle, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already logged in
-  if (user) {
-    navigate('/dashboard');
-    return null;
-  }
+  // Redirect if already logged in - use useEffect to avoid race conditions
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,7 +137,18 @@ export default function Signup() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Create Your Account</CardTitle>
+            <div className="flex items-center gap-2 mb-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="h-8 w-8"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <CardTitle>Create Your Account</CardTitle>
+            </div>
             <CardDescription>Join Service HUB to get started</CardDescription>
           </CardHeader>
           <CardContent>
