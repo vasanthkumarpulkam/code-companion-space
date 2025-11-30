@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,9 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { Send, Paperclip, Image as ImageIcon, X, Search, Edit2, Trash2, Check, Mic, Square, ArrowLeft } from 'lucide-react';
+import { Send, Paperclip, Image as ImageIcon, X, Search, Edit2, Trash2, Check, Mic, Square, ArrowLeft, CheckCheck } from 'lucide-react';
 import { useRealtimeMessages } from '@/hooks/useRealtimeMessages';
 import { useToast } from '@/hooks/use-toast';
+import { useMessageReactions } from '@/hooks/useMessageReactions';
+import { useUserPresence } from '@/hooks/useUserPresence';
+import { MessageReactions } from '@/components/chat/MessageReactions';
+import { OnlineStatusBadge } from '@/components/chat/OnlineStatusBadge';
+import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,6 +58,15 @@ export default function Chats() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Get message IDs for reactions
+  const messageIds = useMemo(() => messages.map(m => m.id), [messages]);
+  
+  // Use message reactions hook
+  const { reactions, addReaction, removeReaction } = useMessageReactions(messageIds);
+  
+  // Use user presence hook
+  const { isOnline } = useUserPresence('global-presence', user?.id);
 
   const handleMessageReceived = useCallback(() => {
     fetchThreads();
@@ -220,6 +234,20 @@ export default function Chats() {
       .order('created_at', { ascending: true });
 
     setMessages(data || []);
+    
+    // Mark messages as read
+    if (data && data.length > 0) {
+      const unreadMessages = data.filter(
+        m => m.recipient_id === user.id && !m.read_at
+      );
+      
+      if (unreadMessages.length > 0) {
+        await supabase
+          .from('messages')
+          .update({ read_at: new Date().toISOString() })
+          .in('id', unreadMessages.map(m => m.id));
+      }
+    }
   };
 
   const handleTyping = () => {
@@ -567,6 +595,9 @@ export default function Chats() {
                 {threads.map((thread) => {
                   const threadId = thread.job_id || thread.quote_request_id;
                   const threadTitle = thread.jobs?.title || thread.quote_requests?.title || 'Conversation';
+                  const otherUserId = thread.sender_id === user?.id ? thread.recipient_id : thread.sender_id;
+                  const otherUserOnline = isOnline(otherUserId);
+                  
                   return (
                   <button
                     key={threadId}
@@ -582,17 +613,22 @@ export default function Chats() {
                             {thread.otherUserName?.[0] || 'U'}
                           </AvatarFallback>
                         </Avatar>
-                        {unreadCounts[threadId] > 0 && (
-                          <Badge 
-                            variant="destructive" 
-                            className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                          >
-                            {unreadCounts[threadId] > 9 ? '9+' : unreadCounts[threadId]}
-                          </Badge>
-                        )}
+                        <div className="absolute -bottom-0.5 -right-0.5">
+                          <OnlineStatusBadge isOnline={otherUserOnline} size="sm" />
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium truncate">{thread.title}</p>
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium truncate">{thread.title}</p>
+                          {unreadCounts[threadId] > 0 && (
+                            <Badge 
+                              variant="destructive" 
+                              className="ml-2 h-5 min-w-[20px] flex items-center justify-center px-1 text-xs"
+                            >
+                              {unreadCounts[threadId] > 9 ? '9+' : unreadCounts[threadId]}
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground truncate">
                           {thread.otherUserName}
                         </p>
@@ -712,13 +748,31 @@ export default function Chats() {
                                   </DropdownMenu>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2 mt-1">
-                                <p className="text-xs opacity-70">
-                                  {new Date(message.created_at).toLocaleTimeString()}
-                                </p>
-                                {message.edited_at && (
-                                  <span className="text-xs opacity-60 italic">(edited)</span>
-                                )}
+                              <div className="flex items-center justify-between gap-2 mt-2">
+                                <div className="flex items-center gap-2">
+                                  <p className="text-xs opacity-70">
+                                    {new Date(message.created_at).toLocaleTimeString()}
+                                  </p>
+                                  {message.edited_at && (
+                                    <span className="text-xs opacity-60 italic">(edited)</span>
+                                  )}
+                                  {message.sender_id === user?.id && message.read_at && (
+                                    <span title="Read">
+                                      <CheckCheck className="h-3 w-3 opacity-70" />
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              {/* Message Reactions */}
+                              <div className="mt-2">
+                                <MessageReactions
+                                  messageId={message.id}
+                                  reactions={reactions[message.id] || []}
+                                  currentUserId={user?.id || ''}
+                                  onAddReaction={(emoji) => addReaction(message.id, emoji, user?.id || '')}
+                                  onRemoveReaction={(emoji) => removeReaction(message.id, emoji, user?.id || '')}
+                                />
                               </div>
                             </>
                           )}
@@ -726,15 +780,7 @@ export default function Chats() {
                       </div>
                     ))}
                     {otherUserTyping && (
-                      <div className="flex justify-start">
-                        <div className="bg-muted rounded-lg p-3">
-                          <div className="flex gap-1">
-                            <span className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <span className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <span className="w-2 h-2 bg-foreground/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                          </div>
-                        </div>
-                      </div>
+                      <TypingIndicator userName={threads.find(t => (t.job_id || t.quote_request_id) === selectedThread)?.sender_id === user?.id ? threads.find(t => (t.job_id || t.quote_request_id) === selectedThread)?.recipient_name : threads.find(t => (t.job_id || t.quote_request_id) === selectedThread)?.sender_name} />
                     )}
                     <div ref={messagesEndRef} />
                   </div>
