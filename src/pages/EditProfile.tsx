@@ -12,10 +12,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import { Upload, Save } from 'lucide-react';
+import { useFileUpload } from '@/hooks/useFileUpload';
+import { ProviderSettingsEditor } from '@/components/providers/ProviderSettingsEditor';
 
 const profileSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -28,10 +31,11 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export default function EditProfile() {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+  const { uploadFile, uploading } = useFileUpload();
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -66,6 +70,30 @@ export default function EditProfile() {
         phone: data.phone || '',
         language_preference: (data.language_preference === 'es' ? 'es' : 'en') as 'en' | 'es',
       });
+    }
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const url = await uploadFile(file, 'profile-images', user.id);
+    if (url) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: url })
+        .eq('id', user.id);
+
+      if (error) {
+        toast({
+          title: 'Error updating avatar',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        setProfile({ ...profile, avatar_url: url });
+        toast({ title: 'Profile photo updated!' });
+      }
     }
   };
 
@@ -113,15 +141,28 @@ export default function EditProfile() {
           <CardContent>
             <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
               <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
+                <AvatarImage src={profile?.avatar_url} />
                 <AvatarFallback className="text-xl sm:text-2xl">
                   {profile?.full_name?.[0] || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="space-y-2 text-center sm:text-left w-full sm:w-auto">
-                <Button variant="outline" className="w-full sm:w-auto">
+                <Button 
+                  variant="outline" 
+                  className="w-full sm:w-auto" 
+                  disabled={uploading}
+                  onClick={() => document.getElementById('avatar-upload')?.click()}
+                >
                   <Upload className="mr-2 h-4 w-4" />
-                  Upload Photo
+                  {uploading ? 'Uploading...' : 'Upload Photo'}
                 </Button>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhotoUpload}
+                />
                 <p className="text-xs text-muted-foreground">
                   JPG, PNG or GIF. Max size 2MB
                 </p>
@@ -130,12 +171,21 @@ export default function EditProfile() {
           </CardContent>
         </Card>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg sm:text-xl">Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 sm:space-y-5">
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            {userRole === 'provider' && (
+              <TabsTrigger value="settings">Provider Settings</TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="profile">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg sm:text-xl">Basic Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 sm:space-y-5">
               <div>
                 <Label htmlFor="full_name">Full Name</Label>
                 <Input
@@ -213,21 +263,29 @@ export default function EditProfile() {
             </CardContent>
           </Card>
 
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button type="submit" disabled={loading} className="w-full sm:w-auto h-11">
-              <Save className="mr-2 h-4 w-4" />
-              {loading ? 'Saving...' : 'Save Changes'}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => navigate(-1)}
-              className="w-full sm:w-auto h-11"
-            >
-              Cancel
-            </Button>
-          </div>
-          </form>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button type="submit" disabled={loading} className="w-full sm:w-auto h-11">
+                  <Save className="mr-2 h-4 w-4" />
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => navigate(-1)}
+                  className="w-full sm:w-auto h-11"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </TabsContent>
+
+          {userRole === 'provider' && (
+            <TabsContent value="settings">
+              <ProviderSettingsEditor />
+            </TabsContent>
+          )}
+        </Tabs>
         </div>
       </div>
     </main>
