@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import LandingPage from "./pages/LandingPage";
 import HowItWorks from "./pages/HowItWorks";
 import Services from "./pages/Services";
@@ -129,6 +130,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
               </Routes>
+              <PWAInstallPrompt />
             </LanguageProvider>
           </AuthProvider>
         </ErrorBoundary>
