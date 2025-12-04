@@ -33,9 +33,17 @@ import RequestService from "./pages/RequestService";
 import ServiceRequestWizard from "./pages/ServiceRequestWizard";
 import MyQuotes from "./pages/MyQuotes";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      retry: 1,
+    },
+  },
+});
 
-const App = () => (
+function App() {
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -135,6 +143,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+}
 
 export default App;
