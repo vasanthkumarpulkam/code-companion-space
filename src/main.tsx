@@ -9,8 +9,8 @@ if (process.env.NODE_ENV === 'development') {
   performanceMonitor.init();
 }
 
-createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const container = document.getElementById("root");
+if (container) {
+  const root = createRoot(container);
+  root.render(<App />);
+}
