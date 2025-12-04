@@ -12,9 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Upload, ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
+import { Upload, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { useFileUpload } from '@/hooks/useFileUpload';
 
 const formSchema = z.object({
   title: z.string().min(20, 'Title must be at least 20 characters'),
@@ -31,10 +30,8 @@ export default function NewJob() {
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { uploadFile, uploading } = useFileUpload();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -64,32 +61,6 @@ export default function NewJob() {
     fetchCategories();
   }, []);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (uploadedFiles.length + files.length > 5) {
-      toast({
-        title: 'Too many files',
-        description: 'You can upload up to 5 photos',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    for (const file of files) {
-      const url = await uploadFile(file, 'job-media', user?.id || '');
-      if (url) {
-        setUploadedFiles((prev) => [...prev, url]);
-        form.setValue('media_urls', [...uploadedFiles, url]);
-      }
-    }
-  };
-
-  const removeFile = (index: number) => {
-    const newFiles = uploadedFiles.filter((_, i) => i !== index);
-    setUploadedFiles(newFiles);
-    form.setValue('media_urls', newFiles);
-  };
-
   const onSubmit = async (data: FormData) => {
     if (!user) {
       toast({ 
@@ -110,7 +81,7 @@ export default function NewJob() {
         category_id: data.category_id,
         budget: parseFloat(data.budget),
         location: data.location,
-        media_urls: uploadedFiles,
+        media_urls: data.media_urls || [],
       });
 
       if (error) {
@@ -118,7 +89,7 @@ export default function NewJob() {
       }
 
       toast({ title: 'Job posted successfully!' });
-      navigate('/dashboard');
+      navigate('/jobs');
     } catch (error: any) {
       toast({ 
         title: 'Error posting job', 
@@ -245,48 +216,13 @@ export default function NewJob() {
 
               {step === 3 && (
                 <div className="space-y-4">
-                  <div 
-                    className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
-                    onClick={() => document.getElementById('file-upload')?.click()}
-                  >
+                  <div className="border-2 border-dashed rounded-lg p-8 text-center">
                     <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                     <p className="text-sm text-muted-foreground">
-                      {uploading ? 'Uploading...' : 'Click to select photos'}
+                      Drag and drop photos here, or click to select
                     </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Up to 5 photos ({uploadedFiles.length}/5 uploaded)
-                    </p>
-                    <input
-                      id="file-upload"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="hidden"
-                      onChange={handleFileUpload}
-                      disabled={uploading || uploadedFiles.length >= 5}
-                    />
+                    <p className="text-xs text-muted-foreground mt-2">Up to 5 photos</p>
                   </div>
-
-                  {uploadedFiles.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                      {uploadedFiles.map((url, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={url}
-                            alt={`Upload ${index + 1}`}
-                            className="w-full h-32 object-cover rounded-lg"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeFile(index)}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )}
 

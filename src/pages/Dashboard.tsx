@@ -33,8 +33,6 @@ export default function Dashboard() {
   });
   const [quoteRequests, setQuoteRequests] = useState<any[]>([]);
   const [loadingQuotes, setLoadingQuotes] = useState(false);
-  const [customerJobs, setCustomerJobs] = useState<any[]>([]);
-  const [loadingJobs, setLoadingJobs] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -42,9 +40,6 @@ export default function Dashboard() {
       fetchStats();
       if (userRole === 'provider') {
         fetchQuoteRequests();
-      }
-      if (userRole === 'customer') {
-        fetchCustomerJobs();
       }
     }
   }, [user, userRole]);
@@ -168,29 +163,6 @@ export default function Dashboard() {
       console.error('Error fetching quote requests:', error);
     } finally {
       setLoadingQuotes(false);
-    }
-  };
-
-  const fetchCustomerJobs = async () => {
-    setLoadingJobs(true);
-    try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select(`
-          *,
-          categories (name, icon),
-          bids (id, amount, status)
-        `)
-        .eq('customer_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setCustomerJobs(data || []);
-    } catch (error) {
-      console.error('Error fetching customer jobs:', error);
-    } finally {
-      setLoadingJobs(false);
     }
   };
 
@@ -359,69 +331,13 @@ export default function Dashboard() {
                   <CardDescription>{t('dashboard.yourJobs.description')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {loadingJobs ? (
-                    <div className="space-y-4">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-24 bg-muted animate-pulse rounded" />
-                      ))}
-                    </div>
-                  ) : customerJobs.length === 0 ? (
-                    <div className="text-center py-12 text-muted-foreground">
-                      <Briefcase className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p className="mb-4">{t('dashboard.yourJobs.empty')}</p>
-                      <Button asChild>
-                        <Link to="/jobs/new">{t('dashboard.yourJobs.firstJob')}</Link>
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {customerJobs.map((job) => (
-                        <Link 
-                          key={job.id} 
-                          to={`/jobs/${job.id}`}
-                          className="block p-4 border rounded-lg hover:bg-accent transition-colors"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <Badge variant="secondary">{job.categories?.name}</Badge>
-                                <Badge 
-                                  variant={
-                                    job.status === 'open' ? 'default' : 
-                                    job.status === 'awarded' ? 'secondary' : 
-                                    'outline'
-                                  }
-                                >
-                                  {job.status}
-                                </Badge>
-                              </div>
-                              <h3 className="font-semibold text-lg mb-1">{job.title}</h3>
-                              <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                                {job.description}
-                              </p>
-                              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                <span className="flex items-center gap-1">
-                                  <DollarSign className="h-4 w-4" />
-                                  ${job.budget}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <MapPin className="h-4 w-4" />
-                                  {job.location}
-                                </span>
-                                <span className="flex items-center gap-1">
-                                  <MessageCircle className="h-4 w-4" />
-                                  {job.bids?.length || 0} bids
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                      <Button variant="outline" asChild className="w-full">
-                        <Link to="/jobs">View All Jobs</Link>
-                      </Button>
-                    </div>
-                  )}
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Briefcase className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p className="mb-4">{t('dashboard.yourJobs.empty')}</p>
+                    <Button asChild>
+                      <Link to="/jobs/new">{t('dashboard.yourJobs.firstJob')}</Link>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </div>

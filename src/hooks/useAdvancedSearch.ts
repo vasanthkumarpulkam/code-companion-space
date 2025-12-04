@@ -32,12 +32,9 @@ export function useAdvancedSearch(filters: SearchFilters) {
       `)
       .eq('status', 'open');
 
-    // Full-text search using tsvector
+    // Text search
     if (filters.query) {
-      query = query.textSearch('search_vector', filters.query, {
-        type: 'websearch',
-        config: 'english'
-      });
+      query = query.or(`title.ilike.%${filters.query}%,description.ilike.%${filters.query}%`);
     }
 
     // Category filter
