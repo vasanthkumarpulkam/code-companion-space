@@ -8,13 +8,10 @@ import JobCard from '@/components/jobs/JobCard';
 import { AdvancedFilters } from '@/components/jobs/AdvancedFilters';
 import { JobMapView } from '@/components/jobs/JobMapView';
 import { LocationSearch } from '@/components/jobs/LocationSearch';
-import { SavedSearches } from '@/components/jobs/SavedSearches';
 import { useAdvancedSearch, SearchFilters } from '@/hooks/useAdvancedSearch';
 import { analytics } from '@/utils/analytics';
-import { useAuth } from '@/contexts/AuthContext';
 
 export default function Jobs() {
-  const { user } = useAuth();
   const [filters, setFilters] = useState<SearchFilters>({
     sortBy: 'recent',
     datePosted: 'all',
@@ -34,18 +31,6 @@ export default function Jobs() {
 
   const handleRadiusChange = (radius: number) => {
     setFilters(prev => ({ ...prev, radius }));
-  };
-
-  const handleApplySavedSearch = (savedFilters: any) => {
-    setFilters(prev => ({
-      ...prev,
-      query: savedFilters.query || '',
-      category: savedFilters.category,
-      minBudget: savedFilters.minBudget,
-      maxBudget: savedFilters.maxBudget,
-      location: savedFilters.location,
-      sortBy: savedFilters.sortBy || 'recent',
-    }));
   };
 
   return (
@@ -74,19 +59,6 @@ export default function Jobs() {
               onRadiusChange={handleRadiusChange}
             />
             <AdvancedFilters filters={filters} onFiltersChange={setFilters} />
-            {user && (
-              <SavedSearches
-                currentFilters={{
-                  query: filters.query,
-                  category: filters.category,
-                  minBudget: filters.minBudget,
-                  maxBudget: filters.maxBudget,
-                  location: filters.location,
-                  sortBy: filters.sortBy,
-                }}
-                onApplySearch={handleApplySavedSearch}
-              />
-            )}
           </div>
 
           {/* Main Content */}
