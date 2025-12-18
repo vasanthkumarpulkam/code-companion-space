@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -33,9 +32,9 @@ import RequestService from "./pages/RequestService";
 import ServiceRequestWizard from "./pages/ServiceRequestWizard";
 import MyQuotes from "./pages/MyQuotes";
 
-function App() {
-  const [queryClient] = useState(() => new QueryClient());
+const queryClient = new QueryClient();
 
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
