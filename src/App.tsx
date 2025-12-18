@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -39,12 +38,11 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipPrimitive.Provider delayDuration={0}>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ErrorBoundary>
-            <AuthProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ErrorBoundary>
+          <AuthProvider>
               <LanguageProvider>
                 <Routes>
                   <Route path="/" element={<LandingPage />} />
@@ -132,10 +130,9 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </LanguageProvider>
-            </AuthProvider>
-          </ErrorBoundary>
-        </BrowserRouter>
-      </TooltipPrimitive.Provider>
+          </AuthProvider>
+        </ErrorBoundary>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
