@@ -13,6 +13,9 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Force a single React instance (fixes Radix hooks dispatcher=null)
+      react: path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
     // Ensure a single React instance across dependencies
     dedupe: ["react", "react-dom"],
