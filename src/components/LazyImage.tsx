@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface LazyImageProps {
@@ -7,14 +7,27 @@ interface LazyImageProps {
   className?: string;
   width?: number;
   height?: number;
+  priority?: boolean;
+  aspectRatio?: string;
 }
 
-export function LazyImage({ src, alt, className, width, height }: LazyImageProps) {
+export const LazyImage = memo(function LazyImage({ 
+  src, 
+  alt, 
+  className, 
+  width, 
+  height,
+  priority = false,
+  aspectRatio
+}: LazyImageProps) {
   const [isLoading, setIsLoading] = useState(true);
-  const [isInView, setIsInView] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const [isInView, setIsInView] = useState(priority);
+  const [hasError, setHasError] = useState(false);
+  const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (priority) return;
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -25,7 +38,7 @@ export function LazyImage({ src, alt, className, width, height }: LazyImageProps
         });
       },
       {
-        rootMargin: '50px',
+        rootMargin: '200px',
       }
     );
 
@@ -36,25 +49,51 @@ export function LazyImage({ src, alt, className, width, height }: LazyImageProps
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [priority]);
 
   const handleLoad = () => {
     setIsLoading(false);
   };
 
+  const handleError = () => {
+    setHasError(true);
+    setIsLoading(false);
+  };
+
+  const containerStyle: React.CSSProperties = {
+    width: width ? `${width}px` : '100%',
+    height: height ? `${height}px` : undefined,
+    aspectRatio: aspectRatio,
+  };
+
   return (
-    <div className={className} style={{ width, height }}>
-      {isLoading && <Skeleton className="w-full h-full" />}
-      <img
-        ref={imgRef}
-        src={isInView ? src : undefined}
-        alt={alt}
-        className={`${className} ${isLoading ? 'hidden' : 'block'}`}
-        onLoad={handleLoad}
-        loading="lazy"
-        width={width}
-        height={height}
-      />
+    <div 
+      ref={imgRef} 
+      className={`relative overflow-hidden ${className || ''}`} 
+      style={containerStyle}
+    >
+      {isLoading && !hasError && (
+        <Skeleton className="absolute inset-0 w-full h-full" />
+      )}
+      {isInView && !hasError && (
+        <img
+          src={src}
+          alt={alt}
+          className={`w-full h-full object-cover transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+          onLoad={handleLoad}
+          onError={handleError}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding={priority ? 'sync' : 'async'}
+          width={width}
+          height={height}
+          fetchPriority={priority ? 'high' : 'auto'}
+        />
+      )}
+      {hasError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground text-sm">
+          Image unavailable
+        </div>
+      )}
     </div>
   );
-}
+});
