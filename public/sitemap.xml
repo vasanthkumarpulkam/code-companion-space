@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
   <url>
     <loc>https://www.nripeople.com/</loc>
     <lastmod>2025-12-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.nripeople.com/services</loc>
-    <lastmod>2025-12-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.nripeople.com/how-it-works</loc>
@@ -19,29 +14,125 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nripeople.com/services</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Service Categories -->
+  <url>
+    <loc>https://www.nripeople.com/services/cleaning</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/services/moving</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/services/landscaping</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/services/handyman</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/services/events</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/services/other</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Request Service Pages -->
+  <url>
+    <loc>https://www.nripeople.com/request-service</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/request-service/cleaning</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/request-service/moving</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/request-service/landscaping</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/request-service/handyman</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.nripeople.com/request-service/events</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Providers -->
+  <url>
     <loc>https://www.nripeople.com/providers</loc>
     <lastmod>2025-12-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.nripeople.com/top-providers</loc>
+    <lastmod>2025-12-18</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Jobs -->
+  <url>
     <loc>https://www.nripeople.com/jobs</loc>
     <lastmod>2025-12-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
+  
+  <!-- Authentication -->
   <url>
-    <loc>https://www.nripeople.com/login</loc>
+    <loc>https://www.nripeople.com/auth/login</loc>
     <lastmod>2025-12-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://www.nripeople.com/signup</loc>
+    <loc>https://www.nripeople.com/auth/signup</loc>
     <lastmod>2025-12-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
+  
+  <!-- Support & Legal -->
   <url>
     <loc>https://www.nripeople.com/support</loc>
     <lastmod>2025-12-18</lastmod>
@@ -49,13 +140,13 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.nripeople.com/terms-of-service</loc>
+    <loc>https://www.nripeople.com/legal/terms</loc>
     <lastmod>2025-12-18</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.nripeople.com/privacy-policy</loc>
+    <loc>https://www.nripeople.com/legal/privacy</loc>
     <lastmod>2025-12-18</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
