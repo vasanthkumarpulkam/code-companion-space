@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Users, Briefcase, DollarSign, AlertTriangle, Settings, FileText, Eye, Award } from 'lucide-react';
+import { Users, Briefcase, DollarSign, AlertTriangle, Settings, Award, Layers, Clock } from 'lucide-react';
 import { FinancialReports } from '@/components/admin/FinancialReports';
 import { DisputeResolution } from '@/components/admin/DisputeResolution';
 import { UserManagement } from '@/components/admin/UserManagement';
 import { PlatformSettings } from '@/components/admin/PlatformSettings';
 import { BadgeManagement } from '@/components/admin/BadgeManagement';
+import { JobOversight } from '@/components/admin/JobOversight';
+import { CategoryManagement } from '@/components/admin/CategoryManagement';
+import { AuditLog } from '@/components/admin/AuditLog';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -24,14 +25,10 @@ export default function Admin() {
     totalRevenue: 0,
     pendingDisputes: 0,
   });
-  const [users, setUsers] = useState<any[]>([]);
-  const [jobs, setJobs] = useState<any[]>([]);
 
   useEffect(() => {
     if (userRole === 'admin') {
       fetchStats();
-      fetchUsers();
-      fetchJobs();
     }
   }, [userRole]);
 
@@ -54,43 +51,6 @@ export default function Admin() {
       totalRevenue,
       pendingDisputes: reportsData.count || 0,
     });
-  };
-
-  const fetchUsers = async () => {
-    const { data: profilesData } = await supabase
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    if (profilesData) {
-      // Fetch roles for each user
-      const usersWithRoles = await Promise.all(
-        profilesData.map(async (profile) => {
-          const { data: rolesData } = await supabase
-            .from('user_roles')
-            .select('role')
-            .eq('user_id', profile.id);
-          
-          return {
-            ...profile,
-            user_roles: rolesData || []
-          };
-        })
-      );
-      
-      setUsers(usersWithRoles);
-    }
-  };
-
-  const fetchJobs = async () => {
-    const { data } = await supabase
-      .from('jobs')
-      .select('*, profiles!jobs_customer_id_fkey(full_name), categories(name)')
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    setJobs(data || []);
   };
 
   if (userRole !== 'admin') {
@@ -150,7 +110,7 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="users" className="space-y-4">
-          <TabsList>
+          <TabsList className="flex-wrap h-auto gap-2">
             <TabsTrigger value="users">
               <Users className="h-4 w-4 mr-2" />
               Users
@@ -158,6 +118,10 @@ export default function Admin() {
             <TabsTrigger value="jobs">
               <Briefcase className="h-4 w-4 mr-2" />
               Jobs
+            </TabsTrigger>
+            <TabsTrigger value="categories">
+              <Layers className="h-4 w-4 mr-2" />
+              Categories
             </TabsTrigger>
             <TabsTrigger value="financial">
               <DollarSign className="h-4 w-4 mr-2" />
@@ -171,6 +135,10 @@ export default function Admin() {
               <Award className="h-4 w-4 mr-2" />
               Badges
             </TabsTrigger>
+            <TabsTrigger value="audit">
+              <Clock className="h-4 w-4 mr-2" />
+              Activity
+            </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
               Settings
@@ -182,48 +150,11 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="jobs">
-            <Card>
-              <CardHeader>
-                <CardTitle>Job Oversight</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Budget</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {jobs.map((job) => (
-                      <TableRow key={job.id}>
-                        <TableCell className="font-medium">{job.title}</TableCell>
-                        <TableCell>{job.categories?.name}</TableCell>
-                        <TableCell>{job.profiles?.full_name || 'Anonymous'}</TableCell>
-                        <TableCell>
-                          <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
-                            {job.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>${job.budget}</TableCell>
-                        <TableCell>
-                          <Button variant="outline" size="sm" asChild>
-                            <Link to={`/jobs/${job.id}`}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View
-                            </Link>
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <JobOversight />
+          </TabsContent>
+
+          <TabsContent value="categories">
+            <CategoryManagement />
           </TabsContent>
 
           <TabsContent value="financial">
@@ -236,6 +167,10 @@ export default function Admin() {
 
           <TabsContent value="badges">
             <BadgeManagement />
+          </TabsContent>
+
+          <TabsContent value="audit">
+            <AuditLog />
           </TabsContent>
 
           <TabsContent value="settings">
