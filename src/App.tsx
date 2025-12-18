@@ -8,31 +8,42 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+
+// Critical pages loaded immediately
 import LandingPage from "./pages/LandingPage";
-import HowItWorks from "./pages/HowItWorks";
-import Services from "./pages/Services";
-import ServiceCategory from "./pages/ServiceCategory";
-import Support from "./pages/Support";
-import TermsOfService from "./pages/TermsOfService";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
-import Dashboard from "./pages/Dashboard";
-import ProviderDashboard from "./pages/ProviderDashboard";
-import Providers from "./pages/Providers";
-import TopProviders from "./pages/TopProviders";
-import Jobs from "./pages/jobs/Jobs";
-import NewJob from "./pages/jobs/NewJob";
-import JobDetail from "./pages/jobs/JobDetail";
-import Chats from "./pages/Chats";
-import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile";
-import Settings from "./pages/Settings";
-import Admin from "./pages/Admin";
-import NotFound from "./pages/NotFound";
-import RequestService from "./pages/RequestService";
-import ServiceRequestWizard from "./pages/ServiceRequestWizard";
-import MyQuotes from "./pages/MyQuotes";
+
+// Lazy load non-critical pages for better performance
+const HowItWorks = React.lazy(() => import("./pages/HowItWorks"));
+const Services = React.lazy(() => import("./pages/Services"));
+const ServiceCategory = React.lazy(() => import("./pages/ServiceCategory"));
+const Support = React.lazy(() => import("./pages/Support"));
+const TermsOfService = React.lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
+const Dashboard = React.lazy(() => import("./pages/Dashboard"));
+const ProviderDashboard = React.lazy(() => import("./pages/ProviderDashboard"));
+const Providers = React.lazy(() => import("./pages/Providers"));
+const TopProviders = React.lazy(() => import("./pages/TopProviders"));
+const Jobs = React.lazy(() => import("./pages/jobs/Jobs"));
+const NewJob = React.lazy(() => import("./pages/jobs/NewJob"));
+const JobDetail = React.lazy(() => import("./pages/jobs/JobDetail"));
+const Chats = React.lazy(() => import("./pages/Chats"));
+const Profile = React.lazy(() => import("./pages/Profile"));
+const EditProfile = React.lazy(() => import("./pages/EditProfile"));
+const Settings = React.lazy(() => import("./pages/Settings"));
+const Admin = React.lazy(() => import("./pages/Admin"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+const RequestService = React.lazy(() => import("./pages/RequestService"));
+const ServiceRequestWizard = React.lazy(() => import("./pages/ServiceRequestWizard"));
+const MyQuotes = React.lazy(() => import("./pages/MyQuotes"));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+  </div>
+);
 
 function App() {
   const [queryClient] = React.useState(
@@ -56,7 +67,8 @@ function App() {
         <ErrorBoundary>
           <AuthProvider>
             <LanguageProvider>
-              <Routes>
+              <React.Suspense fallback={<PageLoader />}>
+                <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/services" element={<Services />} />
@@ -140,7 +152,8 @@ function App() {
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
-              </Routes>
+                </Routes>
+              </React.Suspense>
             </LanguageProvider>
           </AuthProvider>
         </ErrorBoundary>
