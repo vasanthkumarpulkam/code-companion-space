@@ -118,6 +118,7 @@ export type Database = {
           location_lat: number | null
           location_lng: number | null
           media_urls: string[] | null
+          search_vector: unknown
           status: string | null
           title: string
           updated_at: string | null
@@ -137,6 +138,7 @@ export type Database = {
           location_lat?: number | null
           location_lng?: number | null
           media_urls?: string[] | null
+          search_vector?: unknown
           status?: string | null
           title: string
           updated_at?: string | null
@@ -156,6 +158,7 @@ export type Database = {
           location_lat?: number | null
           location_lng?: number | null
           media_urls?: string[] | null
+          search_vector?: unknown
           status?: string | null
           title?: string
           updated_at?: string | null
