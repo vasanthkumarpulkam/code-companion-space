@@ -981,39 +981,11 @@ export type Database = {
         Args: { user_email: string }
         Returns: undefined
       }
-      create_notification: {
-        Args: {
-          p_data?: Json
-          p_message: string
-          p_title: string
-          p_type: string
-          p_user_id: string
-        }
-        Returns: string
-      }
-      create_payment: {
-        Args: {
-          p_customer_fee: number
-          p_customer_id: string
-          p_job_id: string
-          p_provider_fee: number
-          p_provider_id: string
-        }
-        Returns: string
-      }
       get_user_average_rating: { Args: { user_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
-        }
-        Returns: boolean
-      }
-      update_payment_status: {
-        Args: {
-          p_payment_id: string
-          p_status: string
-          p_stripe_payment_intent_id?: string
         }
         Returns: boolean
       }
