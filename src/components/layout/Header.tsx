@@ -43,9 +43,8 @@ export const Header = ({ hideBackButton = false }: HeaderProps) => {
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             )}
-            <Link to="/" className="flex items-center gap-2">
-              <img src={logo} alt="Housecal Pro" className="h-10 sm:h-12 w-auto" />
-              <span className="hidden sm:inline-block font-bold text-lg text-primary">Housecal Pro</span>
+            <Link to="/" className="flex items-center">
+              <img src={logo} alt="Housecal Pro" className="h-12 sm:h-14 w-auto" />
             </Link>
           </div>
 
