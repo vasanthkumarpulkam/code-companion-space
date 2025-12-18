@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, User, Home, ArrowLeft, Award } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -42,11 +43,8 @@ export const Header = ({ hideBackButton = false }: HeaderProps) => {
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             )}
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-base sm:text-lg font-bold text-primary-foreground">SH</span>
-              </div>
-              <span className="text-base sm:text-xl font-bold hidden xs:inline-block">Service HUB</span>
+            <Link to="/" className="flex items-center">
+              <img src={logo} alt="Housecal Pro" className="h-8 sm:h-10 w-auto" />
             </Link>
           </div>
 
