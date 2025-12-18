@@ -2,7 +2,7 @@
 
 ## Overview
 
-Security is a top priority for Service HUB. This document outlines our security measures and how to report vulnerabilities.
+Security is a top priority for Housecal Pro. This document outlines our security measures and how to report vulnerabilities.
 
 ## Security Features
 
@@ -159,7 +159,7 @@ CREATE POLICY "Anyone can view"
 If you discover a security vulnerability, please report it responsibly:
 
 1. **Do NOT** create a public GitHub issue
-2. Email: security@servicehub.com (replace with actual email)
+2. Email: security@housecalpro.com (replace with actual email)
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
@@ -252,8 +252,8 @@ We appreciate responsible disclosure. Security researchers who report valid vuln
 
 ### Contact
 For security incidents:
-- Emergency: security@servicehub.com
-- Non-urgent: support@servicehub.com
+- Emergency: security@housecalpro.com
+- Non-urgent: support@housecalpro.com
 
 ## Updates
 

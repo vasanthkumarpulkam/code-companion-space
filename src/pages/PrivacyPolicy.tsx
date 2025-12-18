@@ -66,7 +66,7 @@ export default function PrivacyPolicy() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">5. Payment Information</h2>
               <p className="text-muted-foreground">
-                Payment card information is processed and stored securely by Stripe, our payment processor. Service HUB does not directly store full credit card numbers.
+                Payment card information is processed and stored securely by Stripe, our payment processor. Housecal Pro does not directly store full credit card numbers.
               </p>
             </section>
 
@@ -94,14 +94,14 @@ export default function PrivacyPolicy() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">8. Children's Privacy</h2>
               <p className="text-muted-foreground">
-                Service HUB is not intended for users under the age of 18. We do not knowingly collect information from children under 18.
+                Housecal Pro is not intended for users under the age of 18. We do not knowingly collect information from children under 18.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3">9. International Users</h2>
               <p className="text-muted-foreground">
-                Service HUB is based in Texas, USA, and primarily serves users in Texas. Information collected may be stored and processed in the United States.
+                Housecal Pro is based in Texas, USA, and primarily serves users in Texas. Information collected may be stored and processed in the United States.
               </p>
             </section>
 
@@ -117,9 +117,9 @@ export default function PrivacyPolicy() {
               <p className="text-muted-foreground">
                 If you have questions about this Privacy Policy, please contact us at:
                 <br />
-                Email: privacy@servicehub.com
+                Email: privacy@housecalpro.com
                 <br />
-                Address: Service HUB, Texas, USA
+                Address: Housecal Pro, Texas, USA
               </p>
             </section>
           </div>

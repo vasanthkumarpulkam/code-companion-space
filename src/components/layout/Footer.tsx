@@ -63,7 +63,7 @@ export const Footer = () => {
             <h3 className="font-semibold mb-3 text-sm sm:text-base">{t('footer.contact')}</h3>
             <ul className="space-y-2 text-xs sm:text-sm">
               <li className="text-muted-foreground break-words">
-                {t('footer.email')}: support@servicehub.com
+                {t('footer.email')}: support@housecalpro.com
               </li>
               <li className="text-muted-foreground">
                 {t('footer.location')}: {t('footer.locationValue')}

@@ -2,7 +2,7 @@
 
 ## WCAG 2.1 Level AA Compliance
 
-This document outlines the accessibility features implemented in Service HUB and guidelines for maintaining accessibility standards.
+This document outlines the accessibility features implemented in Housecal Pro and guidelines for maintaining accessibility standards.
 
 ## Implemented Features
 

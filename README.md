@@ -1,4 +1,4 @@
-# Service HUB
+# Housecal Pro
 
 A comprehensive marketplace platform that connects customers in Texas with local service providers across multiple categories including cleaning, moving, landscaping, handyman services, and events.
 

@@ -117,7 +117,7 @@ const translations: Record<Language, Record<string, string>> = {
     'landing.testimonials.customer': 'Customer',
     'landing.testimonials.provider': 'Provider',
     'landing.cta.title': 'Ready to Get Started?',
-    'landing.cta.subtitle': 'Join thousands of satisfied customers and top-rated service providers on Service HUB today.',
+    'landing.cta.subtitle': 'Join thousands of satisfied customers and top-rated service providers on Housecal Pro today.',
     'landing.cta.postJob': 'Post a Job Now',
     'landing.cta.becomeProvider': 'Become a Provider',
     // Services Page
@@ -137,7 +137,7 @@ const translations: Record<Language, Record<string, string>> = {
     'services.cta.subtitle': 'Post your job and get competitive bids from local professionals',
     'services.cta.button': 'Post a Job Now',
     // How It Works Page
-    'howItWorks.title': 'How Service HUB Works',
+    'howItWorks.title': 'How Housecal Pro Works',
     'howItWorks.subtitle': 'A simple platform connecting customers with trusted local service providers',
     'howItWorks.customers.title': 'For Customers',
     'howItWorks.customers.subtitle': 'Get your tasks done by local professionals',
@@ -166,7 +166,7 @@ const translations: Record<Language, Record<string, string>> = {
     'howItWorks.faq.a1': 'Customers pay providers directly in cash when the job is completed. The platform automatically collects a 10% fee from both parties through saved payment methods.',
     'howItWorks.faq.q2': 'What categories are available?',
     'howItWorks.faq.a2': 'We support Cleaning, Moving, Landscaping, Handyman services, Events, and Other miscellaneous services across Texas.',
-    'howItWorks.faq.q3': 'Is there a fee to use Service HUB?',
+    'howItWorks.faq.q3': 'Is there a fee to use Housecal Pro?',
     'howItWorks.faq.a3': 'Posting jobs and browsing providers is free. We charge a 10% platform fee from both customers and providers only when a job is successfully completed.',
     'howItWorks.faq.q4': 'How are providers verified?',
     'howItWorks.faq.a4': 'Providers create detailed profiles with their skills and portfolio. They build reputation through customer reviews and ratings visible on their public profiles.',
@@ -181,7 +181,7 @@ const translations: Record<Language, Record<string, string>> = {
     'category.other': 'Other',
     // Testimonials
     'testimonial1.text': 'Found an amazing cleaner in minutes! The bidding process made it easy to find someone within my budget.',
-    'testimonial2.text': 'Service HUB has helped me grow my handyman business. I get consistent work from local customers.',
+    'testimonial2.text': 'Housecal Pro has helped me grow my handyman business. I get consistent work from local customers.',
     'testimonial3.text': 'The platform made moving so much easier. Got multiple quotes and chose the perfect moving company.',
     // Footer
     'footer.tagline': 'Connecting customers with local service providers across Texas.',
@@ -333,7 +333,7 @@ const translations: Record<Language, Record<string, string>> = {
     'landing.testimonials.customer': 'Cliente',
     'landing.testimonials.provider': 'Proveedor',
     'landing.cta.title': '¿Listo para Comenzar?',
-    'landing.cta.subtitle': 'Únete a miles de clientes satisfechos y proveedores de servicios mejor calificados en Service HUB hoy.',
+    'landing.cta.subtitle': 'Únete a miles de clientes satisfechos y proveedores de servicios mejor calificados en Housecal Pro hoy.',
     'landing.cta.postJob': 'Publicar un Trabajo Ahora',
     'landing.cta.becomeProvider': 'Conviértete en Proveedor',
     // Services Page
@@ -353,7 +353,7 @@ const translations: Record<Language, Record<string, string>> = {
     'services.cta.subtitle': 'Publica tu trabajo y recibe ofertas competitivas de profesionales locales',
     'services.cta.button': 'Publicar un Trabajo Ahora',
     // How It Works Page
-    'howItWorks.title': 'Cómo Funciona Service HUB',
+    'howItWorks.title': 'Cómo Funciona Housecal Pro',
     'howItWorks.subtitle': 'Una plataforma simple que conecta clientes con proveedores de servicios locales confiables',
     'howItWorks.customers.title': 'Para Clientes',
     'howItWorks.customers.subtitle': 'Haz que tus tareas sean realizadas por profesionales locales',
@@ -382,7 +382,7 @@ const translations: Record<Language, Record<string, string>> = {
     'howItWorks.faq.a1': 'Los clientes pagan a los proveedores directamente en efectivo cuando el trabajo se completa. La plataforma cobra automáticamente una tarifa del 10% de ambas partes a través de métodos de pago guardados.',
     'howItWorks.faq.q2': '¿Qué categorías están disponibles?',
     'howItWorks.faq.a2': 'Apoyamos Limpieza, Mudanza, Jardinería, servicios de Reparación, Eventos y Otros servicios misceláneos en todo Texas.',
-    'howItWorks.faq.q3': '¿Hay una tarifa por usar Service HUB?',
+    'howItWorks.faq.q3': '¿Hay una tarifa por usar Housecal Pro?',
     'howItWorks.faq.a3': 'Publicar trabajos y explorar proveedores es gratis. Cobramos una tarifa de plataforma del 10% a clientes y proveedores solo cuando un trabajo se completa exitosamente.',
     'howItWorks.faq.q4': '¿Cómo se verifican los proveedores?',
     'howItWorks.faq.a4': 'Los proveedores crean perfiles detallados con sus habilidades y portafolio. Construyen reputación a través de reseñas y calificaciones de clientes visibles en sus perfiles públicos.',
@@ -397,7 +397,7 @@ const translations: Record<Language, Record<string, string>> = {
     'category.other': 'Otros',
     // Testimonials
     'testimonial1.text': '¡Encontré una limpiadora increíble en minutos! El proceso de ofertas hizo fácil encontrar a alguien dentro de mi presupuesto.',
-    'testimonial2.text': 'Service HUB me ha ayudado a hacer crecer mi negocio de reparación. Obtengo trabajo consistente de clientes locales.',
+    'testimonial2.text': 'Housecal Pro me ha ayudado a hacer crecer mi negocio de reparación. Obtengo trabajo consistente de clientes locales.',
     'testimonial3.text': 'La plataforma hizo la mudanza mucho más fácil. Obtuve múltiples cotizaciones y elegí la compañía de mudanza perfecta.',
     // Footer
     'footer.tagline': 'Conectando clientes con proveedores de servicios locales en todo Texas.',

@@ -396,7 +396,7 @@ export default function LandingPage() {
             <div className="mb-6 md:mb-8">
               <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2 md:mb-3">Get free cost estimates</h2>
               <p className="text-xs md:text-sm text-muted-foreground max-w-2xl">
-                We analyzed millions of bids from Service HUB professionals to see what things really cost.
+                We analyzed millions of bids from Housecal Pro professionals to see what things really cost.
               </p>
             </div>
             
@@ -504,15 +504,15 @@ export default function LandingPage() {
               {[
                 {
                   name: "Pamela",
-                  text: "We found so many people on Service HUB. And some of the people we found, like our electrician, we use him now. He's great."
+                  text: "We found so many people on Housecal Pro. And some of the people we found, like our electrician, we use him now. He's great."
                 },
                 {
                   name: "Terrence", 
-                  text: "I didn't realize how many professionals Service HUB had on it. You type in things like 'house cleaning,' you get a ton of pros. You name it. It's there."
+                  text: "I didn't realize how many professionals Housecal Pro had on it. You type in things like 'house cleaning,' you get a ton of pros. You name it. It's there."
                 },
                 {
                   name: "Lawrence",
-                  text: "Service HUB is a place that I would recommend real people to go. If you need to have your sink done, replaced, go to Service HUB."
+                  text: "Housecal Pro is a place that I would recommend real people to go. If you need to have your sink done, replaced, go to Housecal Pro."
                 }
               ].map((testimonial, index) => (
                 <Card key={index} className="border-2 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 transition-all bg-card">

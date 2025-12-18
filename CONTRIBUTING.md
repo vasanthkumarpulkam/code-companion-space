@@ -1,6 +1,6 @@
-# Contributing to Service HUB
+# Contributing to Housecal Pro
 
-Thank you for your interest in contributing to Service HUB! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Housecal Pro! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -266,4 +266,4 @@ Contributors will be:
 
 By contributing, you agree that your contributions will be licensed under the same license as the project.
 
-Thank you for contributing to Service HUB! 🎉
+Thank you for contributing to Housecal Pro! 🎉
