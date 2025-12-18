@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
+import logo from '@/assets/logo.png';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address').max(255),
@@ -110,11 +111,8 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-xl font-bold text-primary-foreground">SH</span>
-            </div>
-            <span className="text-2xl font-bold">Service HUB</span>
+          <Link to="/" className="inline-flex items-center mb-4">
+            <img src={logo} alt="Housecal Pro" className="h-12 w-auto" />
           </Link>
         </div>
 

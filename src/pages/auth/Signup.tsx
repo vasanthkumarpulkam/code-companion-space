@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
+import logo from '@/assets/logo.png';
 
 const signupSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -127,11 +128,8 @@ export default function Signup() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-xl font-bold text-primary-foreground">SH</span>
-            </div>
-            <span className="text-2xl font-bold">Service HUB</span>
+          <Link to="/" className="inline-flex items-center mb-4">
+            <img src={logo} alt="Housecal Pro" className="h-12 w-auto" />
           </Link>
         </div>
 
@@ -149,7 +147,7 @@ export default function Signup() {
               </Button>
               <CardTitle>Create Your Account</CardTitle>
             </div>
-            <CardDescription>Join Service HUB to get started</CardDescription>
+            <CardDescription>Join Housecal Pro to get started</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

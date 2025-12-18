@@ -15,14 +15,14 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">1. Acceptance of Terms</h2>
               <p className="text-muted-foreground">
-                By accessing and using Service HUB, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to these terms, please do not use our platform.
+                By accessing and using Housecal Pro, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to these terms, please do not use our platform.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3">2. Platform Description</h2>
               <p className="text-muted-foreground">
-                Service HUB is a marketplace platform that connects customers with local service providers across Texas. We facilitate job postings, bidding, and connections but are not directly involved in the service delivery or payment transactions between users.
+                Housecal Pro is a marketplace platform that connects customers with local service providers across Texas. We facilitate job postings, bidding, and connections but are not directly involved in the service delivery or payment transactions between users.
               </p>
             </section>
 
@@ -42,7 +42,7 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">4. Platform Fees</h2>
               <p className="text-muted-foreground">
-                Service HUB charges a 10% platform fee from both customers and service providers upon successful job completion. This fee is automatically collected from saved payment methods when both parties mark the job as completed.
+                Housecal Pro charges a 10% platform fee from both customers and service providers upon successful job completion. This fee is automatically collected from saved payment methods when both parties mark the job as completed.
               </p>
             </section>
 
@@ -63,14 +63,14 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">6. Content and Intellectual Property</h2>
               <p className="text-muted-foreground">
-                Users retain ownership of content they post but grant Service HUB a license to use, display, and distribute such content on the platform. All platform features, design, and functionality remain the exclusive property of Service HUB.
+                Users retain ownership of content they post but grant Housecal Pro a license to use, display, and distribute such content on the platform. All platform features, design, and functionality remain the exclusive property of Housecal Pro.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3">7. Limitation of Liability</h2>
               <p className="text-muted-foreground">
-                Service HUB acts solely as a platform connecting customers and providers. We are not responsible for the quality, safety, or legality of services provided, the ability of providers to deliver services, or the ability of customers to pay for services.
+                Housecal Pro acts solely as a platform connecting customers and providers. We are not responsible for the quality, safety, or legality of services provided, the ability of providers to deliver services, or the ability of customers to pay for services.
               </p>
             </section>
 
@@ -91,14 +91,14 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-semibold mb-3">10. Changes to Terms</h2>
               <p className="text-muted-foreground">
-                Service HUB reserves the right to modify these terms at any time. Users will be notified of significant changes, and continued use of the platform constitutes acceptance of modified terms.
+                Housecal Pro reserves the right to modify these terms at any time. Users will be notified of significant changes, and continued use of the platform constitutes acceptance of modified terms.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-semibold mb-3">Contact Information</h2>
               <p className="text-muted-foreground">
-                For questions about these Terms of Service, please contact us at legal@servicehub.com
+                For questions about these Terms of Service, please contact us at legal@housecalpro.com
               </p>
             </section>
           </div>
