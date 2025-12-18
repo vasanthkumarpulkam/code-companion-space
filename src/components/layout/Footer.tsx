@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import logo from "@/assets/logo.png";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -10,11 +11,8 @@ export const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand */}
           <div className="space-y-3 col-span-1 sm:col-span-2 md:col-span-1">
-            <div className="flex items-center space-x-2">
-              <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-base sm:text-lg font-bold text-primary-foreground">SH</span>
-              </div>
-              <span className="text-base sm:text-lg font-bold">Service HUB</span>
+            <div className="flex items-center">
+              <img src={logo} alt="Housecal Pro" className="h-8 sm:h-10 w-auto" />
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground">
               {t('footer.tagline')}
@@ -75,7 +73,7 @@ export const Footer = () => {
         </div>
 
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t text-center text-xs sm:text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Service HUB. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Housecal Pro. All rights reserved.</p>
         </div>
       </div>
     </footer>
