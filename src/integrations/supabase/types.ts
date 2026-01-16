@@ -1001,6 +1001,13 @@ export type Database = {
         }
         Returns: string
       }
+      get_contact_info_if_authorized: {
+        Args: { profile_id: string }
+        Returns: {
+          email: string
+          phone: string
+        }[]
+      }
       get_user_average_rating: { Args: { user_id: string }; Returns: number }
       has_role: {
         Args: {
