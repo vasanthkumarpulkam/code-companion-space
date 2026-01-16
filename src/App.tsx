@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,28 +15,28 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 
 // Lazy load non-critical pages for better performance
-const HowItWorks = React.lazy(() => import("./pages/HowItWorks"));
-const Services = React.lazy(() => import("./pages/Services"));
-const ServiceCategory = React.lazy(() => import("./pages/ServiceCategory"));
-const Support = React.lazy(() => import("./pages/Support"));
-const TermsOfService = React.lazy(() => import("./pages/TermsOfService"));
-const PrivacyPolicy = React.lazy(() => import("./pages/PrivacyPolicy"));
-const Dashboard = React.lazy(() => import("./pages/Dashboard"));
-const ProviderDashboard = React.lazy(() => import("./pages/ProviderDashboard"));
-const Providers = React.lazy(() => import("./pages/Providers"));
-const TopProviders = React.lazy(() => import("./pages/TopProviders"));
-const Jobs = React.lazy(() => import("./pages/jobs/Jobs"));
-const NewJob = React.lazy(() => import("./pages/jobs/NewJob"));
-const JobDetail = React.lazy(() => import("./pages/jobs/JobDetail"));
-const Chats = React.lazy(() => import("./pages/Chats"));
-const Profile = React.lazy(() => import("./pages/Profile"));
-const EditProfile = React.lazy(() => import("./pages/EditProfile"));
-const Settings = React.lazy(() => import("./pages/Settings"));
-const Admin = React.lazy(() => import("./pages/Admin"));
-const NotFound = React.lazy(() => import("./pages/NotFound"));
-const RequestService = React.lazy(() => import("./pages/RequestService"));
-const ServiceRequestWizard = React.lazy(() => import("./pages/ServiceRequestWizard"));
-const MyQuotes = React.lazy(() => import("./pages/MyQuotes"));
+const HowItWorks = lazy(() => import("./pages/HowItWorks"));
+const Services = lazy(() => import("./pages/Services"));
+const ServiceCategory = lazy(() => import("./pages/ServiceCategory"));
+const Support = lazy(() => import("./pages/Support"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const ProviderDashboard = lazy(() => import("./pages/ProviderDashboard"));
+const Providers = lazy(() => import("./pages/Providers"));
+const TopProviders = lazy(() => import("./pages/TopProviders"));
+const Jobs = lazy(() => import("./pages/jobs/Jobs"));
+const NewJob = lazy(() => import("./pages/jobs/NewJob"));
+const JobDetail = lazy(() => import("./pages/jobs/JobDetail"));
+const Chats = lazy(() => import("./pages/Chats"));
+const Profile = lazy(() => import("./pages/Profile"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Admin = lazy(() => import("./pages/Admin"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const RequestService = lazy(() => import("./pages/RequestService"));
+const ServiceRequestWizard = lazy(() => import("./pages/ServiceRequestWizard"));
+const MyQuotes = lazy(() => import("./pages/MyQuotes"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -45,31 +45,29 @@ const PageLoader = () => (
   </div>
 );
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+    },
+  },
+});
+
 function App() {
-  const [queryClient] = React.useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 5 * 60 * 1000,
-            retry: 1,
-          },
-        },
-      }),
-  );
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-      <Toaster />
-      <Sonner />
       <BrowserRouter>
         <ErrorBoundary>
           <AuthProvider>
             <LanguageProvider>
-              <React.Suspense fallback={<PageLoader />}>
-                <Routes>
-            <Route path="/" element={<LandingPage />} />
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<LandingPage />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/services" element={<Services />} />
             <Route path="/providers" element={<Providers />} />
@@ -150,15 +148,15 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-                </Routes>
-              </React.Suspense>
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </TooltipProvider>
             </LanguageProvider>
           </AuthProvider>
         </ErrorBoundary>
       </BrowserRouter>
-      </TooltipProvider>
     </QueryClientProvider>
   );
 }
