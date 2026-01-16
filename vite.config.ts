@@ -13,12 +13,17 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      // Force a single React instance (fixes Radix hooks dispatcher=null)
-      react: path.resolve(__dirname, "./node_modules/react"),
-      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
-    // Ensure a single React instance across dependencies
-    dedupe: ["react", "react-dom"],
+    // Force single instances of React packages
+    dedupe: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "@radix-ui/react-tooltip",
+      "@radix-ui/react-context",
+      "@radix-ui/react-primitive",
+    ],
   },
   optimizeDeps: {
     include: [
@@ -28,5 +33,13 @@ export default defineConfig(({ mode }) => ({
       "react/jsx-runtime",
       "react/jsx-dev-runtime",
     ],
+    // Force re-bundling to clear stale cache
+    force: true,
+  },
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
   },
 }));
