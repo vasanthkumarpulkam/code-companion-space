@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MapPin, Navigation } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface LocationSearchProps {
   value: string;
@@ -29,11 +30,12 @@ export function LocationSearch({ value, radius, onLocationChange, onRadiusChange
         const { latitude, longitude } = position.coords;
         
         try {
-          // Reverse geocode to get address
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
-          );
-          const data = await response.json();
+          // Reverse geocode to get address via secure edge function
+          const { data, error } = await supabase.functions.invoke('geocode', {
+            body: { lat: latitude, lng: longitude }
+          });
+          
+          if (error) throw error;
           
           if (data.results && data.results[0]) {
             const address = data.results[0].formatted_address;
