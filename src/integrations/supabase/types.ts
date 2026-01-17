@@ -760,6 +760,27 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          action: string
+          count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          action: string
+          count?: number
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          action?: string
+          count?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           comment: string | null
@@ -980,6 +1001,13 @@ export type Database = {
       assign_admin_role_to_email: {
         Args: { user_email: string }
         Returns: undefined
+      }
+      check_bid_submission_rate_limit: { Args: never; Returns: boolean }
+      check_job_posting_rate_limit: { Args: never; Returns: boolean }
+      check_message_rate_limit: { Args: never; Returns: boolean }
+      check_rate_limit: {
+        Args: { p_action: string; p_limit: number; p_window: unknown }
+        Returns: boolean
       }
       create_notification: {
         Args: {
