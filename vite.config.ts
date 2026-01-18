@@ -13,13 +13,14 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      // Force all React imports to resolve to the same instance
-      "react": path.resolve(__dirname, "./node_modules/react"),
-      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
+    // Ensure a single React instance across all deps
+    dedupe: ["react", "react-dom"],
   },
   optimizeDeps: {
-    // Force re-bundling to clear stale cache - timestamp: 1768699782634
+    // Rebundle deps to clear any stale pre-bundled React chunks
+    include: ["react", "react-dom", "react-dom/client"],
     force: true,
   },
 }));
+
