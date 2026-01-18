@@ -4,6 +4,8 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { Toaster } from "./components/ui/toaster";
+import { Toaster as Sonner } from "./components/ui/sonner";
 
 // Import all pages directly
 import LandingPage from "./pages/LandingPage";
@@ -74,8 +76,10 @@ function App() {
                 <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
-                <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
               </Routes>
+              <Toaster />
+              <Sonner />
             </ErrorBoundary>
           </BrowserRouter>
         </LanguageProvider>
