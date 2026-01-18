@@ -996,6 +996,44 @@ export type Database = {
         }
         Relationships: []
       }
+      public_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          id: string | null
+          job_id: string | null
+          rating: number | null
+          reviewed_id: string | null
+          reviewer_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string | null
+          job_id?: string | null
+          rating?: number | null
+          reviewed_id?: string | null
+          reviewer_id?: never
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          id?: string | null
+          job_id?: string | null
+          rating?: number | null
+          reviewed_id?: string | null
+          reviewer_id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       assign_admin_role_to_email: {
@@ -1034,6 +1072,15 @@ export type Database = {
         Returns: {
           email: string
           phone: string
+        }[]
+      }
+      get_job_location_for_user: {
+        Args: { p_job_id: string; p_user_id: string }
+        Returns: {
+          is_precise: boolean
+          location: string
+          location_lat: number
+          location_lng: number
         }[]
       }
       get_user_average_rating: { Args: { user_id: string }; Returns: number }
