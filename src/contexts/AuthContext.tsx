@@ -18,7 +18,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function NoopAuthProvider({ children }: { children: ReactNode }) {
-  // Useful for debugging provider isolation without breaking hooks.
+  // Noop provider for debugging - provides empty auth context
   const value: AuthContextType = {
     user: null,
     session: null,
