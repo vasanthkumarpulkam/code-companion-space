@@ -2,6 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { MapPin } from 'lucide-react';
 
+// HTML entity escaping to prevent XSS attacks
+function escapeHtml(unsafe: string): string {
+  if (!unsafe) return '';
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 interface JobMapViewProps {
   jobs: any[];
   center?: { lat: number; lng: number };
@@ -71,16 +82,24 @@ export function JobMapView({ jobs, center }: JobMapViewProps) {
         });
 
         marker.addListener('click', () => {
+          // Sanitize all user-provided content to prevent XSS attacks
+          const safeTitle = escapeHtml(job.title);
+          const safeCategory = escapeHtml(job.category?.name || 'Uncategorized');
+          const safeDescription = escapeHtml(job.description?.substring(0, 100) || '');
+          const safeLocation = escapeHtml(job.location);
+          const safeBudget = Number(job.budget) || 0; // Ensure budget is a number
+          const safeId = encodeURIComponent(job.id); // Encode ID for URL safety
+          
           infoWindow.setContent(`
             <div style="padding: 12px; max-width: 280px; font-family: system-ui, -apple-system, sans-serif;">
-              <h3 style="font-weight: 600; margin: 0 0 8px 0; font-size: 16px; color: #111827;">${job.title}</h3>
-              <p style="margin: 4px 0; color: #9333ea; font-size: 13px; font-weight: 500;">${job.category?.name || 'Uncategorized'}</p>
-              <p style="margin: 8px 0; font-size: 14px; color: #4b5563; line-height: 1.4;">${job.description.substring(0, 100)}...</p>
+              <h3 style="font-weight: 600; margin: 0 0 8px 0; font-size: 16px; color: #111827;">${safeTitle}</h3>
+              <p style="margin: 4px 0; color: #9333ea; font-size: 13px; font-weight: 500;">${safeCategory}</p>
+              <p style="margin: 8px 0; font-size: 14px; color: #4b5563; line-height: 1.4;">${safeDescription}...</p>
               <div style="display: flex; align-items: center; gap: 8px; margin: 12px 0; padding: 8px; background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(249, 115, 22, 0.1)); border-radius: 6px;">
-                <span style="font-weight: 700; background: linear-gradient(135deg, #9333ea, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 20px;">$${job.budget}</span>
-                <span style="color: #6b7280; font-size: 12px;">📍 ${job.location}</span>
+                <span style="font-weight: 700; background: linear-gradient(135deg, #9333ea, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 20px;">$${safeBudget}</span>
+                <span style="color: #6b7280; font-size: 12px;">📍 ${safeLocation}</span>
               </div>
-              <a href="/jobs/${job.id}" style="display: inline-block; width: 100%; text-align: center; margin-top: 8px; padding: 8px 16px; background: linear-gradient(135deg, #9333ea, #7c3aed); color: white; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; transition: all 0.2s;">View Details →</a>
+              <a href="/jobs/${safeId}" style="display: inline-block; width: 100%; text-align: center; margin-top: 8px; padding: 8px 16px; background: linear-gradient(135deg, #9333ea, #7c3aed); color: white; text-decoration: none; border-radius: 6px; font-size: 14px; font-weight: 500; transition: all 0.2s;">View Details →</a>
             </div>
           `);
           infoWindow.open(map, marker);
