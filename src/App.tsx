@@ -1,13 +1,14 @@
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import { Toaster } from "./components/ui/toaster";
-import { Toaster as Sonner } from "./components/ui/sonner";
 
-// Import all pages directly
+// Import all pages directly (avoiding lazy loading issues with React instances)
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
@@ -46,44 +47,103 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LanguageProvider>
-          <BrowserRouter>
-            <ErrorBoundary>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/how-it-works" element={<HowItWorks />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/providers" element={<Providers />} />
-                <Route path="/top-providers" element={<TopProviders />} />
-                <Route path="/services/:category" element={<ServiceCategory />} />
-                <Route path="/support" element={<Support />} />
-                <Route path="/legal/terms" element={<TermsOfService />} />
-                <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-                <Route path="/auth/login" element={<Login />} />
-                <Route path="/auth/signup" element={<Signup />} />
-                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/provider-dashboard" element={<ProtectedRoute><ProviderDashboard /></ProtectedRoute>} />
-                <Route path="/request-service" element={<RequestService />} />
-                <Route path="/request-service/:category" element={<RequestService />} />
-                <Route path="/request-service/:category/:subcategory" element={<ServiceRequestWizard />} />
-                <Route path="/jobs" element={<Jobs />} />
-                <Route path="/jobs/new" element={<ProtectedRoute><NewJob /></ProtectedRoute>} />
-                <Route path="/jobs/:id" element={<JobDetail />} />
-                <Route path="/chats" element={<ProtectedRoute><Chats /></ProtectedRoute>} />
-                <Route path="/my-quotes" element={<ProtectedRoute><MyQuotes /></ProtectedRoute>} />
-                <Route path="/profile/:uid" element={<Profile />} />
-                <Route path="/profile/edit" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
-              <Route path="*" element={<NotFound />} />
-              </Routes>
-              <Toaster />
-              <Sonner />
-            </ErrorBoundary>
-          </BrowserRouter>
-        </LanguageProvider>
-      </AuthProvider>
+      <BrowserRouter>
+        <ErrorBoundary>
+          <AuthProvider>
+            <LanguageProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/how-it-works" element={<HowItWorks />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/providers" element={<Providers />} />
+                  <Route path="/top-providers" element={<TopProviders />} />
+                  <Route path="/services/:category" element={<ServiceCategory />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/legal/terms" element={<TermsOfService />} />
+                  <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/auth/login" element={<Login />} />
+                  <Route path="/auth/signup" element={<Signup />} />
+                  <Route 
+                    path="/dashboard" 
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/provider-dashboard" 
+                    element={
+                      <ProtectedRoute>
+                        <ProviderDashboard />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/request-service" element={<RequestService />} />
+                  <Route path="/request-service/:category" element={<RequestService />} />
+                  <Route path="/request-service/:category/:subcategory" element={<ServiceRequestWizard />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route 
+                    path="/jobs/new" 
+                    element={
+                      <ProtectedRoute>
+                        <NewJob />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/jobs/:id" element={<JobDetail />} />
+                  <Route 
+                    path="/chats" 
+                    element={
+                      <ProtectedRoute>
+                        <Chats />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/my-quotes" 
+                    element={
+                      <ProtectedRoute>
+                        <MyQuotes />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route path="/profile/:uid" element={<Profile />} />
+                  <Route 
+                    path="/profile/edit" 
+                    element={
+                      <ProtectedRoute>
+                        <EditProfile />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/settings" 
+                    element={
+                      <ProtectedRoute>
+                        <Settings />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/admin" 
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <Admin />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </TooltipProvider>
+            </LanguageProvider>
+          </AuthProvider>
+        </ErrorBoundary>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
