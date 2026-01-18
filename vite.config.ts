@@ -13,27 +13,14 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Force all React imports to use same instance
+      "react": path.resolve(__dirname, "node_modules/react"),
+      "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
     },
-    // Force single instances of React packages
-    dedupe: [
-      "react",
-      "react-dom",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "@radix-ui/react-tooltip",
-      "@radix-ui/react-context",
-      "@radix-ui/react-primitive",
-    ],
+    dedupe: ["react", "react-dom"],
   },
   optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "react-dom/client",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-    ],
-    // Force re-bundling to clear stale cache
+    include: ["react", "react-dom", "react/jsx-runtime"],
     force: true,
   },
   build: {
