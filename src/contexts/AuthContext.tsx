@@ -16,7 +16,23 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function NoopAuthProvider({ children }: { children: ReactNode }) {
+  // Useful for debugging provider isolation without breaking hooks.
+  const value: AuthContextType = {
+    user: null,
+    session: null,
+    userRole: null,
+    loading: false,
+    signUp: async () => ({ error: new Error('Auth disabled') }),
+    signIn: async () => ({ error: new Error('Auth disabled') }),
+    signInWithGoogle: async () => ({ error: new Error('Auth disabled') }),
+    signOut: async () => {},
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
