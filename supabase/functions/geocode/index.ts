@@ -17,7 +17,14 @@ serve(async (req) => {
     // Get API key from environment
     const apiKey = Deno.env.get('GOOGLE_MAPS_API_KEY')
     if (!apiKey) {
-      throw new Error('Google Maps API key not configured')
+      console.error('Google Maps API key not configured')
+      return new Response(
+        JSON.stringify({ error: 'Geocoding service unavailable' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 503,
+        }
+      )
     }
 
     let url: string
@@ -29,7 +36,13 @@ serve(async (req) => {
       // Forward geocoding (address to coordinates)
       url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`
     } else {
-      throw new Error('Either lat/lng or address must be provided')
+      return new Response(
+        JSON.stringify({ error: 'Invalid request parameters' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      )
     }
 
     const response = await fetch(url)
@@ -43,7 +56,7 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('Geocode error:', errorMessage)
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'Failed to process location request' }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,

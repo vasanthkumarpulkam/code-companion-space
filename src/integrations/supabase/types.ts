@@ -1091,6 +1091,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_valid_provider: { Args: { p_id: string }; Returns: boolean }
       update_payment_status: {
         Args: {
           p_payment_id: string
