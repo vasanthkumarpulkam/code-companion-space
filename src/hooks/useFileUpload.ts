@@ -2,9 +2,60 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
+const SIGNED_URL_TTL_SECONDS = 60 * 60 * 24;
+
+function extractStoragePath(value: string, bucket: string): string | null {
+  if (!value) return null;
+
+  let path = value;
+  try {
+    path = new URL(value).pathname;
+  } catch {
+    // Not a full URL, treat as a raw path
+  }
+
+  const withoutQuery = path.split('?')[0];
+  const bucketSegment = `/${bucket}/`;
+  const bucketIndex = withoutQuery.indexOf(bucketSegment);
+
+  if (bucketIndex !== -1) {
+    return decodeURIComponent(withoutQuery.slice(bucketIndex + bucketSegment.length));
+  }
+
+  if (withoutQuery.startsWith(`${bucket}/`)) {
+    return withoutQuery.slice(bucket.length + 1);
+  }
+
+  if (withoutQuery.startsWith('/')) {
+    return withoutQuery.slice(1);
+  }
+
+  return withoutQuery;
+}
+
 export function useFileUpload() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const getFileUrl = async (
+    value: string,
+    bucket: 'job-media' | 'profile-images'
+  ): Promise<string | null> => {
+    const path = extractStoragePath(value, bucket);
+    if (!path) return null;
+
+    if (bucket === 'profile-images') {
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(path);
+      return publicUrl;
+    }
+
+    const { data } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
+    return data?.signedUrl || null;
+  };
 
   const uploadFile = async (
     file: File,
@@ -41,14 +92,21 @@ export function useFileUpload() {
 
       if (error) throw error;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(data.path);
+      if (!data?.path) {
+        throw new Error('Upload failed to return a file path');
+      }
 
       setProgress(100);
       toast({ title: 'File uploaded successfully!' });
-      return publicUrl;
+
+      if (bucket === 'profile-images') {
+        const { data: { publicUrl } } = supabase.storage
+          .from(bucket)
+          .getPublicUrl(data.path);
+        return publicUrl;
+      }
+
+      return data.path;
     } catch (error: any) {
       toast({
         title: 'Upload failed',
@@ -67,7 +125,7 @@ export function useFileUpload() {
   ): Promise<boolean> => {
     try {
       // Extract file path from URL
-      const path = url.split(`${bucket}/`)[1];
+      const path = extractStoragePath(url, bucket);
       if (!path) throw new Error('Invalid file URL');
 
       const { error } = await supabase.storage
@@ -90,6 +148,7 @@ export function useFileUpload() {
 
   return {
     uploadFile,
+    getFileUrl,
     deleteFile,
     uploading,
     progress,
