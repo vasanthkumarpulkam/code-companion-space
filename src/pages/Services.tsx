@@ -10,6 +10,7 @@ import JobCard from "@/components/jobs/JobCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { fetchPublicProfilesByIds } from "@/utils/publicProfiles";
 
 export default function Services() {
   const { t } = useLanguage();
@@ -41,8 +42,7 @@ export default function Services() {
       .from('jobs')
       .select(`
         *,
-        categories(name, icon),
-        profiles!jobs_customer_id_fkey(full_name, avatar_url)
+        categories(name, icon)
       `)
       .eq('status', 'open')
       .order('created_at', { ascending: false });
@@ -54,7 +54,14 @@ export default function Services() {
     const { data } = await query;
     
     if (data) {
-      setJobs(data);
+      const profileMap = await fetchPublicProfilesByIds(
+        data.map((job) => job.customer_id)
+      );
+      const jobsWithProfiles = data.map((job) => ({
+        ...job,
+        profiles: profileMap.get(job.customer_id) || null,
+      }));
+      setJobs(jobsWithProfiles);
     }
     setLoading(false);
   };

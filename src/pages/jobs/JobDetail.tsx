@@ -16,6 +16,7 @@ import ReviewForm from '@/components/reviews/ReviewForm';
 import { useRealtimeBids } from '@/hooks/useRealtimeBids';
 import { ReportDialog } from '@/components/jobs/ReportDialog';
 import { analytics } from '@/utils/analytics';
+import { fetchPublicProfilesByIds } from '@/utils/publicProfiles';
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -42,21 +43,32 @@ export default function JobDetail() {
   const fetchReviews = async () => {
     const { data } = await supabase
       .from('reviews')
-      .select('*, profiles!reviews_reviewer_id_fkey(full_name)')
+      .select('*')
       .eq('job_id', id);
 
-    setReviews(data || []);
+    const profileMap = await fetchPublicProfilesByIds(
+      (data || []).map((review) => review.reviewer_id)
+    );
+    const reviewsWithProfiles = (data || []).map((review) => ({
+      ...review,
+      profiles: profileMap.get(review.reviewer_id) || null,
+    }));
+    setReviews(reviewsWithProfiles);
   };
 
   const fetchJobDetails = async () => {
     const { data, error } = await supabase
       .from('jobs')
-      .select('*, categories(name), profiles!jobs_customer_id_fkey(full_name, avatar_url)')
+      .select('*, categories(name)')
       .eq('id', id)
       .single();
 
     if (!error && data) {
-      setJob(data);
+      const profileMap = await fetchPublicProfilesByIds([data.customer_id]);
+      setJob({
+        ...data,
+        profiles: profileMap.get(data.customer_id) || null,
+      });
     }
     setLoading(false);
   };
@@ -64,13 +76,19 @@ export default function JobDetail() {
   const fetchBids = async () => {
     if (!user) return;
 
-    let query = supabase
+    const { data } = await supabase
       .from('bids')
-      .select('*, profiles!bids_provider_id_fkey(full_name, avatar_url)')
+      .select('*')
       .eq('job_id', id);
 
-    const { data } = await query;
-    setBids(data || []);
+    const profileMap = await fetchPublicProfilesByIds(
+      (data || []).map((bid) => bid.provider_id)
+    );
+    const bidsWithProfiles = (data || []).map((bid) => ({
+      ...bid,
+      profiles: profileMap.get(bid.provider_id) || null,
+    }));
+    setBids(bidsWithProfiles);
   };
 
   const awardBid = async (bidId: string, providerId: string) => {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { fetchPublicProfilesByIds } from '@/utils/publicProfiles';
 
 export interface SearchFilters {
   query?: string;
@@ -27,8 +28,7 @@ export function useAdvancedSearch(filters: SearchFilters) {
       .from('jobs')
       .select(`
         *,
-        categories(name, icon),
-        profiles!jobs_customer_id_fkey(full_name, avatar_url)
+        categories(name, icon)
       `)
       .eq('status', 'open');
 
@@ -99,11 +99,17 @@ export function useAdvancedSearch(filters: SearchFilters) {
     const { data, error } = await query;
 
     if (!error && data) {
-      let filteredJobs = data;
+      const profileMap = await fetchPublicProfilesByIds(
+        data.map((job) => job.customer_id)
+      );
+      let filteredJobs = data.map((job) => ({
+        ...job,
+        profiles: profileMap.get(job.customer_id) || null,
+      }));
 
       // Client-side radius filtering if coordinates provided
       if (filters.locationCoords && filters.radius && filters.radius > 0) {
-        filteredJobs = data.filter((job: any) => {
+        filteredJobs = filteredJobs.filter((job: any) => {
           if (!job.location_lat || !job.location_lng) return false;
           
           const distance = calculateDistance(

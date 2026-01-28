@@ -43,8 +43,8 @@ export default function Profile() {
     const isOwnProfile = uid === user?.id;
     
     // Fetch profile data
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
+    const { data: profileData } = await supabase
+      .from('public_profiles')
       .select('*')
       .eq('id', uid)
       .maybeSingle();

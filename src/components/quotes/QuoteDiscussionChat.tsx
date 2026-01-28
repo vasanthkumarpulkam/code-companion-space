@@ -44,7 +44,7 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
 
   const fetchOtherProfile = async () => {
     const { data } = await supabase
-      .from('profiles')
+      .from('public_profiles')
       .select('full_name, avatar_url')
       .eq('id', otherUserId)
       .single();

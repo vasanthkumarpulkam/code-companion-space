@@ -151,7 +151,7 @@ export default function Chats() {
         // Get other user profile
         const otherUserId = thread.sender_id === user.id ? thread.recipient_id : thread.sender_id;
         const { data: profile } = await supabase
-          .from('profiles')
+          .from('public_profiles')
           .select('full_name')
           .eq('id', otherUserId)
           .single();
@@ -227,7 +227,7 @@ export default function Chats() {
     const isJobThread = !!thread.job_id;
     const { data } = await supabase
       .from('messages')
-      .select('*, profiles!messages_sender_id_fkey(full_name)')
+      .select('*')
       .eq(isJobThread ? 'job_id' : 'quote_request_id', threadId)
       .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
       .is('deleted_at', null)
