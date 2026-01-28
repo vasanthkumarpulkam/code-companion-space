@@ -33,6 +33,86 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+const CHAT_MEDIA_BUCKET = 'chat-media';
+const SIGNED_URL_TTL_SECONDS = 60 * 60 * 24;
+const IMAGE_EXT_REGEX = /\.(jpg|jpeg|png|gif|webp)$/i;
+const AUDIO_EXT_REGEX = /\.(webm|mp3|ogg|wav|m4a)$/i;
+
+function extractChatMediaPath(mediaUrl?: string | null): string | null {
+  if (!mediaUrl) return null;
+
+  let rawPath = mediaUrl;
+  try {
+    rawPath = new URL(mediaUrl).pathname;
+  } catch {
+    // Not a full URL - treat as a path or bucket-prefixed value
+  }
+
+  const withoutQuery = rawPath.split('?')[0];
+  const bucketSegment = `/${CHAT_MEDIA_BUCKET}/`;
+  const bucketIndex = withoutQuery.indexOf(bucketSegment);
+
+  if (bucketIndex !== -1) {
+    return decodeURIComponent(withoutQuery.slice(bucketIndex + bucketSegment.length));
+  }
+
+  if (withoutQuery.startsWith(`${CHAT_MEDIA_BUCKET}/`)) {
+    return withoutQuery.slice(CHAT_MEDIA_BUCKET.length + 1);
+  }
+
+  if (withoutQuery.startsWith('/')) {
+    return withoutQuery.slice(1);
+  }
+
+  return withoutQuery;
+}
+
+async function attachSignedMediaUrls(messages: any[]): Promise<any[]> {
+  const paths = Array.from(
+    new Set(
+      messages
+        .map((message) => extractChatMediaPath(message.media_url))
+        .filter((path): path is string => !!path)
+    )
+  );
+
+  if (paths.length === 0) {
+    return messages.map((message) => ({
+      ...message,
+      media_path: extractChatMediaPath(message.media_url),
+      media_signed_url: null,
+    }));
+  }
+
+  const { data, error } = await supabase.storage
+    .from(CHAT_MEDIA_BUCKET)
+    .createSignedUrls(paths, SIGNED_URL_TTL_SECONDS);
+
+  if (error) {
+    return messages.map((message) => ({
+      ...message,
+      media_path: extractChatMediaPath(message.media_url),
+      media_signed_url: null,
+    }));
+  }
+
+  const signedUrlByPath = new Map<string, string>();
+  (data || []).forEach((entry) => {
+    if (entry.path && entry.signedUrl) {
+      signedUrlByPath.set(entry.path, entry.signedUrl);
+    }
+  });
+
+  return messages.map((message) => {
+    const mediaPath = extractChatMediaPath(message.media_url);
+    return {
+      ...message,
+      media_path: mediaPath,
+      media_signed_url: mediaPath ? signedUrlByPath.get(mediaPath) || null : null,
+    };
+  });
+}
+
 export default function Chats() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -233,7 +313,8 @@ export default function Chats() {
       .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
-    setMessages(data || []);
+    const messagesWithMedia = await attachSignedMediaUrls(data || []);
+    setMessages(messagesWithMedia);
     
     // Mark messages as read
     if (data && data.length > 0) {
@@ -317,11 +398,11 @@ export default function Chats() {
       return null;
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('chat-media')
-      .getPublicUrl(data.path);
+    if (!data?.path) {
+      return null;
+    }
 
-    return publicUrl;
+    return data.path;
   };
 
   const sendMessage = async () => {
@@ -525,9 +606,14 @@ export default function Chats() {
       return;
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from('chat-media')
-      .getPublicUrl(data.path);
+    if (!data?.path) {
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload voice message',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     // Send message with audio
     const { error } = await supabase.from('messages').insert({
@@ -535,7 +621,7 @@ export default function Chats() {
       sender_id: user.id,
       recipient_id: recipientId,
       content: '🎤 Voice message',
-      media_url: publicUrl,
+      media_url: data.path,
     });
 
     if (!error) {
@@ -647,13 +733,21 @@ export default function Chats() {
               <>
                 <ScrollArea className="flex-1 p-4">
                   <div className="space-y-4">
-                    {filteredMessages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`flex ${
-                          message.sender_id === user?.id ? 'justify-end' : 'justify-start'
-                        }`}
-                      >
+                    {filteredMessages.map((message) => {
+                      const mediaPath = message.media_path || extractChatMediaPath(message.media_url);
+                      const mediaSrc =
+                        message.media_signed_url ||
+                        (message.media_url?.startsWith('http') ? message.media_url : null);
+                      const isImage = !!mediaPath && IMAGE_EXT_REGEX.test(mediaPath);
+                      const isAudio = !!mediaPath && AUDIO_EXT_REGEX.test(mediaPath);
+
+                      return (
+                        <div
+                          key={message.id}
+                          className={`flex ${
+                            message.sender_id === user?.id ? 'justify-end' : 'justify-start'
+                          }`}
+                        >
                         <div
                           className={`max-w-[70%] rounded-lg p-3 ${
                             message.sender_id === user?.id
@@ -661,27 +755,27 @@ export default function Chats() {
                               : 'bg-muted'
                           }`}
                         >
-                          {message.media_url && (
+                          {message.media_url && mediaSrc && (
                             <div className="mb-2">
-                              {message.media_url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                              {isImage ? (
                                 <img 
-                                  src={message.media_url} 
+                                  src={mediaSrc} 
                                   alt="Shared media" 
                                   className="rounded max-h-64 w-auto"
                                 />
-                              ) : message.media_url.match(/\.(webm|mp3|ogg|wav|m4a)$/i) || message.content === '🎤 Voice message' ? (
+                              ) : isAudio || message.content === '🎤 Voice message' ? (
                                 <audio 
                                   controls 
                                   className="max-w-full"
                                   preload="metadata"
                                 >
-                                  <source src={message.media_url} type="audio/webm" />
-                                  <source src={message.media_url} type="audio/mpeg" />
+                                  <source src={mediaSrc} type="audio/webm" />
+                                  <source src={mediaSrc} type="audio/mpeg" />
                                   Your browser does not support audio playback.
                                 </audio>
                               ) : (
                                 <a 
-                                  href={message.media_url} 
+                                  href={mediaSrc} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
                                   className="flex items-center gap-2 underline"
@@ -778,7 +872,8 @@ export default function Chats() {
                           )}
                         </div>
                       </div>
-                    ))}
+                    );
+                  })}
                     {otherUserTyping && (
                       <TypingIndicator userName={threads.find(t => (t.job_id || t.quote_request_id) === selectedThread)?.sender_id === user?.id ? threads.find(t => (t.job_id || t.quote_request_id) === selectedThread)?.recipient_name : threads.find(t => (t.job_id || t.quote_request_id) === selectedThread)?.sender_name} />
                     )}
