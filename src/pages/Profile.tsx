@@ -14,6 +14,7 @@ import { Star, MapPin, Briefcase, MessageSquare, Calendar, Award, CheckCircle, D
 import { QuickQuoteDialog } from '@/components/providers/QuickQuoteDialog';
 import ProviderBadges from '@/components/providers/ProviderBadges';
 import { toast } from '@/hooks/use-toast';
+import { fetchPublicProfilesByIds } from '@/utils/publicProfiles';
 
 export default function Profile() {
   const { uid } = useParams();
@@ -40,8 +41,6 @@ export default function Profile() {
       return;
     }
 
-    const isOwnProfile = uid === user?.id;
-    
     // Fetch profile data
     const { data: profileData } = await supabase
       .from('public_profiles')
@@ -102,8 +101,28 @@ export default function Profile() {
   };
 
   const fetchReviews = async () => {
-    // Placeholder for reviews - would need a reviews table
-    setReviews([]);
+    if (!uid) return;
+
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('id, rating, comment, created_at, reviewer_id')
+      .eq('reviewed_id', uid)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      setReviews([]);
+      return;
+    }
+
+    const profileMap = await fetchPublicProfilesByIds(
+      (data || []).map((review) => review.reviewer_id)
+    );
+    const reviewsWithProfiles = (data || []).map((review) => ({
+      ...review,
+      reviewer: profileMap.get(review.reviewer_id) || null,
+    }));
+
+    setReviews(reviewsWithProfiles);
   };
 
   if (loading) {
@@ -115,8 +134,10 @@ export default function Profile() {
   }
 
   const isProvider = profile.user_roles?.some((r: any) => r.role === 'provider');
-  const averageRating = 4.8; // Placeholder
-  const totalReviews = 24; // Placeholder
+  const totalReviews = reviews.length;
+  const averageRating = totalReviews
+    ? reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / totalReviews
+    : 0;
   const completedJobsCount = completedJobs.length;
 
   return (
@@ -137,8 +158,10 @@ export default function Profile() {
                 <div className="flex items-center gap-4 mt-2 text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{averageRating}</span>
-                    <span>({totalReviews} reviews)</span>
+                    <span className="font-semibold">
+                      {averageRating > 0 ? averageRating.toFixed(1) : '—'}
+                    </span>
+                    <span>({totalReviews} {totalReviews === 1 ? 'review' : 'reviews'})</span>
                   </div>
                   {profile.location && (
                     <div className="flex items-center gap-1">
@@ -281,9 +304,45 @@ export default function Profile() {
           <TabsContent value="reviews" className="space-y-4">
             <h2 className="text-2xl font-bold">{t('profile.reviewsRatings')}</h2>
             
-            <Card className="p-12 text-center">
-              <p className="text-muted-foreground">{t('profile.noReviews')}</p>
-            </Card>
+            {reviews.length === 0 ? (
+              <Card className="p-12 text-center">
+                <p className="text-muted-foreground">{t('profile.noReviews')}</p>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {reviews.map((review) => (
+                  <Card key={review.id}>
+                    <CardContent className="pt-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium">
+                            {review.reviewer?.full_name?.[0] || 'U'}
+                          </div>
+                          <div>
+                            <p className="font-medium">
+                              {review.reviewer?.full_name || 'Anonymous'}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(review.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: review.rating || 0 }).map((_, i) => (
+                            <Award key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          ))}
+                        </div>
+                      </div>
+                      {review.comment && (
+                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                          {review.comment}
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           {isProvider && (
