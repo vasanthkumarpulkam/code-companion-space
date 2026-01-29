@@ -28,8 +28,10 @@ export default function Settings() {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState({
     email: true,
-    push: false,
+    push: true,
     sms: false,
+    loading: true,
+    saving: false,
   });
   const [privacySettings, setPrivacySettings] = useState({
     isPublic: true,
@@ -68,6 +70,127 @@ export default function Settings() {
 
     loadPrivacySettings();
   }, [user, toast]);
+
+  useEffect(() => {
+    const loadNotificationPreferences = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('notification_preferences')
+        .select('email_new_bids, email_job_awarded, email_job_completed, email_new_messages, in_app_notifications, sms_notifications')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        toast({
+          title: 'Failed to load notification settings',
+          description: error.message,
+          variant: 'destructive',
+        });
+        setNotifications((prev) => ({ ...prev, loading: false }));
+        return;
+      }
+
+      if (!data) {
+        const { error: insertError } = await supabase
+          .from('notification_preferences')
+          .insert({
+            user_id: user.id,
+            email_new_bids: true,
+            email_job_awarded: true,
+            email_job_completed: true,
+            email_new_messages: true,
+            in_app_notifications: true,
+            sms_notifications: false,
+          });
+
+        if (insertError) {
+          toast({
+            title: 'Failed to initialize notification settings',
+            description: insertError.message,
+            variant: 'destructive',
+          });
+          setNotifications((prev) => ({ ...prev, loading: false }));
+          return;
+        }
+
+        setNotifications({
+          email: true,
+          push: true,
+          sms: false,
+          loading: false,
+          saving: false,
+        });
+        return;
+      }
+
+      const emailEnabled =
+        data.email_new_bids &&
+        data.email_job_awarded &&
+        data.email_job_completed &&
+        data.email_new_messages;
+
+      setNotifications({
+        email: emailEnabled,
+        push: data.in_app_notifications ?? true,
+        sms: data.sms_notifications ?? false,
+        loading: false,
+        saving: false,
+      });
+    };
+
+    loadNotificationPreferences();
+  }, [user, toast]);
+
+  const updateNotificationSetting = async (key: 'email' | 'push' | 'sms', value: boolean) => {
+    if (!user) return;
+    const previousValue = notifications[key];
+    let updates: Record<string, boolean> = {};
+
+    if (key === 'email') {
+      updates = {
+        email_new_bids: value,
+        email_job_awarded: value,
+        email_job_completed: value,
+        email_new_messages: value,
+      };
+    }
+    if (key === 'push') {
+      updates = { in_app_notifications: value };
+    }
+    if (key === 'sms') {
+      updates = { sms_notifications: value };
+    }
+
+    setNotifications((prev) => ({
+      ...prev,
+      [key]: value,
+      saving: true,
+    }));
+
+    const { error } = await supabase
+      .from('notification_preferences')
+      .update(updates)
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast({
+        title: 'Failed to update notification settings',
+        description: error.message,
+        variant: 'destructive',
+      });
+      setNotifications((prev) => ({
+        ...prev,
+        [key]: previousValue,
+        saving: false,
+      }));
+      return;
+    }
+
+    setNotifications((prev) => ({
+      ...prev,
+      saving: false,
+    }));
+  };
 
   const updatePrivacySetting = async (key: 'isPublic' | 'showEmail', value: boolean) => {
     if (!user) return;
@@ -122,6 +245,25 @@ export default function Settings() {
     navigate('/');
   };
 
+  const handlePasswordReset = async () => {
+    if (!user?.email) return;
+    const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+    if (error) {
+      toast({
+        title: 'Failed to send reset email',
+        description: error.message,
+        variant: 'destructive',
+      });
+      return;
+    }
+    toast({
+      title: 'Password reset email sent',
+      description: 'Check your inbox to update your password.',
+    });
+  };
+
   return (
     <div className="container max-w-6xl py-8">
       <div className="space-y-6">
@@ -173,8 +315,9 @@ export default function Settings() {
                   <Switch
                     id="email-notifications"
                     checked={notifications.email}
+                    disabled={notifications.loading || notifications.saving}
                     onCheckedChange={(checked) =>
-                      setNotifications({ ...notifications, email: checked })
+                      updateNotificationSetting('email', checked)
                     }
                   />
                 </div>
@@ -191,8 +334,9 @@ export default function Settings() {
                   <Switch
                     id="push-notifications"
                     checked={notifications.push}
+                    disabled={notifications.loading || notifications.saving}
                     onCheckedChange={(checked) =>
-                      setNotifications({ ...notifications, push: checked })
+                      updateNotificationSetting('push', checked)
                     }
                   />
                 </div>
@@ -209,8 +353,9 @@ export default function Settings() {
                   <Switch
                     id="sms-notifications"
                     checked={notifications.sms}
+                    disabled={notifications.loading || notifications.saving}
                     onCheckedChange={(checked) =>
-                      setNotifications({ ...notifications, sms: checked })
+                      updateNotificationSetting('sms', checked)
                     }
                   />
                 </div>
@@ -250,7 +395,9 @@ export default function Settings() {
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                 </div>
                 
-                <Button variant="outline">Change Password</Button>
+                <Button variant="outline" onClick={handlePasswordReset} disabled={!user?.email}>
+                  Change Password
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
