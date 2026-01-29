@@ -8,10 +8,13 @@ export type PublicProfile = {
   location: string | null;
   language_preference: string | null;
   created_at: string | null;
+  email?: string | null;
+  is_public?: boolean | null;
+  show_email?: boolean | null;
 };
 
 const PUBLIC_PROFILE_SELECT =
-  'id, full_name, avatar_url, bio, location, language_preference, created_at';
+  'id, full_name, avatar_url, bio, location, language_preference, created_at, email, is_public, show_email';
 
 export async function fetchPublicProfilesByIds(
   ids: Array<string | null | undefined>

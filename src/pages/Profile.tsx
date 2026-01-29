@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star, MapPin, Briefcase, MessageSquare, Calendar, Award, CheckCircle, DollarSign, Clock } from 'lucide-react';
+import { Star, MapPin, Briefcase, MessageSquare, Calendar, Award, CheckCircle, DollarSign, Clock, Mail } from 'lucide-react';
 import { QuickQuoteDialog } from '@/components/providers/QuickQuoteDialog';
 import ProviderBadges from '@/components/providers/ProviderBadges';
 import { toast } from '@/hooks/use-toast';
@@ -167,6 +167,12 @@ export default function Profile() {
                     <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
                       <span>{profile.location}</span>
+                    </div>
+                  )}
+                  {profile.email && (
+                    <div className="flex items-center gap-1">
+                      <Mail className="h-4 w-4" />
+                      <span>{profile.email}</span>
                     </div>
                   )}
                 </div>

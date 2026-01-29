@@ -459,9 +459,11 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          is_public: boolean
           language_preference: string | null
           location: string | null
           phone: string | null
+          show_email: boolean
           updated_at: string | null
         }
         Insert: {
@@ -471,9 +473,11 @@ export type Database = {
           email: string
           full_name?: string | null
           id: string
+          is_public?: boolean
           language_preference?: string | null
           location?: string | null
           phone?: string | null
+          show_email?: boolean
           updated_at?: string | null
         }
         Update: {
@@ -483,9 +487,11 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+          is_public?: boolean
           language_preference?: string | null
           location?: string | null
           phone?: string | null
+          show_email?: boolean
           updated_at?: string | null
         }
         Relationships: []
@@ -971,28 +977,37 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string | null
+          email: string | null
           full_name: string | null
           id: string | null
+          is_public: boolean | null
           language_preference: string | null
           location: string | null
+          show_email: boolean | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string | null
+          is_public?: boolean | null
           language_preference?: string | null
           location?: string | null
+          show_email?: boolean | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string | null
+          is_public?: boolean | null
           language_preference?: string | null
           location?: string | null
+          show_email?: boolean | null
         }
         Relationships: []
       }

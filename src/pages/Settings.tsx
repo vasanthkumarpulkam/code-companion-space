@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -19,15 +20,89 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bell, CreditCard, Lock, Globe, Download, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function Settings() {
   const { user, signOut } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState({
     email: true,
     push: false,
     sms: false,
   });
+  const [privacySettings, setPrivacySettings] = useState({
+    isPublic: true,
+    showEmail: false,
+    loading: true,
+    saving: false,
+  });
+
+  useEffect(() => {
+    const loadPrivacySettings = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('is_public, show_email')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        toast({
+          title: 'Failed to load privacy settings',
+          description: error.message,
+          variant: 'destructive',
+        });
+        setPrivacySettings((prev) => ({ ...prev, loading: false }));
+        return;
+      }
+
+      setPrivacySettings({
+        isPublic: data?.is_public ?? true,
+        showEmail: data?.show_email ?? false,
+        loading: false,
+        saving: false,
+      });
+    };
+
+    loadPrivacySettings();
+  }, [user, toast]);
+
+  const updatePrivacySetting = async (key: 'isPublic' | 'showEmail', value: boolean) => {
+    if (!user) return;
+    const previousValue = privacySettings[key];
+    const updates = key === 'isPublic' ? { is_public: value } : { show_email: value };
+
+    setPrivacySettings((prev) => ({
+      ...prev,
+      [key]: value,
+      saving: true,
+    }));
+
+    const { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', user.id);
+
+    if (error) {
+      toast({
+        title: 'Failed to update privacy settings',
+        description: error.message,
+        variant: 'destructive',
+      });
+      setPrivacySettings((prev) => ({
+        ...prev,
+        [key]: previousValue,
+        saving: false,
+      }));
+      return;
+    }
+
+    setPrivacySettings((prev) => ({
+      ...prev,
+      saving: false,
+    }));
+  };
 
   const handleDeleteAccount = () => {
     // Placeholder for account deletion
@@ -183,7 +258,11 @@ export default function Settings() {
                       Make your profile visible to everyone
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch
+                    checked={privacySettings.isPublic}
+                    disabled={privacySettings.loading || privacySettings.saving}
+                    onCheckedChange={(checked) => updatePrivacySetting('isPublic', checked)}
+                  />
                 </div>
 
                 <Separator />
@@ -195,7 +274,11 @@ export default function Settings() {
                       Display your email on your profile
                     </p>
                   </div>
-                  <Switch />
+                  <Switch
+                    checked={privacySettings.showEmail}
+                    disabled={privacySettings.loading || privacySettings.saving}
+                    onCheckedChange={(checked) => updatePrivacySetting('showEmail', checked)}
+                  />
                 </div>
               </CardContent>
             </Card>
