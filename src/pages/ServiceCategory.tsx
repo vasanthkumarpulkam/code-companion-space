@@ -105,14 +105,12 @@ export default function ServiceCategory() {
       const profileMap = await fetchPublicProfilesByIds(
         data.map((job) => job.customer_id)
       );
-      const jobsWithCustomer = data.map((job) => {
-        const { categories, ...rest } = job;
-        return {
-          ...rest,
-          category: categories,
-          customer: profileMap.get(job.customer_id) || null,
-        };
-      });
+      const jobsWithCustomer = data.map((job) => ({
+        ...job,
+        categories: job.categories,
+        category: job.categories,
+        customer: profileMap.get(job.customer_id) || null,
+      }));
       setJobs(jobsWithCustomer);
     }
     setLoading(false);

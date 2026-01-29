@@ -8,13 +8,14 @@ interface JobCardProps {
 }
 
 export default function JobCard({ job }: JobCardProps) {
+  const categoryName = job.categories?.name || job.category?.name || 'Uncategorized';
   return (
     <Link to={`/jobs/${job.id}`}>
       <Card className="hover:shadow-md transition-shadow cursor-pointer">
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="space-y-1 flex-1">
-              <Badge variant="secondary">{job.categories?.name}</Badge>
+              <Badge variant="secondary">{categoryName}</Badge>
               <h3 className="font-semibold text-lg line-clamp-1">{job.title}</h3>
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {job.description}
