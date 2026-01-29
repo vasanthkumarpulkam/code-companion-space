@@ -78,6 +78,7 @@ bun install
 # Create .env file with:
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_SENTRY_DSN=your_sentry_dsn # optional
 
 # Step 5: Start development server
 npm run dev
@@ -129,7 +130,30 @@ bun dev
 - See `SECURITY.md` for security policies
 
 ## Testing
-Run the Supabase linter:
+Unit tests:
+```bash
+npm test
+```
+
+E2E tests (requires seeded accounts):
+```bash
+# Install browsers once
+npx playwright install
+
+# Run against local dev server (auto-starts on :8080)
+npm run test:e2e
+```
+
+E2E environment variables:
+```env
+E2E_BASE_URL=https://your-staging-url # optional
+E2E_CUSTOMER_EMAIL=customer@example.com
+E2E_CUSTOMER_PASSWORD=yourpassword
+E2E_PROVIDER_EMAIL=provider@example.com
+E2E_PROVIDER_PASSWORD=yourpassword
+```
+
+Supabase linter:
 ```bash
 supabase db lint
 ```
