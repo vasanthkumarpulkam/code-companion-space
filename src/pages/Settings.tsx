@@ -37,6 +37,7 @@ export default function Settings() {
     loading: true,
     saving: false,
   });
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   useEffect(() => {
     const loadPrivacySettings = async () => {
@@ -104,9 +105,21 @@ export default function Settings() {
     }));
   };
 
-  const handleDeleteAccount = () => {
-    // Placeholder for account deletion
-    signOut();
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setDeletingAccount(true);
+    const { error } = await supabase.rpc('delete_user_account');
+    if (error) {
+      toast({
+        title: 'Failed to delete account',
+        description: error.message,
+        variant: 'destructive',
+      });
+      setDeletingAccount(false);
+      return;
+    }
+    await signOut();
+    navigate('/');
   };
 
   return (
@@ -332,8 +345,9 @@ export default function Settings() {
                         <AlertDialogAction
                           onClick={handleDeleteAccount}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          disabled={deletingAccount}
                         >
-                          Delete Account
+                          {deletingAccount ? 'Deleting...' : 'Delete Account'}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
