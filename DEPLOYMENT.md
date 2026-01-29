@@ -63,7 +63,8 @@
 ### Required Variables
 ```env
 VITE_SUPABASE_URL=https://[project-ref].supabase.co
-VITE_SUPABASE_ANON_KEY=[your-anon-key]
+VITE_SUPABASE_PUBLISHABLE_KEY=[your-anon-key]
+# (or VITE_SUPABASE_ANON_KEY if you prefer)
 ```
 
 ### Supabase Edge Function Secrets
@@ -72,6 +73,9 @@ Configure in Supabase Dashboard → Settings → Edge Functions:
 - `GOOGLE_TRANSLATE_API_KEY`
 - `STRIPE_SECRET_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `ALLOWED_ORIGINS` (comma-separated list for edge functions)
+- `GEOCODE_RATE_LIMIT_COUNT` (default: 60)
+- `GEOCODE_RATE_LIMIT_WINDOW` (default: 1 hour)
 
 ## Supabase Configuration
 
@@ -86,7 +90,7 @@ Navigate to Authentication → Settings:
 
 ### 2. Storage Configuration
 Navigate to Storage:
-- Verify `job-media` bucket (public)
+- Verify `job-media` bucket (private)
 - Verify `profile-images` bucket (public)
 - Check RLS policies on `storage.objects`
 
