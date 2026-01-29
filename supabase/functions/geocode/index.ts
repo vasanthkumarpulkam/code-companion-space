@@ -1,14 +1,103 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+const DEFAULT_ALLOWED_ORIGINS = ['http://localhost:5173', 'http://localhost:8080']
+const DEFAULT_RATE_LIMIT_COUNT = 60
+const DEFAULT_RATE_LIMIT_WINDOW = '1 hour'
+
+const getAllowedOrigins = () => {
+  const raw = Deno.env.get('ALLOWED_ORIGINS')
+  if (!raw) return DEFAULT_ALLOWED_ORIGINS
+  return raw.split(',').map((origin) => origin.trim()).filter(Boolean)
 }
 
+const buildCorsHeaders = (origin: string) => ({
+  'Access-Control-Allow-Origin': origin,
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Vary': 'Origin',
+})
+
 serve(async (req) => {
+  const origin = req.headers.get('Origin') ?? ''
+  const allowedOrigins = getAllowedOrigins()
+  const originAllowed = origin !== '' && allowedOrigins.includes(origin)
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    if (!originAllowed) {
+      return new Response(null, { status: 403 })
+    }
+    return new Response(null, { headers: buildCorsHeaders(origin) })
+  }
+
+  if (!originAllowed) {
+    return new Response(
+      JSON.stringify({ error: 'Origin not allowed' }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+        status: 403,
+      }
+    )
+  }
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')
+  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return new Response(
+      JSON.stringify({ error: 'Server configuration error' }),
+      {
+        headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    )
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: req.headers.get('Authorization') ?? '',
+      },
+    },
+  })
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized' }),
+      {
+        headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
+        status: 401,
+      }
+    )
+  }
+
+  const rateLimitCount = Number(Deno.env.get('GEOCODE_RATE_LIMIT_COUNT') ?? DEFAULT_RATE_LIMIT_COUNT)
+  const rateLimitWindow = Deno.env.get('GEOCODE_RATE_LIMIT_WINDOW') ?? DEFAULT_RATE_LIMIT_WINDOW
+  const { data: rateAllowed, error: rateError } = await supabase.rpc('check_rate_limit', {
+    p_action: 'geocode',
+    p_limit: rateLimitCount,
+    p_window: rateLimitWindow,
+  })
+
+  if (rateError) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit check failed' }),
+      {
+        headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    )
+  }
+
+  if (!rateAllowed) {
+    return new Response(
+      JSON.stringify({ error: 'Rate limit exceeded' }),
+      {
+        headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
+        status: 429,
+      }
+    )
   }
 
   try {
@@ -21,7 +110,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Geocoding service unavailable' }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
           status: 503,
         }
       )
@@ -39,7 +128,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Invalid request parameters' }),
         {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
           status: 400,
         }
       )
@@ -49,7 +138,7 @@ serve(async (req) => {
     const data = await response.json()
 
     return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
       status: 200,
     })
   } catch (error: unknown) {
@@ -58,7 +147,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ error: 'Failed to process location request' }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...buildCorsHeaders(origin), 'Content-Type': 'application/json' },
         status: 400,
       }
     )
