@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Users, Briefcase, DollarSign, AlertTriangle, Settings, Award, Layers, Clock, MessageCircle } from 'lucide-react';
+import { Users, Briefcase, DollarSign, AlertTriangle, Settings, Award, Layers, Clock } from 'lucide-react';
 import { FinancialReports } from '@/components/admin/FinancialReports';
 import { DisputeResolution } from '@/components/admin/DisputeResolution';
 import { UserManagement } from '@/components/admin/UserManagement';
@@ -14,7 +14,6 @@ import { BadgeManagement } from '@/components/admin/BadgeManagement';
 import { JobOversight } from '@/components/admin/JobOversight';
 import { CategoryManagement } from '@/components/admin/CategoryManagement';
 import { AuditLog } from '@/components/admin/AuditLog';
-import { SupportRequests } from '@/components/admin/SupportRequests';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -144,10 +143,6 @@ export default function Admin() {
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </TabsTrigger>
-            <TabsTrigger value="support">
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Support
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -180,10 +175,6 @@ export default function Admin() {
 
           <TabsContent value="settings">
             <PlatformSettings />
-          </TabsContent>
-
-          <TabsContent value="support">
-            <SupportRequests />
           </TabsContent>
         </Tabs>
       </div>

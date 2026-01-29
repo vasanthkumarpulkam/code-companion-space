@@ -9,7 +9,6 @@ import { Search, Filter, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProviderCard from "@/components/providers/ProviderCard";
-import { fetchPublicProfilesByIds } from "@/utils/publicProfiles";
 
 export default function Providers() {
   const [searchParams] = useSearchParams();
@@ -71,49 +70,24 @@ export default function Providers() {
     
     const providerIds = providerRoles.map(r => r.user_id);
     
-    const [profileMap, settingsResult, skillsResult] = await Promise.all([
-      fetchPublicProfilesByIds(providerIds),
-      supabase.from('provider_settings').select('*').in('provider_id', providerIds),
-      supabase
-        .from('provider_skills')
-        .select('provider_id, skill_name, years_experience, verified')
-        .in('provider_id', providerIds),
-    ]);
+    // Get all providers with their settings
+    let query = supabase
+      .from('profiles')
+      .select(`
+        *,
+        provider_settings (*),
+        provider_skills (skill_name, years_experience, verified)
+      `)
+      .in('id', providerIds);
 
-    const settingsByProvider = new Map(
-      (settingsResult.data || []).map((setting) => [setting.provider_id, setting])
-    );
-    const skillsByProvider = new Map<string, any[]>();
-    (skillsResult.data || []).forEach((skill) => {
-      const existing = skillsByProvider.get(skill.provider_id) || [];
-      existing.push(skill);
-      skillsByProvider.set(skill.provider_id, existing);
-    });
+    if (availableOnly) {
+      query = query.eq('provider_settings.available_now', true);
+    }
 
-    const providersData = Array.from(profileMap.values()).flatMap((profile) => {
-      if (!profile.id) {
-        return [];
-      }
-
-      return [
-        {
-          ...profile,
-          provider_settings: settingsByProvider.has(profile.id)
-            ? [settingsByProvider.get(profile.id)]
-            : [],
-          provider_skills: skillsByProvider.get(profile.id) || [],
-        },
-      ];
-    });
-
-    if (providersData.length > 0) {
-      let filteredData = providersData;
-
-      if (availableOnly) {
-        filteredData = filteredData.filter(
-          (provider) => provider.provider_settings?.[0]?.available_now
-        );
-      }
+    const { data } = await query;
+    
+    if (data) {
+      let filteredData = data;
       
       // Filter by category if selected
       if (selectedCategory && selectedCategory !== 'all') {
@@ -165,7 +139,7 @@ export default function Providers() {
   const filteredProviders = providers.filter(provider =>
     provider.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     provider.bio?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    provider.provider_settings?.bio_headline?.toLowerCase()?.includes(searchQuery.toLowerCase())
+    provider.provider_settings?.bio_headline?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const getDisplayCategory = () => {

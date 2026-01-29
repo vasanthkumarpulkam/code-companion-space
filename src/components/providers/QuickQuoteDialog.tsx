@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,33 +10,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-
-const SERVICE_REQUEST_DRAFT_KEY = 'serviceRequestDraft';
-
-type ServiceRequestDraft = {
-  category: string;
-  subcategory: string;
-  location: string;
-  itemType?: string;
-  taskSize?: string;
-  details: string;
-};
-
-const buildDraftTitle = (draft: ServiceRequestDraft) => {
-  const base = draft.subcategory || draft.category || 'Service';
-  return `Need ${base} help`;
-};
-
-const buildDraftDescription = (draft: ServiceRequestDraft) => {
-  const lines = [draft.details];
-  if (draft.itemType) {
-    lines.push(`Item type: ${draft.itemType}`);
-  }
-  if (draft.taskSize) {
-    lines.push(`Task size: ${draft.taskSize}`);
-  }
-  return lines.filter(Boolean).join('\n');
-};
 
 interface QuickQuoteDialogProps {
   providerId: string;
@@ -63,35 +36,6 @@ export function QuickQuoteDialog({ providerId, providerName }: QuickQuoteDialogP
     const { data } = await supabase.from('categories').select('*').order('name');
     if (data) setCategories(data);
   };
-
-  const loadDraft = () => {
-    if (typeof window === 'undefined') return null;
-    const stored = localStorage.getItem(SERVICE_REQUEST_DRAFT_KEY);
-    if (!stored) return null;
-    try {
-      return JSON.parse(stored) as ServiceRequestDraft;
-    } catch {
-      return null;
-    }
-  };
-
-  useEffect(() => {
-    if (!open || categories.length === 0) return;
-
-    const draft = loadDraft();
-    if (!draft) return;
-
-    const categoryId =
-      categories.find((cat) => cat.slug === draft.category)?.id || '';
-
-    setFormData((prev) => ({
-      ...prev,
-      categoryId: prev.categoryId || categoryId,
-      title: prev.title || buildDraftTitle(draft),
-      description: prev.description || buildDraftDescription(draft),
-      location: prev.location || draft.location,
-    }));
-  }, [open, categories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,9 +69,6 @@ export function QuickQuoteDialog({ providerId, providerName }: QuickQuoteDialogP
 
       toast({ title: `Quote request sent to ${providerName}!` });
       setOpen(false);
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(SERVICE_REQUEST_DRAFT_KEY);
-      }
       setFormData({
         categoryId: '',
         title: '',

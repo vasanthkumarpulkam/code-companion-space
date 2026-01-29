@@ -344,7 +344,6 @@ export type Database = {
           email_new_messages: boolean | null
           id: string
           in_app_notifications: boolean | null
-          sms_notifications: boolean | null
           updated_at: string
           user_id: string
         }
@@ -356,7 +355,6 @@ export type Database = {
           email_new_messages?: boolean | null
           id?: string
           in_app_notifications?: boolean | null
-          sms_notifications?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -368,7 +366,6 @@ export type Database = {
           email_new_messages?: boolean | null
           id?: string
           in_app_notifications?: boolean | null
-          sms_notifications?: boolean | null
           updated_at?: string
           user_id?: string
         }
@@ -462,11 +459,9 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
-          is_public: boolean
           language_preference: string | null
           location: string | null
           phone: string | null
-          show_email: boolean
           updated_at: string | null
         }
         Insert: {
@@ -476,11 +471,9 @@ export type Database = {
           email: string
           full_name?: string | null
           id: string
-          is_public?: boolean
           language_preference?: string | null
           location?: string | null
           phone?: string | null
-          show_email?: boolean
           updated_at?: string | null
         }
         Update: {
@@ -490,11 +483,9 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
-          is_public?: boolean
           language_preference?: string | null
           location?: string | null
           phone?: string | null
-          show_email?: boolean
           updated_at?: string | null
         }
         Relationships: []
@@ -905,39 +896,6 @@ export type Database = {
         }
         Relationships: []
       }
-      support_requests: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          message: string
-          name: string
-          status: string
-          subject: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          message: string
-          name: string
-          status?: string
-          subject: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          message?: string
-          name?: string
-          status?: string
-          subject?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       user_reports: {
         Row: {
           created_at: string
@@ -1013,37 +971,28 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string | null
-          email: string | null
           full_name: string | null
           id: string | null
-          is_public: boolean | null
           language_preference: string | null
           location: string | null
-          show_email: boolean | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
-          email?: string | null
           full_name?: string | null
           id?: string | null
-          is_public?: boolean | null
           language_preference?: string | null
           location?: string | null
-          show_email?: boolean | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
-          email?: string | null
           full_name?: string | null
           id?: string | null
-          is_public?: boolean | null
           language_preference?: string | null
           location?: string | null
-          show_email?: boolean | null
         }
         Relationships: []
       }

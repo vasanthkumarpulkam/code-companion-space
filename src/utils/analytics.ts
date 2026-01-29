@@ -1,5 +1,4 @@
 // Simple analytics tracking utility
-const isDev = import.meta.env.DEV;
 class Analytics {
   private enabled: boolean = true;
 
@@ -7,9 +6,7 @@ class Analytics {
   trackPageView(path: string) {
     if (!this.enabled) return;
     
-    if (isDev) {
-      console.log('[Analytics] Page View:', path);
-    }
+    console.log('[Analytics] Page View:', path);
     
     // You can integrate with Google Analytics, Mixpanel, etc.
     if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -23,9 +20,7 @@ class Analytics {
   trackEvent(eventName: string, properties?: Record<string, any>) {
     if (!this.enabled) return;
     
-    if (isDev) {
-      console.log('[Analytics] Event:', eventName, properties);
-    }
+    console.log('[Analytics] Event:', eventName, properties);
     
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', eventName, properties);

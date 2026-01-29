@@ -84,9 +84,7 @@ export function JobMapView({ jobs, center }: JobMapViewProps) {
         marker.addListener('click', () => {
           // Sanitize all user-provided content to prevent XSS attacks
           const safeTitle = escapeHtml(job.title);
-          const safeCategory = escapeHtml(
-            job.categories?.name || job.category?.name || 'Uncategorized'
-          );
+          const safeCategory = escapeHtml(job.category?.name || 'Uncategorized');
           const safeDescription = escapeHtml(job.description?.substring(0, 100) || '');
           const safeLocation = escapeHtml(job.location);
           const safeBudget = Number(job.budget) || 0; // Ensure budget is a number

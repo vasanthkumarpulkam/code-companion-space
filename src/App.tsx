@@ -11,7 +11,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
-import ResetPassword from "./pages/auth/ResetPassword";
 import HowItWorks from "./pages/HowItWorks";
 import Services from "./pages/Services";
 import ServiceCategory from "./pages/ServiceCategory";
@@ -65,7 +64,6 @@ function App() {
                   <Route path="/legal/privacy" element={<PrivacyPolicy />} />
                   <Route path="/auth/login" element={<Login />} />
                   <Route path="/auth/signup" element={<Signup />} />
-                  <Route path="/auth/reset-password" element={<ResetPassword />} />
                   <Route 
                     path="/dashboard" 
                     element={
