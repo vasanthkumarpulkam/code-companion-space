@@ -232,18 +232,7 @@ export default function Dashboard() {
                     {profile.bio && (
                       <p className="mt-4 text-muted-foreground">{profile.bio}</p>
                     )}
-                    {profile.role === "provider" && profile.skills && profile.skills.length > 0 && (
-                      <div className="mt-4">
-                        <p className="text-sm font-semibold mb-2">{t('dashboard.profile.skills')}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {profile.skills.map((skill: string, index: number) => (
-                            <span key={index} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    {/* Skills are stored in provider_skills table, not on profile */}
                   </div>
                 </div>
               </CardContent>

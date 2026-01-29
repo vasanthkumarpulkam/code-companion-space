@@ -10,6 +10,7 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 // Import all pages directly (avoiding lazy loading issues with React instances)
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/auth/Login";
+import ResetPassword from "./pages/auth/ResetPassword";
 import Signup from "./pages/auth/Signup";
 import HowItWorks from "./pages/HowItWorks";
 import Services from "./pages/Services";
@@ -63,6 +64,7 @@ function App() {
                   <Route path="/legal/terms" element={<TermsOfService />} />
                   <Route path="/legal/privacy" element={<PrivacyPolicy />} />
                   <Route path="/auth/login" element={<Login />} />
+                  <Route path="/auth/reset-password" element={<ResetPassword />} />
                   <Route path="/auth/signup" element={<Signup />} />
                   <Route 
                     path="/dashboard" 
