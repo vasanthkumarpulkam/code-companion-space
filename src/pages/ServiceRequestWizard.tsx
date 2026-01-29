@@ -18,6 +18,8 @@ interface TaskData {
   details: string;
 }
 
+const SERVICE_REQUEST_DRAFT_KEY = 'serviceRequestDraft';
+
 export default function ServiceRequestWizard() {
   const { category, subcategory } = useParams();
   const navigate = useNavigate();
@@ -56,6 +58,22 @@ export default function ServiceRequestWizard() {
     if (step < 4) {
       setStep(step + 1);
     } else {
+      const draft = {
+        category: decodedCategory,
+        subcategory: decodedSubcategory,
+        location: [taskData.location.street, taskData.location.unit]
+          .filter(Boolean)
+          .join(', '),
+        itemType: taskData.itemType,
+        taskSize: taskData.taskSize,
+        details: taskData.details,
+        createdAt: new Date().toISOString(),
+      };
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(SERVICE_REQUEST_DRAFT_KEY, JSON.stringify(draft));
+      }
+
       navigate(`/providers?service=${category}`);
     }
   };
