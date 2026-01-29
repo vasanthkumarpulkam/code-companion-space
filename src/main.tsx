@@ -5,10 +5,12 @@ import "./index.css";
 import { performanceMonitor } from "./utils/performance";
 
 // Minimal React runtime diagnostics (helps detect duplicate React instances)
-try {
-  console.log("[ReactDiag] React.version:", React.version);
-} catch {
-  // ignore
+if (import.meta.env.DEV) {
+  try {
+    console.log("[ReactDiag] React.version:", React.version);
+  } catch {
+    // ignore
+  }
 }
 
 // Initialize performance monitoring in development

@@ -15,8 +15,7 @@ export function useRealtimeQuotes(userId: string | undefined, onQuoteUpdate: () 
           table: 'quote_requests',
           filter: `customer_id=eq.${userId}`
         },
-        (payload) => {
-          console.log('Quote update received:', payload);
+        () => {
           onQuoteUpdate();
         }
       )
@@ -28,8 +27,7 @@ export function useRealtimeQuotes(userId: string | undefined, onQuoteUpdate: () 
           table: 'quote_requests',
           filter: `provider_id=eq.${userId}`
         },
-        (payload) => {
-          console.log('Quote update received:', payload);
+        () => {
           onQuoteUpdate();
         }
       )
