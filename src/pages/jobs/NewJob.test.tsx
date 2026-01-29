@@ -3,24 +3,13 @@ import { MemoryRouter } from 'react-router-dom';
 
 import NewJob from './NewJob';
 
-const mockFrom = vi.fn((table: string) => {
-  if (table === 'categories') {
-    return {
-      select: vi.fn(async () => ({
-        data: [{ id: 'cat-1', name: 'Cleaning' }],
-        error: null,
-      })),
-    };
-  }
-
-  return {
-    select: vi.fn(async () => ({ data: [], error: null })),
-  };
-});
+const mocks = vi.hoisted(() => ({
+  from: vi.fn(),
+}));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: mockFrom,
+    from: mocks.from,
   },
 }));
 
@@ -31,6 +20,23 @@ vi.mock('@/contexts/AuthContext', () => ({
 }));
 
 describe('NewJob', () => {
+  beforeEach(() => {
+    mocks.from.mockImplementation((table: string) => {
+      if (table === 'categories') {
+        return {
+          select: vi.fn(async () => ({
+            data: [{ id: 'cat-1', name: 'Cleaning' }],
+            error: null,
+          })),
+        };
+      }
+
+      return {
+        select: vi.fn(async () => ({ data: [], error: null })),
+      };
+    });
+  });
+
   it('blocks step advance when required fields are missing', async () => {
     render(
       <MemoryRouter>

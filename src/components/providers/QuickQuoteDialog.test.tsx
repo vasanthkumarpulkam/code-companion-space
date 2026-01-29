@@ -3,26 +3,16 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { QuickQuoteDialog } from './QuickQuoteDialog';
 
-const insertMock = vi.fn(async () => ({ error: null }));
-const orderMock = vi.fn(async () => ({
-  data: [{ id: 'cat-1', name: 'Cleaning' }],
-  error: null,
+const mocks = vi.hoisted(() => ({
+  insert: vi.fn(),
+  order: vi.fn(),
+  select: vi.fn(),
+  from: vi.fn(),
 }));
-const selectMock = vi.fn(() => ({ order: orderMock }));
-
-const mockFrom = vi.fn((table: string) => {
-  if (table === 'categories') {
-    return { select: selectMock };
-  }
-  if (table === 'quote_requests') {
-    return { insert: insertMock };
-  }
-  return { select: vi.fn(async () => ({ data: [], error: null })) };
-});
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: mockFrom,
+    from: mocks.from,
   },
 }));
 
@@ -33,6 +23,24 @@ vi.mock('@/contexts/AuthContext', () => ({
 }));
 
 describe('QuickQuoteDialog', () => {
+  beforeEach(() => {
+    mocks.order.mockResolvedValue({
+      data: [{ id: 'cat-1', name: 'Cleaning' }],
+      error: null,
+    });
+    mocks.select.mockReturnValue({ order: mocks.order });
+    mocks.insert.mockResolvedValue({ error: null });
+    mocks.from.mockImplementation((table: string) => {
+      if (table === 'categories') {
+        return { select: mocks.select };
+      }
+      if (table === 'quote_requests') {
+        return { insert: mocks.insert };
+      }
+      return { select: vi.fn(async () => ({ data: [], error: null })) };
+    });
+  });
+
   it('submits a quote request with required fields', async () => {
     render(
       <MemoryRouter>
@@ -46,11 +54,10 @@ describe('QuickQuoteDialog', () => {
       await screen.findByText('Request Quick Quote from Pro Helper')
     ).toBeInTheDocument();
 
-    await waitFor(() => expect(orderMock).toHaveBeenCalled());
+    await waitFor(() => expect(mocks.order).toHaveBeenCalled());
 
-    const categorySelect = screen.getByRole('combobox');
-    fireEvent.mouseDown(categorySelect);
-    fireEvent.click(await screen.findByText('Cleaning'));
+    const hiddenSelects = document.querySelectorAll('select');
+    fireEvent.change(hiddenSelects[0], { target: { value: 'cat-1' } });
 
     fireEvent.change(screen.getByLabelText(/project title/i), {
       target: { value: 'Need cleaning help' },
@@ -65,7 +72,7 @@ describe('QuickQuoteDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: /send quote request/i }));
 
     await waitFor(() => {
-      expect(insertMock).toHaveBeenCalledWith(
+      expect(mocks.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           customer_id: 'user-1',
           provider_id: 'provider-1',

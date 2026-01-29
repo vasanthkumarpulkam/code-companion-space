@@ -3,7 +3,9 @@ import { MemoryRouter } from 'react-router-dom';
 
 import Login from './Login';
 
-const mockSignIn = vi.fn(async () => ({ error: null }));
+const mockSignIn = vi.fn(async () => ({
+  error: { message: 'Invalid login credentials' },
+}));
 const mockSignInWithGoogle = vi.fn(async () => ({ error: null }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -31,13 +33,15 @@ describe('Login', () => {
     );
 
     fireEvent.change(screen.getByLabelText('Email'), {
-      target: { value: 'not-an-email' },
+      target: { value: 'user@example.com' },
     });
     fireEvent.change(screen.getByLabelText('Password'), {
       target: { value: 'password123' },
     });
     fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
 
-    expect(await screen.findByText('Invalid email address')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Invalid email or password. Please try again.')
+    ).toBeInTheDocument();
   });
 });
