@@ -102,8 +102,17 @@ export default function Profile() {
   };
 
   const fetchReviews = async () => {
-    // Placeholder for reviews - would need a reviews table
-    setReviews([]);
+    if (!uid) return;
+    
+    const { data, error } = await supabase
+      .from('public_reviews')
+      .select('*')
+      .eq('reviewed_id', uid)
+      .order('created_at', { ascending: false });
+    
+    if (!error && data) {
+      setReviews(data);
+    }
   };
 
   if (loading) {
@@ -115,8 +124,10 @@ export default function Profile() {
   }
 
   const isProvider = profile.user_roles?.some((r: any) => r.role === 'provider');
-  const averageRating = 4.8; // Placeholder
-  const totalReviews = 24; // Placeholder
+  const totalReviews = reviews.length;
+  const averageRating = totalReviews > 0 
+    ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / totalReviews 
+    : 0;
   const completedJobsCount = completedJobs.length;
 
   return (
@@ -134,11 +145,11 @@ export default function Profile() {
             <div className="flex-1 space-y-4">
               <div>
                 <h1 className="text-3xl font-bold">{profile.full_name || 'Anonymous'}</h1>
-                <div className="flex items-center gap-4 mt-2 text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{averageRating}</span>
-                    <span>({totalReviews} reviews)</span>
+                  <div className="flex items-center gap-4 mt-2 text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-semibold">{averageRating > 0 ? averageRating.toFixed(1) : '—'}</span>
+                      <span>({totalReviews} {totalReviews === 1 ? 'review' : 'reviews'})</span>
                   </div>
                   {profile.location && (
                     <div className="flex items-center gap-1">
