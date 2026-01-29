@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Upload, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 const formSchema = z.object({
   title: z.string().min(20, 'Title must be at least 20 characters'),
@@ -30,8 +31,10 @@ export default function NewJob() {
   const [step, setStep] = useState(1);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [mediaItems, setMediaItems] = useState<Array<{ path: string; url: string }>>([]);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { uploadFile, deleteFile, getFileUrl, uploading } = useFileUpload();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -110,6 +113,43 @@ export default function NewJob() {
   const prevStep = () => setStep(step - 1);
 
   const progress = (step / 4) * 100;
+
+  const handleMediaUpload = async (files: FileList | null) => {
+    if (!files || !user) return;
+
+    const remainingSlots = Math.max(0, 5 - mediaItems.length);
+    if (remainingSlots === 0) {
+      toast({ title: 'You can upload up to 5 photos.', variant: 'destructive' });
+      return;
+    }
+
+    const filesToUpload = Array.from(files).slice(0, remainingSlots);
+
+    for (const file of filesToUpload) {
+      const uploadedPath = await uploadFile(file, 'job-media', user.id);
+      if (!uploadedPath) continue;
+
+      const signedUrl = await getFileUrl(uploadedPath, 'job-media');
+      if (!signedUrl) continue;
+
+      setMediaItems((prev) => {
+        const next = [...prev, { path: uploadedPath, url: signedUrl }];
+        form.setValue('media_urls', next.map((item) => item.path));
+        return next;
+      });
+    }
+  };
+
+  const handleRemoveMedia = async (path: string) => {
+    const removed = await deleteFile(path, 'job-media');
+    if (!removed) return;
+
+    setMediaItems((prev) => {
+      const next = prev.filter((item) => item.path !== path);
+      form.setValue('media_urls', next.map((item) => item.path));
+      return next;
+    });
+  };
 
   return (
     <div className="container max-w-3xl py-4 sm:py-8 px-4">
@@ -219,10 +259,41 @@ export default function NewJob() {
                   <div className="border-2 border-dashed rounded-lg p-8 text-center">
                     <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                     <p className="text-sm text-muted-foreground">
-                      Drag and drop photos here, or click to select
+                      Upload photos to help providers understand your job
                     </p>
                     <p className="text-xs text-muted-foreground mt-2">Up to 5 photos</p>
+                    <div className="mt-4">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        disabled={uploading}
+                        onChange={(e) => handleMediaUpload(e.target.files)}
+                      />
+                    </div>
                   </div>
+
+                  {mediaItems.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {mediaItems.map((item) => (
+                        <div key={item.path} className="relative rounded border overflow-hidden">
+                          <img
+                            src={item.url}
+                            alt="Job media"
+                            className="h-32 w-full object-cover"
+                          />
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            className="absolute top-2 right-2 h-7 w-7"
+                            onClick={() => handleRemoveMedia(item.path)}
+                          >
+                            <span className="text-xs">×</span>
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 

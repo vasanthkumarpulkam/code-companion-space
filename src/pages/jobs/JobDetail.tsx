@@ -17,6 +17,7 @@ import { useRealtimeBids } from '@/hooks/useRealtimeBids';
 import { ReportDialog } from '@/components/jobs/ReportDialog';
 import { analytics } from '@/utils/analytics';
 import { fetchPublicProfilesByIds } from '@/utils/publicProfiles';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -25,7 +26,9 @@ export default function JobDetail() {
   const [job, setJob] = useState<any>(null);
   const [bids, setBids] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [mediaUrls, setMediaUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const { getFileUrl } = useFileUpload();
 
   const fetchBidsCallback = useCallback(() => {
     fetchBids();
@@ -39,6 +42,30 @@ export default function JobDetail() {
     fetchBids();
     fetchReviews();
   }, [id]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadMedia = async () => {
+      if (!job?.media_urls || job.media_urls.length === 0) {
+        if (isMounted) setMediaUrls([]);
+        return;
+      }
+
+      const urls = await Promise.all(
+        job.media_urls.map((path: string) => getFileUrl(path, 'job-media'))
+      );
+      if (isMounted) {
+        setMediaUrls(urls.filter((url): url is string => !!url));
+      }
+    };
+
+    loadMedia();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [job?.id, job?.media_urls, getFileUrl]);
 
   const fetchReviews = async () => {
     const { data } = await supabase
@@ -183,6 +210,22 @@ export default function JobDetail() {
                 <h3 className="text-base sm:text-lg font-semibold">Description</h3>
                 <p className="text-sm sm:text-base text-muted-foreground whitespace-pre-wrap break-words">{job.description}</p>
               </div>
+
+              {mediaUrls.length > 0 && (
+                <div className="space-y-3">
+                  <h3 className="text-base sm:text-lg font-semibold">Photos</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {mediaUrls.map((url) => (
+                      <img
+                        key={url}
+                        src={url}
+                        alt="Job media"
+                        className="h-32 w-full rounded object-cover"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {job.description_spanish && (
                 <Button variant="outline" size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
