@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { QuoteDiscussionChat } from '@/components/quotes/QuoteDiscussionChat';
 import { useRealtimeQuotes } from '@/hooks/useRealtimeQuotes';
+import { fetchPublicProfilesByIds } from '@/utils/publicProfiles';
 
 export default function MyQuotes() {
   const { user } = useAuth();
@@ -27,14 +28,20 @@ export default function MyQuotes() {
         .from('quote_requests')
         .select(`
           *,
-          profiles:provider_id (full_name, email, location, avatar_url),
           categories (name)
         `)
         .eq('customer_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setQuoteRequests(data || []);
+      const profileMap = await fetchPublicProfilesByIds(
+        (data || []).map((request) => request.provider_id)
+      );
+      const requestsWithProfiles = (data || []).map((request) => ({
+        ...request,
+        profiles: profileMap.get(request.provider_id) || null,
+      }));
+      setQuoteRequests(requestsWithProfiles);
     } catch (error) {
       console.error('Error fetching quote requests:', error);
       toast({ title: 'Error loading quotes', variant: 'destructive' });

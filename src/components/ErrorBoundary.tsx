@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle } from 'lucide-react';
 
+const isDev = import.meta.env.DEV;
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -51,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <p className="text-muted-foreground">
                 We're sorry, but something unexpected happened. Please try refreshing the page or returning to the home page.
               </p>
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {isDev && this.state.error && (
                 <div className="p-4 bg-muted rounded-md">
                   <p className="text-sm font-mono text-destructive">
                     {this.state.error.message}

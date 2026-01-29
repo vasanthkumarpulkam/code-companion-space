@@ -13,6 +13,7 @@ import { Briefcase, DollarSign, Star, Plus, Search, MessageCircle, User, MapPin,
 import { supabase } from '@/integrations/supabase/client';
 import { QuoteRequestCard } from '@/components/providers/QuoteRequestCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { fetchPublicProfilesByIds } from '@/utils/publicProfiles';
 
 export default function Dashboard() {
   const { user, userRole } = useAuth();
@@ -151,14 +152,20 @@ export default function Dashboard() {
         .from('quote_requests')
         .select(`
           *,
-          profiles:customer_id (full_name, email, location),
           categories (name)
         `)
         .eq('provider_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setQuoteRequests(data || []);
+      const profileMap = await fetchPublicProfilesByIds(
+        (data || []).map((request) => request.customer_id)
+      );
+      const requestsWithProfiles = (data || []).map((request) => ({
+        ...request,
+        profiles: profileMap.get(request.customer_id) || null,
+      }));
+      setQuoteRequests(requestsWithProfiles);
     } catch (error) {
       console.error('Error fetching quote requests:', error);
     } finally {

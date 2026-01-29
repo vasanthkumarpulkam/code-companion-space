@@ -13,6 +13,7 @@ import { MapPin, DollarSign, Calendar, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import JobCard from "@/components/jobs/JobCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { fetchPublicProfilesByIds } from "@/utils/publicProfiles";
 
 export default function ServiceCategory() {
   const { category } = useParams();
@@ -60,8 +61,7 @@ export default function ServiceCategory() {
       .from('jobs')
       .select(`
         *,
-        category:categories(name, icon),
-        customer:profiles!jobs_customer_id_fkey(full_name, avatar_url)
+        categories(name, icon)
       `)
       .eq('category_id', categoryId)
       .eq('status', 'open');
@@ -102,7 +102,16 @@ export default function ServiceCategory() {
     const { data } = await query;
     
     if (data) {
-      setJobs(data);
+      const profileMap = await fetchPublicProfilesByIds(
+        data.map((job) => job.customer_id)
+      );
+      const jobsWithCustomer = data.map((job) => ({
+        ...job,
+        categories: job.categories,
+        category: job.categories,
+        customer: profileMap.get(job.customer_id) || null,
+      }));
+      setJobs(jobsWithCustomer);
     }
     setLoading(false);
   };

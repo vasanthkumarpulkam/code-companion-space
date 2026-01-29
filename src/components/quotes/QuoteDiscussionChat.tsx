@@ -44,7 +44,7 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
 
   const fetchOtherProfile = async () => {
     const { data } = await supabase
-      .from('profiles')
+      .from('public_profiles')
       .select('full_name, avatar_url')
       .eq('id', otherUserId)
       .single();
@@ -98,13 +98,6 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
   const sendMessage = async () => {
     if (!newMessage.trim() || !quoteRequest) return;
 
-    console.log('Sending message:', {
-      sender_id: user?.id,
-      recipient_id: otherUserId,
-      quote_request_id: quoteRequest.id,
-      isCustomer
-    });
-
     setSendingMessage(true);
     try {
       const { data, error } = await supabase
@@ -122,7 +115,6 @@ export function QuoteDiscussionChat({ open, onOpenChange, quoteRequest }: QuoteD
         throw error;
       }
 
-      console.log('Message sent successfully:', data);
       setNewMessage('');
       
       // Refresh messages instead of optimistically adding

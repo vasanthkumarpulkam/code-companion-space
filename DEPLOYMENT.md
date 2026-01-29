@@ -63,7 +63,22 @@
 ### Required Variables
 ```env
 VITE_SUPABASE_URL=https://[project-ref].supabase.co
-VITE_SUPABASE_ANON_KEY=[your-anon-key]
+VITE_SUPABASE_PUBLISHABLE_KEY=[your-anon-key]
+# (or VITE_SUPABASE_ANON_KEY if you prefer)
+```
+
+### Optional: Sentry (Error Tracking)
+```env
+VITE_SENTRY_DSN=https://examplePublicKey@o0.ingest.sentry.io/0
+VITE_APP_VERSION=1.0.0
+```
+
+### Optional: Sentry Source Maps (Build Time)
+```env
+SENTRY_AUTH_TOKEN=your_sentry_auth_token
+SENTRY_ORG=your_sentry_org_slug
+SENTRY_PROJECT=your_sentry_project_slug
+SENTRY_RELEASE=1.0.0
 ```
 
 ### Supabase Edge Function Secrets
@@ -72,6 +87,9 @@ Configure in Supabase Dashboard → Settings → Edge Functions:
 - `GOOGLE_TRANSLATE_API_KEY`
 - `STRIPE_SECRET_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `ALLOWED_ORIGINS` (comma-separated list for edge functions)
+- `GEOCODE_RATE_LIMIT_COUNT` (default: 60)
+- `GEOCODE_RATE_LIMIT_WINDOW` (default: 1 hour)
 
 ## Supabase Configuration
 
@@ -86,7 +104,7 @@ Navigate to Authentication → Settings:
 
 ### 2. Storage Configuration
 Navigate to Storage:
-- Verify `job-media` bucket (public)
+- Verify `job-media` bucket (private)
 - Verify `profile-images` bucket (public)
 - Check RLS policies on `storage.objects`
 
@@ -147,6 +165,10 @@ Monitor console logs and Supabase logs for:
 - Database query errors
 - Payment processing errors
 - File upload issues
+
+If Sentry is configured, monitor:
+- Frontend runtime exceptions
+- Release health and error spikes
 
 ## Performance Optimization
 

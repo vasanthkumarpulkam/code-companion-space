@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Search, MessageCircle, Mail, HelpCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const helpCategories = [
   {
@@ -71,6 +75,51 @@ const faqs = [
 ];
 
 export default function Support() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState(user?.email || "");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!name || !email || !subject || !message) {
+      toast({
+        title: "Please complete all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    const { error } = await supabase.from("support_requests").insert({
+      user_id: user?.id ?? null,
+      name,
+      email,
+      subject,
+      message,
+    });
+
+    if (error) {
+      toast({
+        title: "Failed to send message",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Support request submitted",
+        description: "We will get back to you within 24 hours.",
+      });
+      setSubject("");
+      setMessage("");
+    }
+
+    setSubmitting(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -157,21 +206,40 @@ export default function Support() {
 
             <Card>
               <CardContent className="pt-6">
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSubmit}>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Name</Label>
-                      <Input id="name" placeholder="Your name" />
+                      <Input
+                        id="name"
+                        placeholder="Your name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="your@email.com" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="subject">Subject</Label>
-                    <Input id="subject" placeholder="How can we help?" />
+                    <Input
+                      id="subject"
+                      placeholder="How can we help?"
+                      value={subject}
+                      onChange={(e) => setSubject(e.target.value)}
+                      required
+                    />
                   </div>
                   
                   <div className="space-y-2">
@@ -180,12 +248,15 @@ export default function Support() {
                       id="message"
                       placeholder="Describe your issue or question..."
                       rows={6}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      required
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
+                  <Button type="submit" className="w-full" size="lg" disabled={submitting}>
                     <Mail className="mr-2 h-4 w-4" />
-                    Send Message
+                    {submitting ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
               </CardContent>

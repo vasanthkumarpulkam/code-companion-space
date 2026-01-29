@@ -10,20 +10,27 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { MapPin, Package, Settings2, FileText, ChevronLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface TaskData {
   location: { street: string; unit: string };
   itemType?: string;
   taskSize?: string;
+  budget: string;
   details: string;
 }
+
+const SERVICE_REQUEST_DRAFT_KEY = 'serviceRequestDraft';
 
 export default function ServiceRequestWizard() {
   const { category, subcategory } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [taskData, setTaskData] = useState<TaskData>({
     location: { street: '', unit: '' },
+    budget: '',
     details: '',
   });
 
@@ -35,7 +42,7 @@ export default function ServiceRequestWizard() {
   const isMovingService = decodedCategory === 'moving';
   const isCleaningService = decodedCategory === 'cleaning';
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 1 && !taskData.location.street) {
       toast.error('Please enter your task location');
       return;
@@ -52,10 +59,74 @@ export default function ServiceRequestWizard() {
       toast.error('Please provide task details');
       return;
     }
+    if (step === 4 && (!taskData.budget || Number(taskData.budget) <= 0)) {
+      toast.error('Please enter a valid budget');
+      return;
+    }
     
     if (step < 4) {
       setStep(step + 1);
     } else {
+      const draft = {
+        category: decodedCategory,
+        subcategory: decodedSubcategory,
+        location: [taskData.location.street, taskData.location.unit]
+          .filter(Boolean)
+          .join(', '),
+        itemType: taskData.itemType,
+        taskSize: taskData.taskSize,
+        budget: taskData.budget,
+        details: taskData.details,
+        createdAt: new Date().toISOString(),
+      };
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(SERVICE_REQUEST_DRAFT_KEY, JSON.stringify(draft));
+      }
+
+      if (!user) {
+        toast.error('Please log in to broadcast your request.');
+        navigate('/auth/login');
+        return;
+      }
+
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('categories')
+        .select('id, name')
+        .eq('slug', decodedCategory)
+        .single();
+
+      if (categoryError || !categoryData) {
+        toast.error('Unable to find that category.');
+        return;
+      }
+
+      const titleBase = decodedSubcategory || categoryData.name;
+      const descriptionLines = [
+        taskData.details.trim(),
+        taskData.itemType ? `Item type: ${taskData.itemType}` : null,
+        taskData.taskSize ? `Task size: ${taskData.taskSize}` : null,
+      ].filter(Boolean);
+
+      const { error: jobError } = await supabase.from('jobs').insert({
+        customer_id: user.id,
+        category_id: categoryData.id,
+        title: `${titleBase} request`,
+        description: descriptionLines.join('\n'),
+        budget: Number(taskData.budget),
+        location: draft.location,
+      });
+
+      if (jobError) {
+        toast.error(jobError.message || 'Unable to post your request.');
+        return;
+      }
+
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(SERVICE_REQUEST_DRAFT_KEY);
+      }
+
+      toast.success('Your request is now live for providers.');
       navigate(`/providers?service=${category}`);
     }
   };
@@ -240,6 +311,18 @@ export default function ServiceRequestWizard() {
               <p className="text-muted-foreground mb-6">
                 Start the conversation and tell your provider what you need done. This helps us show you only qualified and available providers for the job.
               </p>
+              <div className="space-y-2 mb-6">
+                <Label htmlFor="budget">Budget (USD)</Label>
+                <Input
+                  id="budget"
+                  type="number"
+                  min="1"
+                  placeholder="Enter your budget"
+                  value={taskData.budget}
+                  onChange={(e) => setTaskData(prev => ({...prev, budget: e.target.value}))}
+                  className="text-base"
+                />
+              </div>
               <Textarea
                 placeholder="Provide a summary of what you need done. Be sure to include details like the size of your space, any equipment/tools needed, and how to get in."
                 value={taskData.details}
