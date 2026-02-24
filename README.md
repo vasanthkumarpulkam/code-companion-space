@@ -1,145 +1,76 @@
-# Housecal Pro
+# Code Companion Space
 
-A comprehensive marketplace platform that connects customers in Texas with local service providers across multiple categories including cleaning, moving, landscaping, handyman services, and events.
+A Supabase-powered marketplace that connects homeowners in Texas with verified service professionals for cleaning, moving, landscaping, handyman, and event projects. The platform focuses on instant collaboration between customers, providers, and administrators while keeping data secure under strict access controls.
 
-## Features
+---
 
-### For Customers
-- Post jobs with detailed descriptions and budget
-- Receive competitive bids from verified providers
-- Real-time messaging with providers
-- In-app notifications for bid updates
-- Secure payment processing
-- Rate and review completed jobs
+## ✨ Features Overview
 
-### For Providers
-- Browse and bid on available jobs
-- Build professional profiles with portfolios
-- Real-time job notifications
-- Secure payment collection
-- Build reputation through ratings
+- **Role-specific experiences** for customers, providers, and administrators
+- **Job lifecycle management** covering requests, bids, approvals, and reviews
+- **Realtime messaging & notifications** powered by Supabase Realtime
+- **Location-aware flows** and multilingual-ready content (English/Spanish)
+- **Security-first design** with Supabase Auth and Row Level Security on every table
+- **Scalable UI system** using React 18, Vite, Tailwind CSS, and shadcn/ui
 
-### For Administrators
-- Comprehensive admin dashboard
-- User and job moderation
-- Content moderation and reporting
-- Fee management and analytics
-- Dispute resolution tools
+---
 
-## Tech Stack
+## 🏗 Architecture Snapshot
 
-### Frontend
-- **React 18** with TypeScript
-- **Vite** for build tooling
-- **Tailwind CSS** for styling
-- **shadcn/ui** component library
-- **React Router** for navigation
-- **TanStack Query** for data fetching
+| Layer | Technologies |
+| --- | --- |
+| Frontend | React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query |
+| State & Data | Supabase Auth, Postgres, Realtime channels, Storage |
+| Integrations | Stripe (payments & payouts, planned), Google Maps & Translate (planned) |
+| Tooling | ESLint, TypeScript, Supabase CLI, Vite test tooling |
 
-### Backend
-- **Supabase** for:
-  - Authentication (Email, Google OAuth)
-  - PostgreSQL database with Row Level Security
-  - Real-time subscriptions
-  - File storage
-  - Edge Functions for serverless logic
-
-### Payment Processing
-- **Stripe** for secure payment handling
-- Automatic 10% platform fee collection
-
-### Additional Services
-- **Google Maps API** for location services
-- **Google Translate API** for Spanish translations
-
-## Getting Started
-
-### Prerequisites
-- Node.js 18+ or Bun
-- Supabase account
-- Stripe account (for payments)
-- Google Cloud account (for Maps and Translate APIs)
-
-### Installation
-
-```sh
-# Step 1: Clone the repository
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install dependencies
-npm install
-# or
-bun install
-
-# Step 4: Set up environment variables
-# Create .env file with:
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-
-# Step 5: Start development server
-npm run dev
-# or
-bun dev
+```
+Browser (React Router)
+      ↓
+Auth + Language Contexts
+      ↓
+Supabase Client (queries, mutations, realtime)
+      ↓
+Postgres + RLS policies + Edge Functions
 ```
 
-## Database Schema
+---
 
-### Core Tables
-- **profiles** - User profile information
-- **user_roles** - User role management (customer, provider, admin)
-- **categories** - Service categories
-- **jobs** - Job postings
-- **bids** - Bids on jobs
-- **messages** - In-app messaging
-- **reviews** - Ratings and reviews
-- **payments** - Payment tracking
-- **notifications** - User notifications
-- **notification_preferences** - Notification settings
-- **saved_searches** - Saved search filters
-- **user_reports** - Content moderation reports
+## 📂 Project Layout
 
-## Key Features
+- `src/pages/*` – landing, onboarding, dashboards, admin, jobs, chats, settings
+- `src/components/*` – reusable UI blocks for jobs, providers, chat, notifications, admin widgets
+- `src/contexts/*` – authentication and language providers
+- `src/hooks/*` – custom Supabase hooks for data fetching and realtime updates
+- `supabase/migrations` – database schema, policies, triggers, and constraints
+- `supabase/functions` – placeholder for Edge Functions (payments, notifications, translations)
 
-### Real-time Features
-- Live job updates via Supabase Realtime
-- Instant bid notifications
-- Real-time messaging
-- Notification system
-- Live dashboard updates
+---
 
-### Multilingual Support
-- English and Spanish interface
-- Automatic job description translation
-- Browser language detection
-- User language preferences
+## 🚀 Development Flow
 
-### Security
-- Row Level Security on all tables
-- Secure authentication via Supabase
-- PCI-compliant payments via Stripe
-- Content moderation and reporting
-- File upload validation
-
-## Documentation
-- See `DEPLOYMENT.md` for deployment instructions
-- See `ACCESSIBILITY.md` for accessibility guidelines
-- See `SECURITY.md` for security policies
-
-## Testing
-Run the Supabase linter:
 ```bash
-supabase db lint
+npm install
+cp .env.example .env.local   # fill in project-specific secrets (not stored in git)
+npm run dev
 ```
 
+Local development relies on the Supabase CLI for database linting, migrations, and realtime testing.
 
+---
 
-## Support
-For issues or questions:
+## 🗺 Roadmap
 
-- Supabase Documentation: https://supabase.com/docs
-- Google Maps API Documentation: https://developers.google.com/maps/documentation
+| Phase | Focus |
+| --- | --- |
+| Phase 1 | Supabase schema audit, RLS validation, tooling setup, UX research |
+| Phase 2 | Live wiring of auth, profiles, jobs, bids, chat, notifications |
+| Phase 3 | Admin workflows, provider enhancements, reviews, accessibility polish |
+| Phase 4 | Stripe payments/payouts, Google Maps, Translate automations |
+| Phase 5 | CI/CD, automated testing, observability, launch readiness |
 
+---
 
+## 📄 Status
+
+This repository is private and under active development/testing. All rights reserved.

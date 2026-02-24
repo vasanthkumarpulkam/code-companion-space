@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Supabase CLI cache
+supabase/.temp
+
+# Allow project ops logs to be tracked
+!ops/logs/
+!ops/logs/*.md
