@@ -7,7 +7,6 @@
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
@@ -185,10 +184,6 @@ code-companion-space/
 | 3 | Admin workflows, reviews, accessibility | ✅ Complete |
 | 4 | Stripe payments and payouts, Google Maps, Translate | 🔄 In progress |
 | 5 | CI/CD, automated testing, observability | 📋 Planned |
-
-## License
-
-MIT — see [LICENSE](LICENSE).
 
 ## Author
 
